@@ -2,21 +2,22 @@
 """
 rag_system.py - OSM POI用RAGシステム (LangChain v1.x対応)
 
-改善版:
+改善版 v2:
 - langchain-chromaへの移行
 - デバッグ出力追加
 - プロンプト強化（ハルシネーション抑制）
-- RAGなし比較機能
+- ハイブリッド検索（カテゴリフィルター + ベクトル検索）
+- 検索クエリ拡張
 """
 import json
+import re
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Tuple
 
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 # 設定
@@ -27,6 +28,87 @@ POI_DOCUMENTS_PATH = "./poi_documents.json"
 
 # デバッグモード
 DEBUG = True
+
+# カテゴリマッピング（キーワード → カテゴリプレフィックス）
+CATEGORY_KEYWORDS = {
+    # 飲食店
+    "レストラン": "飲食店",
+    "ラーメン": "飲食店",
+    "カフェ": "飲食店/カフェ",
+    "コーヒー": "飲食店/カフェ",
+    "バー": "飲食店/バー",
+    "居酒屋": "飲食店",
+    "パブ": "飲食店/パブ",
+    "ファストフード": "飲食店/ファストフード",
+    "マクドナルド": "飲食店/ファストフード",
+    "ハンバーガー": "飲食店/ファストフード",
+    "食事": "飲食店",
+    "ご飯": "飲食店",
+    "食べる": "飲食店",
+    
+    # 商店
+    "コンビニ": "商店/コンビニ",
+    "コンビニエンスストア": "商店/コンビニ",
+    "セブン": "商店/コンビニ",
+    "ローソン": "商店/コンビニ",
+    "ファミマ": "商店/コンビニ",
+    "ファミリーマート": "商店/コンビニ",
+    "スーパー": "商店/スーパー",
+    "スーパーマーケット": "商店/スーパー",
+    "本屋": "商店/書店",
+    "書店": "商店/書店",
+    "パン屋": "商店/パン屋",
+    "ベーカリー": "商店/パン屋",
+    
+    # 娯楽
+    "映画館": "娯楽/映画館",
+    "映画": "娯楽/映画館",
+    "シネマ": "娯楽/映画館",
+    "劇場": "娯楽/劇場",
+    "シアター": "娯楽",
+    
+    # 交通
+    "駅": "交通/鉄道駅",
+    "鉄道": "交通/鉄道駅",
+    "駐車場": "交通/駐車場",
+    "パーキング": "交通/駐車場",
+    
+    # 医療
+    "病院": "医療",
+    "クリニック": "医療/クリニック",
+    "薬局": "医療/薬局",
+    "ドラッグストア": "医療/薬局",
+    
+    # 金融
+    "銀行": "金融/銀行",
+    "ATM": "金融/銀行",
+    
+    # 公共
+    "郵便局": "公共/郵便局",
+    "交番": "公共/警察",
+    "警察": "公共/警察",
+    
+    # 観光
+    "観光": "観光",
+    "名所": "観光/名所",
+    "博物館": "観光/博物館",
+    
+    # 宿泊
+    "ホテル": "宿泊/ホテル",
+    "宿泊": "宿泊",
+}
+
+# 検索クエリ拡張（同義語・関連語）
+QUERY_EXPANSION = {
+    "映画館": ["映画館", "シネマ", "cinema", "映画", "娯楽/映画館"],
+    "コンビニ": ["コンビニ", "コンビニエンスストア", "セブンイレブン", "ローソン", "ファミリーマート", "商店/コンビニ"],
+    "カフェ": ["カフェ", "コーヒー", "喫茶店", "cafe", "coffee"],
+    "レストラン": ["レストラン", "食事", "料理", "restaurant"],
+    "ラーメン": ["ラーメン", "らーめん", "拉麺", "ramen"],
+    "銀行": ["銀行", "ATM", "bank", "金融"],
+    "駅": ["駅", "鉄道駅", "電車", "station"],
+    "ホテル": ["ホテル", "宿泊", "hotel", "旅館"],
+}
 
 
 def load_documents(file_path: str) -> list:
@@ -66,6 +148,37 @@ def load_vector_store(persist_dir: str):
     )
 
 
+def detect_category(question: str) -> Tuple[Optional[str], List[str]]:
+    """
+    質問からカテゴリキーワードを検出
+    Returns: (カテゴリプレフィックス, マッチしたキーワードリスト)
+    """
+    matched_keywords = []
+    detected_category = None
+    
+    for keyword, category in CATEGORY_KEYWORDS.items():
+        if keyword in question:
+            matched_keywords.append(keyword)
+            # より具体的なカテゴリを優先
+            if detected_category is None or len(category) > len(detected_category):
+                detected_category = category
+    
+    return detected_category, matched_keywords
+
+
+def expand_query(question: str) -> str:
+    """検索クエリを拡張（同義語追加）"""
+    expanded_terms = [question]
+    
+    for keyword, expansions in QUERY_EXPANSION.items():
+        if keyword in question:
+            expanded_terms.extend(expansions)
+    
+    # 重複を除去して結合
+    unique_terms = list(dict.fromkeys(expanded_terms))
+    return " ".join(unique_terms)
+
+
 def format_docs(docs):
     """検索結果をフォーマット"""
     if not docs:
@@ -84,7 +197,7 @@ class POI_RAG_System:
         self.debug = debug
         
         print("=" * 50)
-        print("POI RAGシステム初期化")
+        print("POI RAGシステム初期化 (v2: ハイブリッド検索対応)")
         print("=" * 50)
 
         chroma_path = Path(CHROMA_PERSIST_DIR)
@@ -114,12 +227,6 @@ class POI_RAG_System:
         doc_count = collection.count()
         print(f"ベクトルストア内のドキュメント数: {doc_count}")
 
-        # Retriever
-        self.retriever = self.vectorstore.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k": 5}
-        )
-
         # LLM
         print("\nLLMを初期化中...")
         self.llm = OllamaLLM(
@@ -129,7 +236,7 @@ class POI_RAG_System:
         )
 
         # プロンプトテンプレート（ハルシネーション抑制強化版）
-        prompt_template = """あなたは渋谷エリアのPOI（施設）情報を検索するアシスタントです。
+        self.prompt_template = """あなたは渋谷エリアのPOI（施設）情報を検索するアシスタントです。
 
 【重要なルール】
 1. 必ず以下の「検索結果」に含まれる情報のみを使用して回答してください
@@ -146,27 +253,70 @@ class POI_RAG_System:
 【回答】
 上記の検索結果に基づいて回答します："""
 
-        self.prompt = PromptTemplate.from_template(prompt_template)
-
-        # RAGチェーン (LCEL形式)
-        self.rag_chain = (
-            {"context": self.retriever | format_docs, "question": RunnablePassthrough()}
-            | self.prompt
-            | self.llm
-            | StrOutputParser()
-        )
+        self.prompt = PromptTemplate.from_template(self.prompt_template)
 
         print("\n初期化完了!")
         print("=" * 50)
 
+    def hybrid_search(self, question: str, k: int = 5) -> list:
+        """
+        ハイブリッド検索：カテゴリフィルター + ベクトル検索
+        """
+        # 1. カテゴリ検出
+        detected_category, matched_keywords = detect_category(question)
+        
+        # 2. クエリ拡張
+        expanded_query = expand_query(question)
+        
+        if self.debug:
+            print(f"\n【デバッグ】検出カテゴリ: {detected_category}")
+            print(f"【デバッグ】マッチキーワード: {matched_keywords}")
+            print(f"【デバッグ】拡張クエリ: {expanded_query[:100]}...")
+
+        # 3. 検索実行
+        if detected_category:
+            # カテゴリフィルター付き検索
+            try:
+                docs = self.vectorstore.similarity_search(
+                    expanded_query,
+                    k=k,
+                    filter={"category": {"$contains": detected_category.split("/")[0]}}  # 大カテゴリでフィルタ
+                )
+                
+                if self.debug:
+                    print(f"【デバッグ】カテゴリフィルター検索結果: {len(docs)}件")
+                
+                # フィルター検索で結果が少ない場合、より具体的なカテゴリで再検索
+                if len(docs) < k and "/" in detected_category:
+                    docs_specific = self.vectorstore.similarity_search(
+                        expanded_query,
+                        k=k,
+                        filter={"category": detected_category}
+                    )
+                    if len(docs_specific) > 0:
+                        docs = docs_specific
+                        if self.debug:
+                            print(f"【デバッグ】具体的カテゴリで再検索: {len(docs)}件")
+                
+            except Exception as e:
+                if self.debug:
+                    print(f"【デバッグ】フィルター検索エラー: {e}")
+                # フォールバック：通常のベクトル検索
+                docs = self.vectorstore.similarity_search(expanded_query, k=k)
+        else:
+            # 通常のベクトル検索
+            docs = self.vectorstore.similarity_search(expanded_query, k=k)
+        
+        return docs
+
     def query_with_rag(self, question: str) -> dict:
         """RAGを使用して回答"""
-        # まず検索結果を取得
-        docs = self.retriever.invoke(question)
+        # ハイブリッド検索
+        docs = self.hybrid_search(question, k=5)
         
         if self.debug:
             print("\n" + "-" * 40)
-            print(f"【デバッグ】検索結果 ({len(docs)}件):")
+            print(f"【デバッグ】最終検索結果 ({len(docs)}件):")
             print("-" * 40)
             for i, doc in enumerate(docs, 1):
                 name = doc.metadata.get("name", "不明")
@@ -177,7 +327,7 @@ class POI_RAG_System:
         # コンテキストを作成
         context = format_docs(docs)
         
-        if self.debug:
+        if self.debug and len(context) > 0:
             print("\n【デバッグ】LLMに渡すコンテキスト（先頭500文字）:")
             print("-" * 40)
             print(context[:500] + "..." if len(context) > 500 else context)
@@ -185,12 +335,6 @@ class POI_RAG_System:
 
         # プロンプトを作成して回答生成
         formatted_prompt = self.prompt.format(context=context, question=question)
-        
-        if self.debug:
-            print("\n【デバッグ】実際のプロンプト（先頭800文字）:")
-            print("-" * 40)
-            print(formatted_prompt[:800] + "..." if len(formatted_prompt) > 800 else formatted_prompt)
-            print("-" * 40)
 
         # 回答生成
         answer = self.llm.invoke(formatted_prompt)
@@ -228,7 +372,7 @@ class POI_RAG_System:
 
     def search_only(self, question: str, k: int = 5) -> list:
         """検索のみ実行（デバッグ用）"""
-        docs = self.vectorstore.similarity_search(question, k=k)
+        docs = self.hybrid_search(question, k=k)
         return [
             {
                 "name": doc.metadata.get("name", "不明"),
@@ -236,6 +380,23 @@ class POI_RAG_System:
                 "lat": doc.metadata.get("lat"),
                 "lon": doc.metadata.get("lon"),
                 "content": doc.page_content[:200] + "..."
+            }
+            for doc in docs
+        ]
+
+    def search_by_category(self, category: str, k: int = 10) -> list:
+        """カテゴリ指定検索（デバッグ用）"""
+        docs = self.vectorstore.similarity_search(
+            category,
+            k=k,
+            filter={"category": {"$contains": category}}
+        )
+        return [
+            {
+                "name": doc.metadata.get("name", "不明"),
+                "category": doc.metadata.get("category", "不明"),
+                "lat": doc.metadata.get("lat"),
+                "lon": doc.metadata.get("lon"),
             }
             for doc in docs
         ]
@@ -250,6 +411,7 @@ def interactive_mode(rag_system: POI_RAG_System):
     print("  quit/exit/q - 終了")
     print("  compare <質問> - RAGあり/なしを比較")
     print("  search <質問> - 検索のみ実行")
+    print("  category <カテゴリ> - カテゴリ指定検索")
     print("  debug on/off - デバッグモード切替")
     print("=" * 50)
 
@@ -272,6 +434,16 @@ def interactive_mode(rag_system: POI_RAG_System):
             elif user_input.lower() == "debug off":
                 rag_system.debug = False
                 print("デバッグモード: OFF")
+                continue
+
+            # カテゴリ指定検索
+            if user_input.lower().startswith("category "):
+                category = user_input[9:].strip()
+                print(f"\n【カテゴリ検索】「{category}」")
+                results = rag_system.search_by_category(category)
+                print(f"\n検索結果 ({len(results)}件):")
+                for i, r in enumerate(results, 1):
+                    print(f"  [{i}] {r['name']} ({r['category']})")
                 continue
 
             # 検索のみ
