@@ -2,3 +2,5 @@ chroma_db
 __pycache__
 test_output.log
 test_report_*
+dumprepo.json
+experiments-local-llm.txt
