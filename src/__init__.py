@@ -48,6 +48,18 @@ from .geo_utils import (
     filter_east_side,
     filter_west_side,
     filter_by_area_cluster,
+    
+    # Phase 6.2追加: 近接性検索・感度分析
+    get_nearest_pois,
+    get_farthest_pois,
+    filter_by_radius,
+    count_by_radius,
+    compare_by_radius,
+    analyze_radius_sensitivity,
+    get_poi_distance_stats,
+    generate_proximity_context,
+    generate_sensitivity_context,
+    RadiusComparisonResult,
 )
 
 from .aggregator import (
@@ -93,6 +105,8 @@ from .aggregator import (
 from .structured_rag_system import (
     # 定数
     CATEGORY_KEYWORDS,
+    PROXIMITY_KEYWORDS,
+    SENSITIVITY_KEYWORDS,
     
     # クラス
     QuestionAnalysis,
@@ -104,5 +118,5 @@ from .structured_rag_system import (
 )
 
 # バージョン情報
-__version__ = "0.6.0"
-__phase__ = "Phase 6: Structured RAG"
+__version__ = "0.6.2"
+__phase__ = "Phase 6.2: Proximity & Sensitivity Analysis"

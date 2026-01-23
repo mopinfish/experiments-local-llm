@@ -20,7 +20,17 @@ from .geo_utils import (
     filter_west_side,
     distance_from_station,
     direction_from_station,
-    SHIBUYA_STATION
+    SHIBUYA_STATION,
+    # Phase 6.2追加
+    get_nearest_pois,
+    get_farthest_pois,
+    filter_by_radius,
+    count_by_radius,
+    compare_by_radius,
+    analyze_radius_sensitivity,
+    get_poi_distance_stats,
+    generate_proximity_context,
+    generate_sensitivity_context
 )
 from .aggregator import (
     count_by_category,
@@ -81,6 +91,10 @@ AGGREGATION_KEYWORDS = ["いくつ", "何件", "多い", "少ない", "数", "�
 DIRECTION_KEYWORDS = ["東", "西", "北", "南"]
 DISTANCE_KEYWORDS = ["近く", "近い", "徒歩", "以内", "m", "メートル", "km", "キロ"]
 
+# Phase 6.2追加: 近接性・感度分析キーワード
+PROXIMITY_KEYWORDS = ["最も近い", "一番近い", "最寄り", "近い順", "最短"]
+SENSITIVITY_KEYWORDS = ["変えても", "変更しても", "広げても", "狭めても", "範囲を", "半径を", "成立"]
+
 
 # =============================================================================
 # 質問分析クラス
@@ -90,7 +104,7 @@ class QuestionAnalysis:
     """質問分析結果を保持するクラス"""
     
     def __init__(self):
-        self.question_type: str = "simple"  # simple, comparison, aggregation, spatial
+        self.question_type: str = "simple"  # simple, comparison, aggregation, spatial, proximity, sensitivity
         self.categories: List[str] = []
         self.subcategories: List[str] = []
         self.directions: List[str] = []
@@ -98,7 +112,10 @@ class QuestionAnalysis:
         self.requires_aggregation: bool = False
         self.requires_comparison: bool = False
         self.requires_spatial: bool = False
+        self.requires_proximity: bool = False  # Phase 6.2追加: 最近傍検索
+        self.requires_sensitivity: bool = False  # Phase 6.2追加: 感度分析
         self.distance_constraint: Optional[float] = None
+        self.sensitivity_radii: Optional[Tuple[float, float]] = None  # Phase 6.2追加
     
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -110,7 +127,10 @@ class QuestionAnalysis:
             "requires_aggregation": self.requires_aggregation,
             "requires_comparison": self.requires_comparison,
             "requires_spatial": self.requires_spatial,
-            "distance_constraint": self.distance_constraint
+            "requires_proximity": self.requires_proximity,
+            "requires_sensitivity": self.requires_sensitivity,
+            "distance_constraint": self.distance_constraint,
+            "sensitivity_radii": self.sensitivity_radii
         }
 
 
@@ -188,6 +208,28 @@ def analyze_question(question: str) -> QuestionAnalysis:
         analysis.question_type = "spatial"
     else:
         analysis.question_type = "simple"
+    
+    # Phase 6.2追加: 近接性キーワード検出
+    if any(word in question for word in PROXIMITY_KEYWORDS):
+        analysis.requires_proximity = True
+        analysis.question_type = "proximity"
+    
+    # Phase 6.2追加: 感度分析キーワード検出
+    if any(word in question for word in SENSITIVITY_KEYWORDS):
+        analysis.requires_sensitivity = True
+        analysis.question_type = "sensitivity"
+        
+        # 感度分析用の半径ペアを抽出
+        # 例: 「500mから300mに変えても」
+        radius_pattern = r'(\d+)\s*(m|メートル).*?(\d+)\s*(m|メートル)'
+        match = re.search(radius_pattern, question)
+        if match:
+            r1 = int(match.group(1))
+            r2 = int(match.group(3))
+            analysis.sensitivity_radii = (min(r1, r2), max(r1, r2))
+        else:
+            # デフォルト: 300m と 500m
+            analysis.sensitivity_radii = (300, 500)
     
     return analysis
 
@@ -506,12 +548,141 @@ class StructuredRAGSystem:
         
         return result
     
+    def _execute_proximity_search(
+        self,
+        question: str,
+        analysis: QuestionAnalysis
+    ) -> Dict[str, Any]:
+        """
+        Phase 6.2追加: 近接性検索を実行
+        
+        Args:
+            question: 質問文
+            analysis: 質問分析結果
+        
+        Returns:
+            近接性検索結果
+        """
+        result = {
+            "type": "proximity",
+            "data": None,
+            "context": "",
+            "nearest_pois": []
+        }
+        
+        # カテゴリを特定
+        category = None
+        if analysis.subcategories:
+            category = analysis.subcategories[0]
+        elif analysis.categories:
+            category = analysis.categories[0].split("/")[-1]
+        
+        # 最近傍POIを取得
+        top_n = 5
+        nearest = get_nearest_pois(self.all_pois, category=category, top_n=top_n)
+        
+        result["nearest_pois"] = nearest
+        result["data"] = {
+            "category": category,
+            "count": len(nearest),
+            "nearest": [
+                {
+                    "name": p.get("name"),
+                    "distance": p.get("distance_from_station"),
+                    "direction": p.get("direction_from_station_jp")
+                }
+                for p in nearest
+            ]
+        }
+        
+        # コンテキスト生成
+        result["context"] = generate_proximity_context(self.all_pois, category, top_n)
+        
+        return result
+    
+    def _execute_sensitivity_analysis(
+        self,
+        question: str,
+        analysis: QuestionAnalysis
+    ) -> Dict[str, Any]:
+        """
+        Phase 6.2追加: 感度分析を実行
+        
+        Args:
+            question: 質問文
+            analysis: 質問分析結果
+        
+        Returns:
+            感度分析結果
+        """
+        result = {
+            "type": "sensitivity",
+            "data": None,
+            "context": ""
+        }
+        
+        # カテゴリを特定
+        category = None
+        if analysis.subcategories:
+            category = analysis.subcategories[0]
+        elif analysis.categories:
+            category = analysis.categories[0].split("/")[-1]
+        
+        # 半径ペアを取得
+        if analysis.sensitivity_radii:
+            radius1, radius2 = analysis.sensitivity_radii
+        else:
+            radius1, radius2 = 300, 500
+        
+        # 半径比較
+        comparison = compare_by_radius(self.all_pois, radius1, radius2, category)
+        
+        # 詳細な感度分析
+        sensitivity = analyze_radius_sensitivity(
+            self.all_pois, 
+            category, 
+            radii=[100, 200, 300, 500, 800, 1000]
+        )
+        
+        result["data"] = {
+            "comparison": comparison.to_dict(),
+            "sensitivity": sensitivity,
+            "conclusion": self._generate_sensitivity_conclusion(comparison, category)
+        }
+        
+        # コンテキスト生成
+        result["context"] = generate_sensitivity_context(
+            self.all_pois, category, radius1, radius2
+        )
+        
+        return result
+    
+    def _generate_sensitivity_conclusion(
+        self,
+        comparison,
+        category: Optional[str]
+    ) -> str:
+        """感度分析の結論を生成"""
+        cat_str = f"「{category}」" if category else "POI"
+        
+        if comparison.count1 == 0:
+            return f"小さい半径では{cat_str}が存在しないため、結論は成立しません。"
+        
+        if comparison.ratio >= 1.5:
+            return f"{cat_str}は駅周辺より郊外に多く分布しており、半径を変えると結論が大きく変わる可能性があります。"
+        elif comparison.ratio >= 1.2:
+            return f"半径を変えると件数は変化しますが、{cat_str}が多いという結論は概ね維持されます。"
+        else:
+            return f"{cat_str}は駅周辺に集中しており、半径を変えても結論は大きく変わりません。"
+    
     def _build_context(
         self,
         search_results: List[Dict[str, Any]],
         aggregation: Optional[Dict[str, Any]],
         comparison: Optional[Dict[str, Any]],
-        spatial: Optional[Dict[str, Any]]
+        spatial: Optional[Dict[str, Any]],
+        proximity: Optional[Dict[str, Any]] = None,
+        sensitivity: Optional[Dict[str, Any]] = None
     ) -> str:
         """
         LLM用のコンテキストを構築
@@ -521,14 +692,26 @@ class StructuredRAGSystem:
             aggregation: 集計結果
             comparison: 比較結果
             spatial: 空間フィルタリング結果
+            proximity: 近接性検索結果（Phase 6.2）
+            sensitivity: 感度分析結果（Phase 6.2）
         
         Returns:
             コンテキストテキスト
         """
         context_parts = []
         
+        # Phase 6.2: 近接性検索結果（最優先）
+        if proximity and proximity.get("context"):
+            context_parts.append(proximity["context"])
+        
+        # Phase 6.2: 感度分析結果
+        if sensitivity and sensitivity.get("context"):
+            context_parts.append(sensitivity["context"])
+            if sensitivity.get("data", {}).get("conclusion"):
+                context_parts.append(f"\n【結論】\n{sensitivity['data']['conclusion']}")
+        
         # ベクトル検索結果
-        if search_results:
+        if search_results and not proximity:  # 近接性検索がない場合のみ
             context_parts.append("【検索結果】")
             for r in search_results[:5]:
                 context_parts.append(r["content"])
@@ -593,8 +776,21 @@ class StructuredRAGSystem:
         if analysis.requires_spatial and (analysis.distance_constraint or analysis.directions):
             spatial = self._execute_spatial_filter(question, analysis)
         
+        # Phase 6.2: 近接性検索
+        proximity = None
+        if analysis.requires_proximity:
+            proximity = self._execute_proximity_search(question, analysis)
+        
+        # Phase 6.2: 感度分析
+        sensitivity = None
+        if analysis.requires_sensitivity:
+            sensitivity = self._execute_sensitivity_analysis(question, analysis)
+        
         # コンテキスト構築
-        context = self._build_context(search_results, aggregation, comparison, spatial)
+        context = self._build_context(
+            search_results, aggregation, comparison, spatial,
+            proximity, sensitivity
+        )
         
         # プロンプト構築
         prompt = f"""以下の情報を参考にして、質問に回答してください。

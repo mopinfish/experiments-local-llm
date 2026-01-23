@@ -502,6 +502,456 @@ def filter_by_area_cluster(
 
 
 # =============================================================================
+# Phase 6.2: 最近傍検索・半径フィルタ・感度分析
+# =============================================================================
+
+def get_nearest_pois(
+    pois: List[Dict[str, Any]],
+    category: Optional[str] = None,
+    top_n: int = 3,
+    station: Dict[str, float] = None
+) -> List[Dict[str, Any]]:
+    """
+    駅に最も近いPOIを取得（距離順ソート）
+    
+    Args:
+        pois: POIデータのリスト（空間情報付き推奨）
+        category: フィルタするカテゴリ（部分一致、Noneで全カテゴリ）
+        top_n: 取得する件数
+        station: 基準駅の座標辞書
+    
+    Returns:
+        距離順にソートされたPOIリスト（最大top_n件）
+    
+    Example:
+        >>> nearest_cafes = get_nearest_pois(pois, category="カフェ", top_n=3)
+        >>> print(nearest_cafes[0]["name"], nearest_cafes[0]["distance_from_station"])
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    # カテゴリフィルタ
+    if category:
+        filtered = [p for p in pois if category in p.get("category", "")]
+    else:
+        filtered = pois
+    
+    # 距離情報を追加（なければ計算）
+    pois_with_distance = []
+    for poi in filtered:
+        if poi.get("lat") and poi.get("lon"):
+            if "distance_from_station" not in poi:
+                distance = distance_from_station(poi["lat"], poi["lon"], station)
+                poi_copy = poi.copy()
+                poi_copy["distance_from_station"] = round(distance, 2)
+                pois_with_distance.append(poi_copy)
+            else:
+                pois_with_distance.append(poi)
+    
+    # 距離でソート
+    sorted_pois = sorted(
+        pois_with_distance,
+        key=lambda p: p.get("distance_from_station", float('inf'))
+    )
+    
+    return sorted_pois[:top_n]
+
+
+def get_farthest_pois(
+    pois: List[Dict[str, Any]],
+    category: Optional[str] = None,
+    top_n: int = 3,
+    station: Dict[str, float] = None
+) -> List[Dict[str, Any]]:
+    """
+    駅から最も遠いPOIを取得（距離逆順ソート）
+    
+    Args:
+        pois: POIデータのリスト
+        category: フィルタするカテゴリ（部分一致）
+        top_n: 取得する件数
+        station: 基準駅の座標辞書
+    
+    Returns:
+        距離逆順にソートされたPOIリスト（最大top_n件）
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    # カテゴリフィルタ
+    if category:
+        filtered = [p for p in pois if category in p.get("category", "")]
+    else:
+        filtered = pois
+    
+    # 距離情報を追加
+    pois_with_distance = []
+    for poi in filtered:
+        if poi.get("lat") and poi.get("lon"):
+            if "distance_from_station" not in poi:
+                distance = distance_from_station(poi["lat"], poi["lon"], station)
+                poi_copy = poi.copy()
+                poi_copy["distance_from_station"] = round(distance, 2)
+                pois_with_distance.append(poi_copy)
+            else:
+                pois_with_distance.append(poi)
+    
+    # 距離逆順でソート
+    sorted_pois = sorted(
+        pois_with_distance,
+        key=lambda p: p.get("distance_from_station", 0),
+        reverse=True
+    )
+    
+    return sorted_pois[:top_n]
+
+
+def filter_by_radius(
+    pois: List[Dict[str, Any]],
+    radius_m: float,
+    category: Optional[str] = None,
+    station: Dict[str, float] = None
+) -> List[Dict[str, Any]]:
+    """
+    指定半径内のPOIをフィルタリング
+    
+    Args:
+        pois: POIデータのリスト
+        radius_m: 半径（メートル）
+        category: フィルタするカテゴリ（部分一致、Noneで全カテゴリ）
+        station: 基準駅の座標辞書
+    
+    Returns:
+        半径内のPOIリスト
+    
+    Example:
+        >>> cafes_500m = filter_by_radius(pois, 500, category="カフェ")
+        >>> print(f"500m以内のカフェ: {len(cafes_500m)}件")
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    result = []
+    for poi in pois:
+        # カテゴリフィルタ
+        if category and category not in poi.get("category", ""):
+            continue
+        
+        # 距離フィルタ
+        if poi.get("lat") and poi.get("lon"):
+            if "distance_from_station" in poi:
+                distance = poi["distance_from_station"]
+            else:
+                distance = distance_from_station(poi["lat"], poi["lon"], station)
+            
+            if distance <= radius_m:
+                result.append(poi)
+    
+    return result
+
+
+def count_by_radius(
+    pois: List[Dict[str, Any]],
+    radius_m: float,
+    category: Optional[str] = None,
+    station: Dict[str, float] = None
+) -> int:
+    """
+    指定半径内のPOI件数をカウント
+    
+    Args:
+        pois: POIデータのリスト
+        radius_m: 半径（メートル）
+        category: フィルタするカテゴリ
+        station: 基準駅の座標辞書
+    
+    Returns:
+        半径内のPOI件数
+    """
+    return len(filter_by_radius(pois, radius_m, category, station))
+
+
+@dataclass
+class RadiusComparisonResult:
+    """半径比較結果を表すデータクラス"""
+    radius1_m: float
+    radius2_m: float
+    count1: int
+    count2: int
+    category: Optional[str]
+    difference: int
+    ratio: float  # count2 / count1
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "radius1_m": self.radius1_m,
+            "radius2_m": self.radius2_m,
+            "count1": self.count1,
+            "count2": self.count2,
+            "category": self.category,
+            "difference": self.difference,
+            "ratio": self.ratio
+        }
+    
+    def to_japanese(self) -> str:
+        """日本語での説明文を生成"""
+        cat_str = f"「{self.category}」" if self.category else "POI"
+        
+        if self.count1 == 0:
+            return f"半径{self.radius1_m}m以内に{cat_str}はありません"
+        
+        change = self.count2 - self.count1
+        if change > 0:
+            return (f"半径{self.radius1_m}m: {self.count1}件 → "
+                   f"半径{self.radius2_m}m: {self.count2}件 "
+                   f"（+{change}件、{self.ratio:.1f}倍）")
+        elif change < 0:
+            return (f"半径{self.radius1_m}m: {self.count1}件 → "
+                   f"半径{self.radius2_m}m: {self.count2}件 "
+                   f"（{change}件、{self.ratio:.1f}倍）")
+        else:
+            return (f"半径{self.radius1_m}m・{self.radius2_m}m: "
+                   f"ともに{self.count1}件（変化なし）")
+
+
+def compare_by_radius(
+    pois: List[Dict[str, Any]],
+    radius1_m: float,
+    radius2_m: float,
+    category: Optional[str] = None,
+    station: Dict[str, float] = None
+) -> RadiusComparisonResult:
+    """
+    異なる半径での件数を比較（感度分析用）
+    
+    Args:
+        pois: POIデータのリスト
+        radius1_m: 半径1（メートル）
+        radius2_m: 半径2（メートル）
+        category: フィルタするカテゴリ
+        station: 基準駅の座標辞書
+    
+    Returns:
+        RadiusComparisonResult
+    
+    Example:
+        >>> result = compare_by_radius(pois, 300, 500, category="カフェ")
+        >>> print(result.to_japanese())
+        '半径300m: 45件 → 半径500m: 89件 (+44件、1.98倍)'
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    count1 = count_by_radius(pois, radius1_m, category, station)
+    count2 = count_by_radius(pois, radius2_m, category, station)
+    
+    ratio = count2 / count1 if count1 > 0 else 0
+    
+    return RadiusComparisonResult(
+        radius1_m=radius1_m,
+        radius2_m=radius2_m,
+        count1=count1,
+        count2=count2,
+        category=category,
+        difference=count2 - count1,
+        ratio=round(ratio, 2)
+    )
+
+
+def analyze_radius_sensitivity(
+    pois: List[Dict[str, Any]],
+    category: Optional[str] = None,
+    radii: List[float] = None,
+    station: Dict[str, float] = None
+) -> Dict[str, Any]:
+    """
+    複数の半径での件数変化を分析（感度分析）
+    
+    Args:
+        pois: POIデータのリスト
+        category: フィルタするカテゴリ
+        radii: 分析する半径のリスト（デフォルト: [100, 200, 300, 500, 800, 1000]）
+        station: 基準駅の座標辞書
+    
+    Returns:
+        半径ごとの件数と分析結果
+    
+    Example:
+        >>> result = analyze_radius_sensitivity(pois, category="カフェ")
+        >>> for r, c in result["counts"].items():
+        ...     print(f"{r}m: {c}件")
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    if radii is None:
+        radii = [100, 200, 300, 500, 800, 1000]
+    
+    counts = {}
+    for radius in sorted(radii):
+        counts[radius] = count_by_radius(pois, radius, category, station)
+    
+    # 変化率の計算
+    changes = []
+    sorted_radii = sorted(radii)
+    for i in range(1, len(sorted_radii)):
+        r1, r2 = sorted_radii[i-1], sorted_radii[i]
+        c1, c2 = counts[r1], counts[r2]
+        if c1 > 0:
+            change_rate = (c2 - c1) / c1 * 100
+        else:
+            change_rate = float('inf') if c2 > 0 else 0
+        changes.append({
+            "from_radius": r1,
+            "to_radius": r2,
+            "from_count": c1,
+            "to_count": c2,
+            "change": c2 - c1,
+            "change_rate": round(change_rate, 1)
+        })
+    
+    return {
+        "category": category,
+        "counts": counts,
+        "changes": changes,
+        "total_at_max_radius": counts[max(radii)],
+        "radii_analyzed": sorted_radii
+    }
+
+
+def get_poi_distance_stats(
+    pois: List[Dict[str, Any]],
+    category: Optional[str] = None,
+    station: Dict[str, float] = None
+) -> Dict[str, float]:
+    """
+    POIの距離統計を計算
+    
+    Args:
+        pois: POIデータのリスト
+        category: フィルタするカテゴリ
+        station: 基準駅の座標辞書
+    
+    Returns:
+        統計情報（min, max, avg, median）
+    """
+    if station is None:
+        station = SHIBUYA_STATION
+    
+    # カテゴリフィルタ
+    if category:
+        filtered = [p for p in pois if category in p.get("category", "")]
+    else:
+        filtered = pois
+    
+    # 距離を収集
+    distances = []
+    for poi in filtered:
+        if poi.get("lat") and poi.get("lon"):
+            if "distance_from_station" in poi:
+                distances.append(poi["distance_from_station"])
+            else:
+                distances.append(distance_from_station(poi["lat"], poi["lon"], station))
+    
+    if not distances:
+        return {"count": 0, "min": 0, "max": 0, "avg": 0, "median": 0}
+    
+    distances_sorted = sorted(distances)
+    n = len(distances_sorted)
+    
+    return {
+        "count": n,
+        "min": round(distances_sorted[0], 1),
+        "max": round(distances_sorted[-1], 1),
+        "avg": round(sum(distances) / n, 1),
+        "median": round(distances_sorted[n // 2], 1)
+    }
+
+
+def generate_proximity_context(
+    pois: List[Dict[str, Any]],
+    category: str,
+    top_n: int = 3,
+    station: Dict[str, float] = None
+) -> str:
+    """
+    最近傍POI情報をLLMコンテキスト用に整形
+    
+    Args:
+        pois: POIデータのリスト
+        category: 対象カテゴリ
+        top_n: 取得件数
+        station: 基準駅の座標辞書
+    
+    Returns:
+        整形されたコンテキスト文字列
+    """
+    nearest = get_nearest_pois(pois, category, top_n, station)
+    
+    if not nearest:
+        return f"「{category}」に該当するPOIが見つかりませんでした。"
+    
+    lines = [f"【{category}の最寄りPOI（上位{len(nearest)}件）】"]
+    for i, poi in enumerate(nearest, 1):
+        name = poi.get("name", "不明")
+        dist = poi.get("distance_from_station", "?")
+        direction = poi.get("direction_from_station_jp", "")
+        lines.append(f"  {i}. {name}")
+        lines.append(f"     距離: {dist}m（{direction}方向）")
+    
+    # 統計情報も追加
+    stats = get_poi_distance_stats(pois, category, station)
+    lines.append(f"\n【{category}の距離統計】")
+    lines.append(f"  総数: {stats['count']}件")
+    lines.append(f"  最短: {stats['min']}m / 最長: {stats['max']}m")
+    lines.append(f"  平均: {stats['avg']}m / 中央値: {stats['median']}m")
+    
+    return "\n".join(lines)
+
+
+def generate_sensitivity_context(
+    pois: List[Dict[str, Any]],
+    category: str,
+    radius1: float,
+    radius2: float,
+    station: Dict[str, float] = None
+) -> str:
+    """
+    感度分析結果をLLMコンテキスト用に整形
+    
+    Args:
+        pois: POIデータのリスト
+        category: 対象カテゴリ
+        radius1: 比較半径1
+        radius2: 比較半径2
+        station: 基準駅の座標辞書
+    
+    Returns:
+        整形されたコンテキスト文字列
+    """
+    comparison = compare_by_radius(pois, radius1, radius2, category, station)
+    sensitivity = analyze_radius_sensitivity(pois, category, [radius1, radius2], station)
+    
+    lines = [f"【{category}の半径別件数比較】"]
+    lines.append(comparison.to_japanese())
+    
+    # 追加分析
+    if comparison.count1 > 0:
+        lines.append(f"\n【分析】")
+        if comparison.ratio >= 1.5:
+            lines.append(f"  半径を{radius1}m→{radius2}mに広げると{comparison.ratio:.1f}倍に増加します。")
+            lines.append(f"  {radius1}m以内では{category}が少なく、周辺に分布しています。")
+        elif comparison.ratio >= 1.2:
+            lines.append(f"  半径を広げると{comparison.difference}件増加しますが、")
+            lines.append(f"  {radius1}m以内にも十分な件数があります。")
+        else:
+            lines.append(f"  半径を変えても大きな変化はありません。")
+            lines.append(f"  {category}は駅周辺に集中しています。")
+    
+    return "\n".join(lines)
+
+
+# =============================================================================
 # テスト・デバッグ用関数
 # =============================================================================
 
