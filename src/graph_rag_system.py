@@ -270,29 +270,41 @@ def analyze_graph_query(question: str) -> GraphQueryAnalysis:
 class GraphRAGSystem:
     """ナレッジグラフを活用したRAGシステム"""
 
-    def __init__(self, graph: nx.DiGraph = None, poi_json_path: str = None):
+    def __init__(self, graph_or_pois=None, poi_json_path: str = None):
         """
         Args:
-            graph: 構築済みのNetworkXグラフ
+            graph_or_pois: 構築済みのNetworkXグラフ、またはPOIリスト（List[Dict]）
             poi_json_path: POI JSONファイルのパス（グラフ未構築時）
         """
         if not HAS_NETWORKX:
             raise ImportError("networkx is required")
 
-        if graph is not None:
-            self.graph = graph
+        if graph_or_pois is not None:
+            if isinstance(graph_or_pois, nx.DiGraph):
+                # NetworkXグラフが渡された場合
+                self.graph = graph_or_pois
+            elif isinstance(graph_or_pois, list):
+                # POIリストが渡された場合
+                self.graph = self._build_graph_from_pois(graph_or_pois)
+            else:
+                raise ValueError(f"Expected nx.DiGraph or list, got {type(graph_or_pois)}")
         elif poi_json_path is not None:
             self.graph = self._build_graph(poi_json_path)
         else:
-            raise ValueError("Either graph or poi_json_path must be provided")
+            raise ValueError("Either graph_or_pois or poi_json_path must be provided")
 
         # ノードインデックスの構築
         self._build_indices()
 
     def _build_graph(self, poi_json_path: str) -> nx.DiGraph:
-        """POI JSONからグラフを構築"""
+        """POI JSONファイルパスからグラフを構築"""
         builder = POIGraphBuilder()
         pois = builder.load_pois_from_json(poi_json_path)
+        return builder.build_graph(pois, verbose=False)
+
+    def _build_graph_from_pois(self, pois: list) -> nx.DiGraph:
+        """POIリストから直接グラフを構築"""
+        builder = POIGraphBuilder()
         return builder.build_graph(pois, verbose=False)
 
     def _build_indices(self):
