@@ -590,5 +590,170 @@ Phase 11: 統合評価
 
 ---
 
+## 11. 拡張グラフRAG構築手順
+
+### 11.1 概要
+
+Phase 8.1の初期実装後、グラフ構造の関係性を強化するために以下の5つの新しいエッジタイプを追加しました。これにより、POI間のより豊かな関係性を表現できるようになりました。
+
+### 11.2 新しいエッジタイプ
+
+| エッジタイプ | 説明 | 抽出条件 | 予想エッジ数 |
+|------------|------|---------|-------------|
+| `SAME_BRAND` | 同一ブランド/チェーン店 | brand属性が一致 | 約200 |
+| `COMPLEMENTARY` | 相補的関係（ホテル↔レストラン等） | カテゴリペアルールに基づく | 約3,000 |
+| `COMPETITOR` | 競合関係（同カテゴリ・近距離） | 同カテゴリ + 100m以内 | 約8,000 |
+| `SAME_CUISINE` | 同一料理ジャンル | cuisine属性が一致 | 約500 |
+| `SAME_HOURS` | 同一営業時間帯 | 24h/深夜/早朝フラグ一致 | 約2,000 |
+
+### 11.3 相補的関係（COMPLEMENTARY）のルール
+
+以下のカテゴリペアが相補的関係としてエッジ化されます（200m以内）：
+
+```python
+COMPLEMENTARY_RULES = {
+    ("宿泊/ホテル", "飲食店/レストラン"): "DINING_NEAR_HOTEL",
+    ("宿泊/ホテル", "飲食店/カフェ"): "CAFE_NEAR_HOTEL",
+    ("宿泊/ホテル", "商店/コンビニ"): "CONVENIENCE_NEAR_HOTEL",
+    ("娯楽/映画館", "飲食店/カフェ"): "ENTERTAINMENT_COMBO",
+    ("娯楽/映画館", "飲食店/ファストフード"): "ENTERTAINMENT_COMBO",
+    ("交通/鉄道駅", "商店/コンビニ"): "TRANSIT_AMENITY",
+    ("交通/鉄道駅", "飲食店/カフェ"): "TRANSIT_AMENITY",
+    ("観光/名所", "飲食店/カフェ"): "SIGHTSEEING_REST",
+    ("観光/名所", "飲食店/レストラン"): "SIGHTSEEING_DINING",
+    ("金融/銀行", "商店/コンビニ"): "BANKING_CONVENIENCE",
+    ("医療/病院", "医療/薬局"): "MEDICAL_COMBO",
+    ("医療/クリニック", "医療/薬局"): "MEDICAL_COMBO",
+}
+```
+
+### 11.4 構築手順
+
+#### ステップ1: POIデータの拡張取得
+
+```bash
+# OpenStreetMapからブランド、営業時間、料理ジャンル等の拡張タグを取得
+uv run python osm_poi_fetcher.py
+```
+
+**出力ファイル**: `poi_documents.json`（拡張メタデータ付き）
+
+**追加される属性**:
+- `brand`: チェーン店/ブランド名（日本語名から自動抽出）
+- `opening_hours`: 営業時間（raw文字列）
+- `is_24h`: 24時間営業フラグ
+- `late_night`: 深夜営業フラグ（22:00以降）
+- `early_morning`: 早朝営業フラグ（6:00以前）
+- `cuisine`: 料理ジャンル
+
+#### ステップ2: 拡張グラフの構築
+
+```python
+from src.graph_builder import POIGraphBuilder
+
+# 拡張エッジを含むグラフを構築
+builder = POIGraphBuilder(
+    poi_json_path="poi_documents.json",
+    include_extended_edges=True  # 新しいエッジタイプを有効化
+)
+stats = builder.build()
+
+# 統計情報の確認
+print(f"ノード数: {stats.total_nodes}")
+print(f"総エッジ数: {stats.total_edges}")
+print(f"- SAME_BRAND: {stats.same_brand_edges}")
+print(f"- COMPLEMENTARY: {stats.complementary_edges}")
+print(f"- COMPETITOR: {stats.competitor_edges}")
+print(f"- SAME_CUISINE: {stats.same_cuisine_edges}")
+print(f"- SAME_HOURS: {stats.same_hours_edges}")
+```
+
+#### ステップ3: GraphRAGシステムの初期化
+
+```python
+from src.graph_rag_system import GraphRAGSystem
+
+# 拡張グラフを使用するシステムの初期化
+system = GraphRAGSystem(
+    rebuild=True,
+    include_extended_edges=True
+)
+```
+
+### 11.5 Google Colabでの実行
+
+`notebooks/graphrag_05_enhanced_comparison.ipynb` を使用して、拡張グラフRAGの評価を実行できます。
+
+```python
+# セルでの実行例
+import sys
+sys.path.append('/content/drive/MyDrive/experiments-local-llm/src')
+
+from graph_builder import POIGraphBuilder
+from graph_rag_system import GraphRAGSystem
+
+# 拡張グラフ構築
+builder = POIGraphBuilder(
+    poi_json_path='/content/drive/MyDrive/experiments-local-llm/poi_documents.json',
+    include_extended_edges=True
+)
+stats = builder.build()
+print(f"拡張グラフ構築完了: {stats.total_edges} エッジ")
+```
+
+### 11.6 期待されるグラフ統計
+
+| 項目 | 基本グラフ | 拡張グラフ |
+|-----|----------|----------|
+| ノード数 | 1,080 | 1,080 |
+| 総エッジ数 | 68,334 | 82,078 |
+| NEAR_TO | 66,248 | 66,248 |
+| SAME_CATEGORY | 2,086 | 2,086 |
+| SAME_BRAND | 0 | 約200 |
+| COMPLEMENTARY | 0 | 約3,000 |
+| COMPETITOR | 0 | 約8,000 |
+| SAME_CUISINE | 0 | 約500 |
+| SAME_HOURS | 0 | 約2,000 |
+
+### 11.7 拡張テストケース
+
+拡張グラフRAG向けに、以下のカテゴリのテストケースが追加されています（`src/test_cases_graphrag.py`）：
+
+| カテゴリ | 件数 | 質問例 |
+|---------|-----|-------|
+| brand | 5件 | 「渋谷にあるスターバックスは何店舗ありますか？」 |
+| complementary | 5件 | 「渋谷駅近くでホテルの近くにあるレストランを教えてください」 |
+| competitor | 3件 | 「渋谷でコンビニが密集しているエリアはどこですか？」 |
+| cuisine | 4件 | 「渋谷で日本料理のレストランを探しています」 |
+| hours | 3件 | 「渋谷で24時間営業の店舗を教えてください」 |
+
+**合計**: 35件（基本15件 + 拡張20件）
+
+### 11.8 トラブルシューティング
+
+#### NetworkXがインストールされていない
+
+```bash
+uv add networkx
+```
+
+#### メタデータのフラット化エラー
+
+ChromaDBはネストされた辞書をサポートしません。`flatten_metadata()`ヘルパーを使用してください：
+
+```python
+from src.geo_utils import flatten_metadata
+flat_meta = flatten_metadata(poi["metadata"])
+```
+
+#### ブランド情報が抽出されない
+
+`osm_poi_fetcher.py`の`KNOWN_BRANDS`辞書にブランドを追加してください。
+
+---
+
 **作成者**: Claude Opus 4.5
 **ステータス**: 承認済み（NetworkX先行、追加テストケース10-15件）
+**更新履歴**:
+- 2026-01-29: 初版作成
+- 2026-01-30: 拡張グラフRAG構築手順（セクション11）追加
