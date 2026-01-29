@@ -80,20 +80,39 @@ CATEGORY_KEYWORDS = {
 
 # サブカテゴリキーワードマッピング
 SUBCATEGORY_KEYWORDS = {
+    # 飲食店
     "カフェ": "カフェ",
+    "喫茶店": "カフェ",
+    "コーヒー": "カフェ",
     "レストラン": "レストラン",
     "バー": "バー",
     "パブ": "パブ",
+    "居酒屋": "バー",
     "ファストフード": "ファストフード",
+    "ファーストフード": "ファストフード",
+    # 商店
     "コンビニ": "コンビニ",
     "スーパー": "スーパー",
     "書店": "書店",
+    "本屋": "書店",
+    # 娯楽
     "映画館": "映画館",
+    "シネマ": "映画館",
+    "劇場": "劇場",
+    # 宿泊
     "ホテル": "ホテル",
+    "宿泊": "ホテル",
+    # 金融
     "銀行": "銀行",
+    "ATM": "銀行",
+    # 公共
     "郵便局": "郵便局",
+    "交番": "警察",
+    # 医療
     "病院": "病院",
+    "クリニック": "クリニック",
     "薬局": "薬局",
+    "ドラッグ": "薬局",
 }
 
 # 方向キーワード
@@ -107,11 +126,35 @@ DIRECTION_KEYWORDS = {
 }
 
 # 質問タイプキーワード
-COMPARISON_KEYWORDS = ["比較", "どちら", "違い", "どっち", "vs", "対", "多い方"]
-AGGREGATION_KEYWORDS = ["いくつ", "何件", "多い", "少ない", "数", "件数", "上位", "ランキング"]
-PROXIMITY_KEYWORDS = ["最も近い", "一番近い", "最寄り", "近い順", "最短", "近く"]
-RELATION_KEYWORDS = ["同じエリア", "近くにある", "周辺", "付近", "そば", "隣"]
-MULTI_HOP_KEYWORDS = ["から", "を起点", "経由", "通って"]
+COMPARISON_KEYWORDS = [
+    "比較", "どちら", "違い", "どっち", "vs", "対", "多い方",
+    "東側と西側", "西側と東側", "どちらが多い", "どちらが少ない",
+    "どっちが多い", "どっちが少ない", "多様性",
+    "に多い", "が多い", "に少ない", "が少ない",  # L2-11対応
+    "充実", "どちらが充実"
+]
+AGGREGATION_KEYWORDS = [
+    "いくつ", "何件", "数", "件数", "上位", "ランキング",
+    "何軒", "何店", "分布", "構成", "割合"
+]
+PROXIMITY_KEYWORDS = [
+    "最も近い", "一番近い", "最寄り", "近い順", "最短", "近く",
+    "m以内", "メートル以内", "徒歩圏", "徒歩", "距離"
+]
+RELATION_KEYWORDS = [
+    "同じエリア", "近くにある", "周辺", "付近", "そば", "隣",
+    "両方ある", "両方がある", "近くの", "〜にある"
+]
+MULTI_HOP_KEYWORDS = ["から", "を起点", "経由", "通って", "を経て"]
+
+# 基本検索キーワード（L1向け）
+BASIC_LOCATION_KEYWORDS = [
+    "場所", "どこ", "位置", "座標", "ありますか", "教えて",
+    "はどこ", "を教えて", "位置情報"
+]
+BASIC_CATEGORY_KEYWORDS = [
+    "を教えて", "はどこ", "を紹介", "を探して", "ありますか"
+]
 
 
 # =============================================================================
@@ -142,6 +185,7 @@ class GraphQueryAnalysis:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "question_type": self.question_type,
+            "query_type": self.question_type,  # エイリアス（ノートブック互換用）
             "categories": self.categories,
             "subcategories": self.subcategories,
             "directions": self.directions,
@@ -214,42 +258,75 @@ def analyze_graph_query(question: str) -> GraphQueryAnalysis:
                     analysis.directions.append(d)
             analysis.requires_area_filter = True
 
-    # 質問タイプ判定
-    # 比較
+    # 距離制約の抽出（先に行う）
+    distance_match = re.search(r'(\d+)\s*(?:m|メートル|分)', question)
+    if distance_match:
+        value = float(distance_match.group(1))
+        # 「分」の場合はメートルに変換（徒歩1分≒80m）
+        if '分' in question:
+            value = value * 80
+        analysis.distance_constraint = value
+
+    # 質問タイプ判定（優先度順）
+    question_type_detected = False
+
+    # 1. 比較（最優先で検出）
     if any(kw in question for kw in COMPARISON_KEYWORDS):
         analysis.question_type = "comparison"
         analysis.requires_comparison = True
         analysis.requires_graph_traversal = True
+        question_type_detected = True
 
-    # 集計
-    if any(kw in question for kw in AGGREGATION_KEYWORDS):
+    # 2. 集計
+    elif any(kw in question for kw in AGGREGATION_KEYWORDS):
         analysis.question_type = "aggregation"
         analysis.requires_aggregation = True
         analysis.requires_graph_traversal = True
+        question_type_detected = True
 
-    # 近接性
-    if any(kw in question for kw in PROXIMITY_KEYWORDS):
+    # 3. 近接性（距離制約がある場合も含む）
+    elif any(kw in question for kw in PROXIMITY_KEYWORDS) or analysis.distance_constraint:
         analysis.question_type = "proximity"
         analysis.requires_proximity = True
         analysis.requires_graph_traversal = True
+        question_type_detected = True
 
-    # 関係性（同じエリア、周辺など）
-    if any(kw in question for kw in RELATION_KEYWORDS):
+    # 4. 関係性（同じエリア、周辺など）
+    elif any(kw in question for kw in RELATION_KEYWORDS):
         analysis.question_type = "relation"
         analysis.requires_relation = True
         analysis.requires_graph_traversal = True
+        question_type_detected = True
 
-    # マルチホップ
-    if any(kw in question for kw in MULTI_HOP_KEYWORDS):
+    # 5. マルチホップ
+    elif any(kw in question for kw in MULTI_HOP_KEYWORDS):
         analysis.question_type = "multi_hop"
         analysis.requires_multi_hop = True
         analysis.requires_graph_traversal = True
         analysis.hop_count = 2
+        question_type_detected = True
 
-    # 距離制約の抽出
-    distance_match = re.search(r'(\d+)\s*(?:m|メートル)', question)
-    if distance_match:
-        analysis.distance_constraint = float(distance_match.group(1))
+    # 6. 基本位置検索（L1-01〜L1-05向け）
+    elif any(kw in question for kw in BASIC_LOCATION_KEYWORDS):
+        if analysis.subcategories or analysis.categories:
+            # カテゴリ指定がある場合はカテゴリ検索
+            analysis.question_type = "category_search"
+            analysis.requires_category_filter = True
+        else:
+            # 特定POIの位置検索
+            analysis.question_type = "location"
+            analysis.requires_proximity = True
+        analysis.requires_graph_traversal = True
+        question_type_detected = True
+
+    # 7. デフォルト: カテゴリがあればカテゴリ検索
+    if not question_type_detected:
+        if analysis.subcategories or analysis.categories:
+            analysis.question_type = "category_search"
+            analysis.requires_category_filter = True
+            analysis.requires_graph_traversal = True
+        else:
+            analysis.question_type = "simple"
 
     # エリア特定
     if analysis.directions:
@@ -570,6 +647,13 @@ class GraphRAGSystem:
         """比較クエリを実行"""
         result = GraphQueryResult()
 
+        # 比較対象の名称を決定（サブカテゴリ優先）
+        target_name = (
+            analysis.subcategories[0] if analysis.subcategories
+            else analysis.categories[0] if analysis.categories
+            else "全カテゴリ"
+        )
+
         # 東西比較
         if "east" in analysis.directions or "west" in analysis.directions:
             east_pois = []
@@ -597,11 +681,28 @@ class GraphRAGSystem:
                 "comparison_type": "east_west",
                 "east_count": len(east_pois),
                 "west_count": len(west_pois),
-                "category": analysis.categories[0] if analysis.categories else "all"
+                "category": target_name,  # サブカテゴリ名を使用
+                "east_examples": [self.poi_nodes.get(p, {}).get("name", "") for p in east_pois[:3]],
+                "west_examples": [self.poi_nodes.get(p, {}).get("name", "") for p in west_pois[:3]]
             })
 
             result.metadata["east_pois"] = len(east_pois)
             result.metadata["west_pois"] = len(west_pois)
+            result.metadata["target_category"] = target_name
+
+        # サブカテゴリ間比較
+        elif len(analysis.subcategories) >= 2:
+            sub1, sub2 = analysis.subcategories[0], analysis.subcategories[1]
+            count1 = len(self.subcategory_to_pois.get(sub1, []))
+            count2 = len(self.subcategory_to_pois.get(sub2, []))
+
+            result.nodes.append({
+                "comparison_type": "subcategory",
+                "category1": sub1,
+                "count1": count1,
+                "category2": sub2,
+                "count2": count2
+            })
 
         # カテゴリ間比較
         elif len(analysis.categories) >= 2:
@@ -700,11 +801,38 @@ class GraphRAGSystem:
             for node in result.nodes:
                 if node.get("comparison_type") == "east_west":
                     cat = node.get("category", "全カテゴリ")
-                    context_parts.append(f"- {cat}: 東側 {node['east_count']}件、西側 {node['west_count']}件")
-                elif node.get("comparison_type") == "category":
-                    context_parts.append(
-                        f"- {node['category1']}: {node['count1']}件 vs {node['category2']}: {node['count2']}件"
-                    )
+                    east_count = node.get('east_count', 0)
+                    west_count = node.get('west_count', 0)
+                    context_parts.append(f"- {cat}: 東側 {east_count}件、西側 {west_count}件")
+
+                    # どちらが多いか明示
+                    if east_count > west_count:
+                        context_parts.append(f"  → 東側の方が{east_count - west_count}件多い")
+                    elif west_count > east_count:
+                        context_parts.append(f"  → 西側の方が{west_count - east_count}件多い")
+                    else:
+                        context_parts.append(f"  → 同数")
+
+                    # 具体例を追加
+                    east_examples = node.get("east_examples", [])
+                    west_examples = node.get("west_examples", [])
+                    if east_examples:
+                        context_parts.append(f"  東側の例: {', '.join(east_examples)}")
+                    if west_examples:
+                        context_parts.append(f"  西側の例: {', '.join(west_examples)}")
+
+                elif node.get("comparison_type") in ["category", "subcategory"]:
+                    cat1 = node.get('category1', '')
+                    cat2 = node.get('category2', '')
+                    count1 = node.get('count1', 0)
+                    count2 = node.get('count2', 0)
+                    context_parts.append(f"- {cat1}: {count1}件 vs {cat2}: {count2}件")
+                    if count1 > count2:
+                        context_parts.append(f"  → {cat1}の方が{count1 - count2}件多い")
+                    elif count2 > count1:
+                        context_parts.append(f"  → {cat2}の方が{count2 - count1}件多い")
+                    else:
+                        context_parts.append(f"  → 同数")
 
         elif analysis.question_type == "aggregation":
             context_parts.append("【集計結果】")
