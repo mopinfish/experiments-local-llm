@@ -1,6 +1,25 @@
-chroma_db
-__pycache__
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ChromaDB
+chroma_db/
+
+# Test outputs
 test_output.log
 test_report_*
+
+# Temp files
 dumprepo.json
 experiments-local-llm.txt
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
