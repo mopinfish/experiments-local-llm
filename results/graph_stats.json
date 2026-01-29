@@ -1,0 +1,19 @@
+{
+  "nodes": {
+    "poi": 1046,
+    "category": 10,
+    "subcategory": 25,
+    "area": 26,
+    "landmark": 1,
+    "total": 1108
+  },
+  "edges": {
+    "belongs_to": 2092,
+    "located_in": 1046,
+    "near_to": 19380,
+    "same_area": 44541,
+    "adjacent_to": 154,
+    "distance_from": 1046,
+    "total": 68259
+  }
+}
