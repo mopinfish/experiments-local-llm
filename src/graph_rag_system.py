@@ -21,17 +21,29 @@ except ImportError:
     HAS_NETWORKX = False
     nx = None
 
-# ローカルモジュール
-from .graph_builder import (
-    POIGraphBuilder,
-    get_pois_by_category,
-    get_pois_by_area,
-    get_nearby_pois,
-    get_pois_in_same_area,
-    find_pois_with_both_categories,
-    SHIBUYA_STATION,
-    DIRECTION_JP
-)
+# ローカルモジュール（パッケージ/スクリプト両対応）
+try:
+    from .graph_builder import (
+        POIGraphBuilder,
+        get_pois_by_category,
+        get_pois_by_area,
+        get_nearby_pois,
+        get_pois_in_same_area,
+        find_pois_with_both_categories,
+        SHIBUYA_STATION,
+        DIRECTION_JP
+    )
+except ImportError:
+    from graph_builder import (
+        POIGraphBuilder,
+        get_pois_by_category,
+        get_pois_by_area,
+        get_nearby_pois,
+        get_pois_in_same_area,
+        find_pois_with_both_categories,
+        SHIBUYA_STATION,
+        DIRECTION_JP
+    )
 
 
 # =============================================================================
