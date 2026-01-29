@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_cases_graphrag.py - GraphRAG評価用テストケース（15件）
+test_cases_graphrag.py - GraphRAG評価用テストケース（35件）
 
 グラフRAGの強みを測定するために設計されたテストケース。
 構造化RAGとの比較評価で使用。
@@ -11,6 +11,11 @@ test_cases_graphrag.py - GraphRAG評価用テストケース（15件）
 - aggregation: 集計クエリ（3件） - ノード集計
 - comparison: 比較クエリ（2件） - 方向別比較
 - proximity: 近接性クエリ（2件） - 距離ソート
+- brand: ブランドクエリ（5件） - SAME_BRANDエッジを活用
+- complementary: 補完関係クエリ（5件） - COMPLEMENTARYエッジを活用
+- competitor: 競合関係クエリ（3件） - COMPETITORエッジを活用
+- cuisine: 料理ジャンルクエリ（4件） - SAME_CUISINEエッジを活用
+- hours: 営業時間クエリ（3件） - SAME_HOURSエッジを活用
 """
 from dataclasses import dataclass
 from typing import List
@@ -166,6 +171,186 @@ GRAPHRAG_TEST_CASES: List[GraphRAGTestCase] = [
         expected_keywords=["映画館", "300m", "距離"],
         description="距離制約付き近接検索",
         graph_advantage="距離フィルタ + ソート"
+    ),
+
+    # ==========================================================================
+    # ブランドクエリ（5件）- SAME_BRANDエッジを活用
+    # ==========================================================================
+    GraphRAGTestCase(
+        id="GR-16",
+        category="brand",
+        question="渋谷にあるスターバックスは何店舗ありますか？",
+        expected_keywords=["スターバックス", "店舗", "数"],
+        description="チェーン店の店舗数を問う",
+        graph_advantage="SAME_BRANDエッジによるチェーン店カウント"
+    ),
+    GraphRAGTestCase(
+        id="GR-17",
+        category="brand",
+        question="ファミリーマートとローソン、どちらが店舗数が多いですか？",
+        expected_keywords=["ファミリーマート", "ローソン", "多い"],
+        description="チェーン店間の比較",
+        graph_advantage="ブランドノードのPOIカウント比較"
+    ),
+    GraphRAGTestCase(
+        id="GR-18",
+        category="brand",
+        question="渋谷駅の東側にあるドトールコーヒーを教えてください",
+        expected_keywords=["ドトール", "東"],
+        description="ブランド + 方向でのフィルタ",
+        graph_advantage="SAME_BRAND + 方向属性フィルタ"
+    ),
+    GraphRAGTestCase(
+        id="GR-19",
+        category="brand",
+        question="マクドナルドの近くにあるスターバックスはありますか？",
+        expected_keywords=["マクドナルド", "スターバックス", "近く"],
+        description="異なるブランド間の近接関係",
+        graph_advantage="ブランドフィルタ + NEAR_TOエッジ"
+    ),
+    GraphRAGTestCase(
+        id="GR-20",
+        category="brand",
+        question="渋谷で最も店舗数が多いコンビニチェーンはどこですか？",
+        expected_keywords=["コンビニ", "多い", "チェーン"],
+        description="カテゴリ内ブランドランキング",
+        graph_advantage="カテゴリ + ブランドの集計"
+    ),
+
+    # ==========================================================================
+    # 補完関係クエリ（5件）- COMPLEMENTARYエッジを活用
+    # ==========================================================================
+    GraphRAGTestCase(
+        id="GR-21",
+        category="complementary",
+        question="ホテルに泊まる場合、近くで食事できるレストランを教えてください",
+        expected_keywords=["ホテル", "レストラン", "近く"],
+        description="宿泊と飲食の補完関係",
+        graph_advantage="COMPLEMENTARYエッジ（DINING_NEAR_HOTEL）"
+    ),
+    GraphRAGTestCase(
+        id="GR-22",
+        category="complementary",
+        question="映画を見た後に行けるカフェを探しています",
+        expected_keywords=["映画", "カフェ"],
+        description="エンタメと飲食の補完関係",
+        graph_advantage="COMPLEMENTARYエッジ（ENTERTAINMENT_COMBO）"
+    ),
+    GraphRAGTestCase(
+        id="GR-23",
+        category="complementary",
+        question="渋谷駅を出てすぐのところで軽食を取れる場所はありますか？",
+        expected_keywords=["駅", "軽食", "近く"],
+        description="交通と飲食の補完関係",
+        graph_advantage="COMPLEMENTARYエッジ（TRANSIT_AMENITY）"
+    ),
+    GraphRAGTestCase(
+        id="GR-24",
+        category="complementary",
+        question="本屋で本を買った後にコーヒーを飲めるカフェは近くにありますか？",
+        expected_keywords=["本屋", "書店", "カフェ", "コーヒー"],
+        description="レジャーの補完関係",
+        graph_advantage="COMPLEMENTARYエッジ（LEISURE_COMBO）"
+    ),
+    GraphRAGTestCase(
+        id="GR-25",
+        category="complementary",
+        question="観光名所の近くで食事ができる場所を教えてください",
+        expected_keywords=["観光", "名所", "食事"],
+        description="観光と飲食の補完関係",
+        graph_advantage="COMPLEMENTARYエッジ（TOURISM_COMBO）"
+    ),
+
+    # ==========================================================================
+    # 競合関係クエリ（3件）- COMPETITORエッジを活用
+    # ==========================================================================
+    GraphRAGTestCase(
+        id="GR-26",
+        category="competitor",
+        question="このカフェが混んでいる場合、近くに代わりのカフェはありますか？",
+        expected_keywords=["カフェ", "代わり", "近く"],
+        description="同カテゴリの代替POI検索",
+        graph_advantage="COMPETITORエッジで代替店舗を提示"
+    ),
+    GraphRAGTestCase(
+        id="GR-27",
+        category="competitor",
+        question="渋谷駅周辺でラーメン屋が密集しているエリアはどこですか？",
+        expected_keywords=["ラーメン", "密集", "エリア"],
+        description="競合店舗の密集エリア検出",
+        graph_advantage="COMPETITORエッジの密度分析"
+    ),
+    GraphRAGTestCase(
+        id="GR-28",
+        category="competitor",
+        question="この居酒屋の他に、同じエリアで別の選択肢を教えてください",
+        expected_keywords=["居酒屋", "選択肢", "エリア"],
+        description="同カテゴリ・同エリアの代替",
+        graph_advantage="COMPETITOR + SAME_AREAエッジ"
+    ),
+
+    # ==========================================================================
+    # 料理ジャンルクエリ（4件）- SAME_CUISINEエッジを活用
+    # ==========================================================================
+    GraphRAGTestCase(
+        id="GR-29",
+        category="cuisine",
+        question="渋谷でイタリアン料理を食べられるお店を教えてください",
+        expected_keywords=["イタリアン", "料理", "店"],
+        description="料理ジャンルでの検索",
+        graph_advantage="SAME_CUISINEエッジによるジャンル検索"
+    ),
+    GraphRAGTestCase(
+        id="GR-30",
+        category="cuisine",
+        question="和食と洋食、どちらの店が渋谷には多いですか？",
+        expected_keywords=["和食", "洋食", "多い"],
+        description="料理ジャンル間の比較",
+        graph_advantage="cuisine属性による集計比較"
+    ),
+    GraphRAGTestCase(
+        id="GR-31",
+        category="cuisine",
+        question="ラーメン屋が集まっているエリアを教えてください",
+        expected_keywords=["ラーメン", "集まっている", "エリア"],
+        description="特定ジャンルの集積エリア検出",
+        graph_advantage="SAME_CUISINE + SAME_AREAの組み合わせ"
+    ),
+    GraphRAGTestCase(
+        id="GR-32",
+        category="cuisine",
+        question="寿司屋の近くにある別の和食店を教えてください",
+        expected_keywords=["寿司", "和食", "近く"],
+        description="同系統ジャンルの近接検索",
+        graph_advantage="cuisineフィルタ + NEAR_TOエッジ"
+    ),
+
+    # ==========================================================================
+    # 営業時間クエリ（3件）- SAME_HOURSエッジを活用
+    # ==========================================================================
+    GraphRAGTestCase(
+        id="GR-33",
+        category="hours",
+        question="渋谷で24時間営業のお店を教えてください",
+        expected_keywords=["24時間", "営業"],
+        description="24時間営業店舗の検索",
+        graph_advantage="is_24h属性によるフィルタ"
+    ),
+    GraphRAGTestCase(
+        id="GR-34",
+        category="hours",
+        question="深夜でも食事ができるレストランはありますか？",
+        expected_keywords=["深夜", "食事", "レストラン"],
+        description="深夜営業店舗の検索",
+        graph_advantage="late_night属性によるフィルタ"
+    ),
+    GraphRAGTestCase(
+        id="GR-35",
+        category="hours",
+        question="早朝から営業しているカフェを教えてください",
+        expected_keywords=["早朝", "営業", "カフェ"],
+        description="早朝営業店舗の検索",
+        graph_advantage="early_morning属性によるフィルタ"
     ),
 ]
 

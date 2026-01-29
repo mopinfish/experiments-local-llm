@@ -63,6 +63,37 @@ DIRECTION_JP = {
     "center": "中心"
 }
 
+# 補完関係の定義（カテゴリペア → 関係タイプ）
+COMPLEMENTARY_RULES = {
+    # 宿泊 × 飲食
+    ("宿泊/ホテル", "飲食店/レストラン"): "DINING_NEAR_HOTEL",
+    ("宿泊/ホテル", "飲食店/カフェ"): "DINING_NEAR_HOTEL",
+    ("宿泊/ホテル", "飲食店/バー"): "DINING_NEAR_HOTEL",
+    # エンタメ × 飲食
+    ("娯楽/映画館", "飲食店/カフェ"): "ENTERTAINMENT_COMBO",
+    ("娯楽/映画館", "飲食店/ファストフード"): "ENTERTAINMENT_COMBO",
+    ("娯楽/劇場", "飲食店/レストラン"): "ENTERTAINMENT_COMBO",
+    ("娯楽/劇場", "飲食店/バー"): "ENTERTAINMENT_COMBO",
+    # 交通 × 商店/飲食
+    ("交通/鉄道駅", "商店/コンビニ"): "TRANSIT_AMENITY",
+    ("交通/鉄道駅", "飲食店/カフェ"): "TRANSIT_AMENITY",
+    ("交通/鉄道駅", "飲食店/ファストフード"): "TRANSIT_AMENITY",
+    # レジャー
+    ("商店/書店", "飲食店/カフェ"): "LEISURE_COMBO",
+    # 観光 × 飲食
+    ("観光/名所", "飲食店/カフェ"): "TOURISM_COMBO",
+    ("観光/名所", "飲食店/レストラン"): "TOURISM_COMBO",
+    ("観光/博物館", "飲食店/カフェ"): "TOURISM_COMBO",
+    # 金融サービス
+    ("金融/銀行", "公共/郵便局"): "FINANCIAL_CLUSTER",
+}
+
+# 補完関係の距離閾値（メートル）
+COMPLEMENTARY_DISTANCE_THRESHOLD = 200
+
+# 競合関係の距離閾値（メートル）
+COMPETITOR_DISTANCE_THRESHOLD = 150
+
 
 # =============================================================================
 # データクラス
@@ -143,12 +174,19 @@ class GraphStats:
     num_subcategory_nodes: int = 0
     num_area_nodes: int = 0
     num_landmark_nodes: int = 0
+    num_brand_nodes: int = 0
     num_belongs_to_edges: int = 0
     num_located_in_edges: int = 0
     num_near_to_edges: int = 0
     num_same_area_edges: int = 0
     num_adjacent_to_edges: int = 0
     num_distance_from_edges: int = 0
+    # 拡張エッジ
+    num_same_brand_edges: int = 0
+    num_complementary_edges: int = 0
+    num_competitor_edges: int = 0
+    num_same_cuisine_edges: int = 0
+    num_same_hours_edges: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -158,9 +196,10 @@ class GraphStats:
                 "subcategory": self.num_subcategory_nodes,
                 "area": self.num_area_nodes,
                 "landmark": self.num_landmark_nodes,
+                "brand": self.num_brand_nodes,
                 "total": (self.num_poi_nodes + self.num_category_nodes +
                          self.num_subcategory_nodes + self.num_area_nodes +
-                         self.num_landmark_nodes)
+                         self.num_landmark_nodes + self.num_brand_nodes)
             },
             "edges": {
                 "belongs_to": self.num_belongs_to_edges,
@@ -169,9 +208,17 @@ class GraphStats:
                 "same_area": self.num_same_area_edges,
                 "adjacent_to": self.num_adjacent_to_edges,
                 "distance_from": self.num_distance_from_edges,
+                "same_brand": self.num_same_brand_edges,
+                "complementary": self.num_complementary_edges,
+                "competitor": self.num_competitor_edges,
+                "same_cuisine": self.num_same_cuisine_edges,
+                "same_hours": self.num_same_hours_edges,
                 "total": (self.num_belongs_to_edges + self.num_located_in_edges +
                          self.num_near_to_edges + self.num_same_area_edges +
-                         self.num_adjacent_to_edges + self.num_distance_from_edges)
+                         self.num_adjacent_to_edges + self.num_distance_from_edges +
+                         self.num_same_brand_edges + self.num_complementary_edges +
+                         self.num_competitor_edges + self.num_same_cuisine_edges +
+                         self.num_same_hours_edges)
             }
         }
 
@@ -381,6 +428,7 @@ class POIGraphBuilder:
     def build_graph(self, pois: List[Dict[str, Any]],
                    include_near_edges: bool = True,
                    include_same_area_edges: bool = True,
+                   include_extended_edges: bool = True,
                    verbose: bool = True) -> nx.DiGraph:
         """
         POIデータからナレッジグラフを構築
@@ -389,11 +437,15 @@ class POIGraphBuilder:
             pois: POIデータのリスト
             include_near_edges: NEAR_TOエッジを含めるか
             include_same_area_edges: SAME_AREAエッジを含めるか
+            include_extended_edges: 拡張エッジ（ブランド、補完、競合等）を含めるか
             verbose: 進捗表示するか
 
         Returns:
             構築されたNetworkXグラフ
         """
+        # POIデータを保存（拡張エッジ用）
+        self._pois_data = pois
+
         if verbose:
             print(f"Building POI Knowledge Graph from {len(pois)} POIs...")
 
@@ -403,7 +455,7 @@ class POIGraphBuilder:
         # 2. POIノードを作成・追加
         for poi_data in pois:
             poi_node = self._create_poi_node(poi_data)
-            self._add_poi_node(poi_node)
+            self._add_poi_node(poi_node, poi_data)
 
         if verbose:
             print(f"  - Added {len(self.poi_nodes)} POI nodes")
@@ -451,6 +503,36 @@ class POIGraphBuilder:
             if verbose:
                 print(f"  - Added {self.stats.num_same_area_edges} SAME_AREA edges")
 
+        # 11-15. 拡張エッジを追加（オプション）
+        if include_extended_edges:
+            if verbose:
+                print("\n  [Extended Edges]")
+
+            # 11. SAME_BRANDエッジ
+            self._add_same_brand_edges(verbose=verbose)
+            if verbose:
+                print(f"  - Added {self.stats.num_same_brand_edges} SAME_BRAND edges")
+
+            # 12. COMPLEMENTARY（補完関係）エッジ
+            self._add_complementary_edges(verbose=verbose)
+            if verbose:
+                print(f"  - Added {self.stats.num_complementary_edges} COMPLEMENTARY edges")
+
+            # 13. COMPETITOR（競合関係）エッジ
+            self._add_competitor_edges(verbose=verbose)
+            if verbose:
+                print(f"  - Added {self.stats.num_competitor_edges} COMPETITOR edges")
+
+            # 14. SAME_CUISINEエッジ
+            self._add_same_cuisine_edges(verbose=verbose)
+            if verbose:
+                print(f"  - Added {self.stats.num_same_cuisine_edges} SAME_CUISINE edges")
+
+            # 15. SAME_HOURS（営業時間類似）エッジ
+            self._add_same_hours_edges(verbose=verbose)
+            if verbose:
+                print(f"  - Added {self.stats.num_same_hours_edges} SAME_HOURS edges")
+
         # 統計情報を更新
         self._update_stats()
 
@@ -473,14 +555,29 @@ class POIGraphBuilder:
         )
         self.stats.num_landmark_nodes = 1
 
-    def _add_poi_node(self, poi_node: POINode):
+    def _add_poi_node(self, poi_node: POINode, poi_data: Dict[str, Any] = None):
         """POIノードをグラフに追加"""
         node_id = f"poi:{poi_node.id}"
         self.poi_nodes[poi_node.id] = poi_node
+
+        # 拡張メタデータを取得
+        metadata = poi_data.get("metadata", poi_data) if poi_data else {}
+        extended_attrs = {
+            "brand": metadata.get("brand"),
+            "cuisine": metadata.get("cuisine"),
+            "opening_hours": metadata.get("opening_hours"),
+            "is_24h": metadata.get("is_24h", False),
+            "late_night": metadata.get("late_night", False),
+            "early_morning": metadata.get("early_morning", False),
+            "wheelchair": metadata.get("wheelchair"),
+            "internet_access": metadata.get("internet_access"),
+        }
+
         self.graph.add_node(
             node_id,
             node_type="poi",
-            **poi_node.to_dict()
+            **poi_node.to_dict(),
+            **extended_attrs
         )
         self.stats.num_poi_nodes += 1
 
@@ -716,6 +813,204 @@ class POIGraphBuilder:
                         area=area
                     )
                     self.stats.num_same_area_edges += 1
+
+    # =========================================================================
+    # 拡張エッジ追加メソッド
+    # =========================================================================
+
+    def _add_same_brand_edges(self, verbose: bool = True):
+        """SAME_BRANDエッジを追加（同一ブランド/チェーンのPOI間）"""
+        # ブランドごとにPOIをグループ化
+        brand_pois = defaultdict(list)
+
+        for node_id in self.graph.nodes():
+            if not node_id.startswith("poi:"):
+                continue
+            node_data = self.graph.nodes[node_id]
+            brand = node_data.get("brand")
+            if brand:
+                brand_pois[brand].append(node_id)
+
+        if verbose:
+            brand_count = len([b for b, pois in brand_pois.items() if len(pois) > 1])
+            print(f"  Computing SAME_BRAND edges for {brand_count} brands with multiple POIs...")
+
+        for brand, poi_ids in brand_pois.items():
+            if len(poi_ids) < 2:
+                continue
+
+            # 同一ブランドのPOI間でエッジを張る
+            for i, poi1_id in enumerate(poi_ids):
+                for poi2_id in poi_ids[i + 1:]:
+                    self.graph.add_edge(
+                        poi1_id,
+                        poi2_id,
+                        edge_type="SAME_BRAND",
+                        brand=brand
+                    )
+                    self.stats.num_same_brand_edges += 1
+
+    def _add_complementary_edges(self, verbose: bool = True):
+        """COMPLEMENTARY（補完関係）エッジを追加"""
+        if verbose:
+            print(f"  Computing COMPLEMENTARY edges...")
+
+        # カテゴリごとにPOIをグループ化
+        category_pois = defaultdict(list)
+        for poi_id, poi in self.poi_nodes.items():
+            full_category = f"{poi.category}/{poi.subcategory}"
+            category_pois[full_category].append((poi_id, poi))
+
+        # 補完関係ルールに基づいてエッジを追加
+        for (cat1, cat2), relation_type in COMPLEMENTARY_RULES.items():
+            pois1 = category_pois.get(cat1, [])
+            pois2 = category_pois.get(cat2, [])
+
+            if not pois1 or not pois2:
+                continue
+
+            for poi1_id, poi1 in pois1:
+                for poi2_id, poi2 in pois2:
+                    distance = haversine_distance(
+                        poi1.lat, poi1.lon,
+                        poi2.lat, poi2.lon
+                    )
+
+                    if distance <= COMPLEMENTARY_DISTANCE_THRESHOLD:
+                        self.graph.add_edge(
+                            f"poi:{poi1_id}",
+                            f"poi:{poi2_id}",
+                            edge_type="COMPLEMENTARY",
+                            relation_subtype=relation_type,
+                            distance_m=distance
+                        )
+                        self.stats.num_complementary_edges += 1
+
+    def _add_competitor_edges(self, verbose: bool = True):
+        """COMPETITOR（競合関係）エッジを追加（同カテゴリの近接POI）"""
+        if verbose:
+            print(f"  Computing COMPETITOR edges...")
+
+        # サブカテゴリごとにPOIをグループ化
+        subcategory_pois = defaultdict(list)
+        for poi_id, poi in self.poi_nodes.items():
+            full_category = f"{poi.category}/{poi.subcategory}"
+            subcategory_pois[full_category].append((poi_id, poi))
+
+        for category, pois in subcategory_pois.items():
+            if len(pois) < 2:
+                continue
+
+            # 同カテゴリ内で近接するPOI間に競合エッジを追加
+            for i, (poi1_id, poi1) in enumerate(pois):
+                for poi2_id, poi2 in pois[i + 1:]:
+                    distance = haversine_distance(
+                        poi1.lat, poi1.lon,
+                        poi2.lat, poi2.lon
+                    )
+
+                    if distance <= COMPETITOR_DISTANCE_THRESHOLD:
+                        self.graph.add_edge(
+                            f"poi:{poi1_id}",
+                            f"poi:{poi2_id}",
+                            edge_type="COMPETITOR",
+                            category=category,
+                            distance_m=distance
+                        )
+                        self.stats.num_competitor_edges += 1
+
+    def _add_same_cuisine_edges(self, verbose: bool = True):
+        """SAME_CUISINEエッジを追加（同一料理ジャンルのPOI間）"""
+        # 料理ジャンルごとにPOIをグループ化
+        cuisine_pois = defaultdict(list)
+
+        for node_id in self.graph.nodes():
+            if not node_id.startswith("poi:"):
+                continue
+            node_data = self.graph.nodes[node_id]
+            cuisine = node_data.get("cuisine")
+            if cuisine:
+                # カンマ区切りの場合は分割
+                for c in cuisine.split(";"):
+                    c = c.strip()
+                    if c:
+                        cuisine_pois[c].append(node_id)
+
+        if verbose:
+            cuisine_count = len([c for c, pois in cuisine_pois.items() if len(pois) > 1])
+            print(f"  Computing SAME_CUISINE edges for {cuisine_count} cuisines with multiple POIs...")
+
+        for cuisine, poi_ids in cuisine_pois.items():
+            if len(poi_ids) < 2:
+                continue
+
+            # 同一料理ジャンルのPOI間でエッジを張る（上限あり）
+            max_edges_per_cuisine = 50  # 組み合わせ爆発を防ぐ
+            edge_count = 0
+
+            for i, poi1_id in enumerate(poi_ids):
+                if edge_count >= max_edges_per_cuisine:
+                    break
+                for poi2_id in poi_ids[i + 1:]:
+                    if edge_count >= max_edges_per_cuisine:
+                        break
+                    self.graph.add_edge(
+                        poi1_id,
+                        poi2_id,
+                        edge_type="SAME_CUISINE",
+                        cuisine=cuisine
+                    )
+                    self.stats.num_same_cuisine_edges += 1
+                    edge_count += 1
+
+    def _add_same_hours_edges(self, verbose: bool = True):
+        """SAME_HOURS（営業時間類似）エッジを追加"""
+        # 営業時間パターンごとにPOIをグループ化
+        hours_patterns = {
+            "24h": [],
+            "late_night": [],
+            "early_morning": []
+        }
+
+        for node_id in self.graph.nodes():
+            if not node_id.startswith("poi:"):
+                continue
+            node_data = self.graph.nodes[node_id]
+
+            if node_data.get("is_24h"):
+                hours_patterns["24h"].append(node_id)
+            elif node_data.get("late_night"):
+                hours_patterns["late_night"].append(node_id)
+            elif node_data.get("early_morning"):
+                hours_patterns["early_morning"].append(node_id)
+
+        if verbose:
+            print(f"  Computing SAME_HOURS edges (24h: {len(hours_patterns['24h'])}, "
+                  f"late_night: {len(hours_patterns['late_night'])}, "
+                  f"early_morning: {len(hours_patterns['early_morning'])})")
+
+        for pattern, poi_ids in hours_patterns.items():
+            if len(poi_ids) < 2:
+                continue
+
+            # 同一営業時間パターンのPOI間でエッジを張る（上限あり）
+            max_edges_per_pattern = 100
+            edge_count = 0
+
+            for i, poi1_id in enumerate(poi_ids):
+                if edge_count >= max_edges_per_pattern:
+                    break
+                for poi2_id in poi_ids[i + 1:]:
+                    if edge_count >= max_edges_per_pattern:
+                        break
+                    self.graph.add_edge(
+                        poi1_id,
+                        poi2_id,
+                        edge_type="SAME_HOURS",
+                        hours_pattern=pattern
+                    )
+                    self.stats.num_same_hours_edges += 1
+                    edge_count += 1
 
     def _update_stats(self):
         """統計情報を更新"""
