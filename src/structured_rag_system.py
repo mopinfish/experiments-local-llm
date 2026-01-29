@@ -848,6 +848,58 @@ class StructuredRAGSystem:
             "time_ms": int(elapsed_time * 1000)
         }
     
+    def get_context(self, question: str, k: int = 5) -> str:
+        """
+        質問に対するコンテキストのみを取得（LLM生成なし）
+
+        統合比較評価用に外部LLMで回答生成する場合に使用。
+
+        Args:
+            question: 質問文
+            k: ベクトル検索の取得件数
+
+        Returns:
+            コンテキストテキスト
+        """
+        # 質問分析
+        analysis = analyze_question(question)
+
+        # ベクトル検索
+        search_results = self._execute_vector_search(question, analysis, k)
+
+        # 集計処理
+        aggregation = None
+        if analysis.requires_aggregation:
+            aggregation = self._execute_aggregation(question, analysis)
+
+        # 比較処理
+        comparison = None
+        if analysis.requires_comparison:
+            comparison = self._execute_comparison(question, analysis)
+
+        # 空間フィルタリング
+        spatial = None
+        if analysis.requires_spatial and (analysis.distance_constraint or analysis.directions):
+            spatial = self._execute_spatial_filter(question, analysis)
+
+        # 近接性検索
+        proximity = None
+        if analysis.requires_proximity:
+            proximity = self._execute_proximity_search(question, analysis)
+
+        # 感度分析
+        sensitivity = None
+        if analysis.requires_sensitivity:
+            sensitivity = self._execute_sensitivity_analysis(question, analysis)
+
+        # コンテキスト構築
+        context = self._build_context(
+            search_results, aggregation, comparison, spatial,
+            proximity, sensitivity
+        )
+
+        return context
+
     def compare(self, question: str, verbose: bool = True) -> Dict[str, Any]:
         """
         構造化RAGあり/なしの回答を比較
