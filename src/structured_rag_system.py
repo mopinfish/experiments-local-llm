@@ -12,38 +12,70 @@ import re
 import time
 import torch
 
-# ローカルモジュール
-from .geo_utils import (
-    enrich_all_pois,
-    filter_by_distance,
-    filter_east_side,
-    filter_west_side,
-    distance_from_station,
-    direction_from_station,
-    SHIBUYA_STATION,
-    # Phase 6.2追加
-    get_nearest_pois,
-    get_farthest_pois,
-    filter_by_radius,
-    count_by_radius,
-    compare_by_radius,
-    analyze_radius_sensitivity,
-    get_poi_distance_stats,
-    generate_proximity_context,
-    generate_sensitivity_context
-)
-from .aggregator import (
-    count_by_category,
-    count_by_direction,
-    count_by_subcategory,
-    get_top_categories,
-    compare_categories,
-    compare_east_west,
-    analyze_category_by_direction,
-    filter_by_category,
-    generate_aggregation_context,
-    generate_comparison_context
-)
+# ローカルモジュール（パッケージ/スクリプト両対応）
+try:
+    from .geo_utils import (
+        enrich_all_pois,
+        filter_by_distance,
+        filter_east_side,
+        filter_west_side,
+        distance_from_station,
+        direction_from_station,
+        SHIBUYA_STATION,
+        # Phase 6.2追加
+        get_nearest_pois,
+        get_farthest_pois,
+        filter_by_radius,
+        count_by_radius,
+        compare_by_radius,
+        analyze_radius_sensitivity,
+        get_poi_distance_stats,
+        generate_proximity_context,
+        generate_sensitivity_context
+    )
+    from .aggregator import (
+        count_by_category,
+        count_by_direction,
+        count_by_subcategory,
+        get_top_categories,
+        compare_categories,
+        compare_east_west,
+        analyze_category_by_direction,
+        filter_by_category,
+        generate_aggregation_context,
+        generate_comparison_context
+    )
+except ImportError:
+    from geo_utils import (
+        enrich_all_pois,
+        filter_by_distance,
+        filter_east_side,
+        filter_west_side,
+        distance_from_station,
+        direction_from_station,
+        SHIBUYA_STATION,
+        get_nearest_pois,
+        get_farthest_pois,
+        filter_by_radius,
+        count_by_radius,
+        compare_by_radius,
+        analyze_radius_sensitivity,
+        get_poi_distance_stats,
+        generate_proximity_context,
+        generate_sensitivity_context
+    )
+    from aggregator import (
+        count_by_category,
+        count_by_direction,
+        count_by_subcategory,
+        get_top_categories,
+        compare_categories,
+        compare_east_west,
+        analyze_category_by_direction,
+        filter_by_category,
+        generate_aggregation_context,
+        generate_comparison_context
+    )
 
 
 # =============================================================================
