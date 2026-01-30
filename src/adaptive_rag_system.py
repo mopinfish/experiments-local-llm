@@ -170,8 +170,9 @@ class AdaptiveRAGSystem:
         if any(kw in question for kw in brand_keywords):
             structured_reasons.append("ブランド検索 (+20%)")
 
-        # multi_hop: 複数ステップ推論
-        if analysis.requires_multi_hop:
+        # multi_hop: 複数ステップ推論（キーワードベース）
+        multi_hop_keywords = ["から徒歩", "を経由", "から最寄り", "の近くの"]
+        if any(kw in question for kw in multi_hop_keywords):
             structured_reasons.append("複数ステップ推論 (+22.2%)")
 
         # cuisine: 料理ジャンル検索
@@ -205,7 +206,7 @@ class AdaptiveRAGSystem:
             "requires_proximity": analysis.requires_proximity,
             "requires_comparison": analysis.requires_comparison,
             "requires_aggregation": analysis.requires_aggregation,
-            "requires_multi_hop": analysis.requires_multi_hop,
+            "requires_sensitivity": analysis.requires_sensitivity,
         }
 
         # システム選択
@@ -266,7 +267,7 @@ class AdaptiveRAGSystem:
             "requires_proximity": analysis.requires_proximity,
             "requires_comparison": analysis.requires_comparison,
             "requires_aggregation": analysis.requires_aggregation,
-            "requires_multi_hop": analysis.requires_multi_hop,
+            "requires_sensitivity": analysis.requires_sensitivity,
         }
 
         # システム選択
