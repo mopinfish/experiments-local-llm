@@ -1,0 +1,34 @@
+{
+  "timestamp": "20260129_072006",
+  "num_test_cases": 15,
+  "overall_metrics": {
+    "avg_keyword_score": 91.1111111111111,
+    "poi_name_hit_rate": 0.8,
+    "avg_total_time": 9.002230501174926,
+    "avg_graph_time": 0.07493497530619303,
+    "avg_llm_time": 8.927295525868734
+  },
+  "by_category": {
+    "Avg Score": {
+      "aggregation": 100.0,
+      "comparison": 75.0,
+      "multi_hop": 100.0,
+      "proximity": 100.0,
+      "relation": 83.33
+    },
+    "Avg Time": {
+      "aggregation": 6.75,
+      "comparison": 14.42,
+      "multi_hop": 10.79,
+      "proximity": 6.43,
+      "relation": 8.14
+    },
+    "Count": {
+      "aggregation": 3,
+      "comparison": 2,
+      "multi_hop": 3,
+      "proximity": 2,
+      "relation": 5
+    }
+  }
+}

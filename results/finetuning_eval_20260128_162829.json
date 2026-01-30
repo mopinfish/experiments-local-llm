@@ -1,0 +1,3430 @@
+{
+  "timestamp": "20260128_162829",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "ft_model_dir": "/content/drive/MyDrive/experiments-local-llm/models/qwen2.5-7b-shibuya-poi",
+  "test_cases_count": 55,
+  "analysis": {
+    "baseline": {
+      "name": "Baseline",
+      "overall": 75.7,
+      "by_level": {
+        "1": 72.7,
+        "2": 68.6,
+        "3": 72.9,
+        "4": 86.8,
+        "5": 81.3
+      },
+      "by_subcategory": {
+        "basic_location": 100.0,
+        "basic_category": 45.3,
+        "spatial_proximity": 82.1,
+        "spatial_density": 55.3,
+        "spatial_comparison": 68.3,
+        "constraint_single": 75.3,
+        "constraint_multi": 70.4,
+        "decision_location": 90.1,
+        "decision_business": 83.4,
+        "advanced_sensitivity": 68.7,
+        "advanced_comparison": 88.8,
+        "advanced_uncertainty": 84.0
+      },
+      "avg_time_sec": 9.91,
+      "valid_count": 55,
+      "error_count": 0
+    },
+    "rag": {
+      "name": "RAG",
+      "overall": 77.1,
+      "by_level": {
+        "1": 84.4,
+        "2": 71.0,
+        "3": 73.0,
+        "4": 80.2,
+        "5": 79.8
+      },
+      "by_subcategory": {
+        "basic_location": 96.8,
+        "basic_category": 72.0,
+        "spatial_proximity": 74.3,
+        "spatial_density": 69.2,
+        "spatial_comparison": 69.5,
+        "constraint_single": 69.7,
+        "constraint_multi": 76.4,
+        "decision_location": 76.6,
+        "decision_business": 83.8,
+        "advanced_sensitivity": 76.7,
+        "advanced_comparison": 90.5,
+        "advanced_uncertainty": 68.7
+      },
+      "avg_time_sec": 8.13,
+      "valid_count": 55,
+      "error_count": 0
+    },
+    "ft_base": {
+      "name": "FT-Base",
+      "overall": 77.1,
+      "by_level": {
+        "1": 73.7,
+        "2": 72.4,
+        "3": 72.8,
+        "4": 88.1,
+        "5": 80.8
+      },
+      "by_subcategory": {
+        "basic_location": 100.0,
+        "basic_category": 47.3,
+        "spatial_proximity": 82.1,
+        "spatial_density": 66.8,
+        "spatial_comparison": 68.3,
+        "constraint_single": 72.7,
+        "constraint_multi": 73.0,
+        "decision_location": 92.8,
+        "decision_business": 83.4,
+        "advanced_sensitivity": 68.7,
+        "advanced_comparison": 87.4,
+        "advanced_uncertainty": 84.0
+      },
+      "avg_time_sec": 9.57,
+      "valid_count": 55,
+      "error_count": 0
+    },
+    "ft_rag": {
+      "name": "FT+RAG",
+      "overall": 78.5,
+      "by_level": {
+        "1": 84.4,
+        "2": 71.4,
+        "3": 81.0,
+        "4": 78.5,
+        "5": 80.6
+      },
+      "by_subcategory": {
+        "basic_location": 96.8,
+        "basic_category": 72.0,
+        "spatial_proximity": 76.3,
+        "spatial_density": 70.7,
+        "spatial_comparison": 67.1,
+        "constraint_single": 85.7,
+        "constraint_multi": 76.4,
+        "decision_location": 70.3,
+        "decision_business": 86.8,
+        "advanced_sensitivity": 76.7,
+        "advanced_comparison": 90.5,
+        "advanced_uncertainty": 71.3
+      },
+      "avg_time_sec": 8.04,
+      "valid_count": 55,
+      "error_count": 0
+    }
+  },
+  "detailed_results": {
+    "baseline": [
+      {
+        "id": "L1-01",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅は渋谷駅周辺に位置しています。座標は緯度35.6592748、経度139.6990594です。カテゴリは駅です。",
+        "time_sec": 13.36,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-02",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "東宝シネマの座標は？",
+        "answer": "東宝シネマは渋谷駅から北西方向に約254mの場所にあります。座標は緯度35.6591782、経度139.7024279です。カテゴリは映画館です。",
+        "time_sec": 13.35,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-03",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷東武ホテルはどこにありますか？",
+        "answer": "渋谷東武ホテルは渋谷駅から北西方向に約405mの場所にあります。座標は緯度35.6597218、経度139.702529です。カテゴリはホテルです。",
+        "time_sec": 12.98,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-04",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局は渋谷駅から北西方向に約425mの場所にあります。座標は緯度35.659817、経度139.702326です。カテゴリは郵便局です。",
+        "time_sec": 5.96,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-05",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "三菱UFJ銀行渋谷支店は渋谷駅から北西方向に約354mの場所にあります。座標は緯度35.6590218、経度139.702527です。カテゴリは銀行です。",
+        "time_sec": 6.75,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-06",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "渋谷駅周辺のコンビニとして、ローソン（駅から約304m）, ドミノピザ（駅から約259m）, 7-ELEVEN（駅から約186m）があります。",
+        "time_sec": 5.54,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L1-07",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷駅周辺のカフェとして、1. バルサム（駅から約402m）, 2. シンプルカフェ（駅から約395m）, 3. フォーマット（駅から約387m）を提案します。",
+        "time_sec": 7.23,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L1-08",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷の映画館を教えてください",
+        "answer": "渋谷駅周辺の映画館として、シネマート新宿（駅から約507m）, シネマチカ（駅から約423m）, シネマコンプレックス（駅から約189m）があります。",
+        "time_sec": 5.94,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 56.7
+        }
+      },
+      {
+        "id": "L1-09",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷駅周辺の薬局として、ローソン薬局（駅から約304m）, 三和薬局（駅から約268m）, シンガポール薬局（駅から約197m）があります。",
+        "time_sec": 6.91,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 20.0
+        }
+      },
+      {
+        "id": "L1-10",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるホテルを教えて",
+        "answer": "渋谷駅周辺のホテルとして、ホテルニューオータニ（駅から約427m）, ホテルニューセントラル（駅から約395m）, ホテルニューグランド（駅から約380m）があります。",
+        "time_sec": 6.14,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-01",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+        "answer": "渋谷駅に最も近いコンビニはローソン（駅から約105m）です。次に近いのはセブンイレブン（約234m）です。",
+        "time_sec": 5.37,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-02",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+        "answer": "東宝シネマから500m以内に1件のカフェがあります。渋谷駅から約274mの場所にあります。座標は(35.659821, 139.702454)です。",
+        "time_sec": 5.54,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 85.0
+        }
+      },
+      {
+        "id": "L2-03",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+        "answer": "渋谷駅と原宿駅の中間地点から最も近いカフェは、スパイスカフェ（約524m）です。次に近いのは、カフェラテ（約531m）です。",
+        "time_sec": 5.33,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-04",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+        "answer": "渋谷神南郵便局の西方向約134mの場所にカフェラテがあります（座標：35.659877, 139.699851）。その他に約155mの場所にカフェラテがあります（座標：35.659877, 139.699851）。",
+        "time_sec": 7.91,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 77.5
+        }
+      },
+      {
+        "id": "L2-05",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅から最も遠い映画館はどれですか？",
+        "answer": "渋谷駅から最も遠い映画館はシネマート新宿で、距離は約1.2kmです。座標は(35.659478, 139.702634)です。次に遠いのはシネマコンプレックス渋谷で約1.1kmです。",
+        "time_sec": 7.78,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L2-06",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+        "answer": "渋谷駅から北方向に最も飲食店が多く、約107件です。次点は東方向で94件です。",
+        "time_sec": 8.56,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 57.5
+        }
+      },
+      {
+        "id": "L2-07",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+        "answer": "渋谷駅から約200m以内でカフェが14件、バーが13件あります。カフェの方が1件多いです。",
+        "time_sec": 4.17,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-08",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+        "answer": "渋谷駅周辺は「商業エリア」の特性が強いです。レストランやカフェの数が多いです。一方で「住宅エリア」の特性も見られますが、「商業エリア」の方が圧倒的に多いです。",
+        "time_sec": 4.69,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 0,
+          "total_score": 22.5
+        }
+      },
+      {
+        "id": "L2-09",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+        "answer": "渋谷駅から北方向に広がる地域に最も多く、次いで東方向に次ぐ順に数が多いです。具体的には、北東方向に12件、北方向に10件、東方向に9件、南方向に7件、西方向に6件です。",
+        "time_sec": 6.45,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-10",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+        "answer": "渋谷駅周辺の宿泊施設の密度は非常に高いです。駅から約500m以内には12件あります。これは駅周辺エリア全体で数えると約10%に相当します。駅周辺の宿泊施設は主にビジネスホテルやゲストハウスが目立つため、ビジネス客向けの施設が多いです。",
+        "time_sec": 8.57,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 74.0
+        }
+      },
+      {
+        "id": "L2-11",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+        "answer": "渋谷駅の西側にカフェが多いため、西側に多く存在します（104件）。東側は57件です。",
+        "time_sec": 3.18,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-12",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+        "answer": "渋谷駅から1km以内には映画館が2件、劇場が4件あります。劇場の方が多めです。",
+        "time_sec": 2.82,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-13",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+        "answer": "渋谷駅周辺ではコンビニが10件あり、スーパーが2件あります。コンビニの数が多いので、生活利便性ではコンビニが優位です。",
+        "time_sec": 4.86,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 74.0
+        }
+      },
+      {
+        "id": "L2-14",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+        "answer": "渋谷駅から近い順に、郵便局は日本郵便（約102m）, トーキョーポスト（約154m）, ジャパンポスト（約163m）です。銀行はみずほ銀行（約178m）, 三井住友銀行（約191m）, 江戸銀行（約201m）, 東京スター銀行（約202m）, 三菱UFJ銀行（約203m）, みずほ信託銀行（約204m）, 三井住友信託銀行（約204m）, みずほ信託銀行（約205m）, 三井住友信託銀行（約205m）, みずほ信託銀行（約206m）, 三井住友信託銀行（約206m）, みずほ信託銀行（約207m）, 三井住友信託銀行（約207m）, みずほ信託銀行（約208m）, 三井住友信託銀行（約208m）, みずほ信託銀行（約209m）, 三井住友信託銀行（約209m）, みずほ信託銀行（約210m）, 三井住友信託銀行（約210m）, みずほ信託銀行（約211m）, 三井住友信託銀行（約211m）, みずほ信託銀行（約212m）, 三井住友信託銀行（約212m）, みずほ信託銀行（約213m）, 三井住友信託銀行（約213m）, みずほ信託銀行（約214m）, 三井住友信託銀行（約214m）,",
+        "time_sec": 45.91,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-15",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+        "answer": "渋谷駅周辺で最も多く見られるPOIカテゴリは「飲食店」（102件）、「コンビニエンスストア」（84件）、「カフェ」（76件）です。",
+        "time_sec": 5.4,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 57.5
+        }
+      },
+      {
+        "id": "L3-01",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+        "answer": "渋谷駅から約400m以内に3件のカフェがあります。具体的には、スパイスカフェ（約279m）、カフェラテ（約186m）、カフェラテ（約222m）です。",
+        "time_sec": 4.88,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 70.0
+        }
+      },
+      {
+        "id": "L3-02",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "電話番号がわかっている渋谷の映画館を教えてください",
+        "answer": "電話番号が確認できるのは以下2件です。渋谷シネマズ（30.28715, 139.69942）, シネマチカ（30.28723, 139.69934）",
+        "time_sec": 6.62,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 53.3
+        }
+      },
+      {
+        "id": "L3-03",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "ウェブサイトを持っている渋谷のレストランを教えてください",
+        "answer": "渋谷でウェブサイトを持つレストランとして、Sushi Saito（45.659128, 139.697071）, カフェラテ（45.659372, 139.697885）, ランチタイム（45.659372, 139.697885）があります。",
+        "time_sec": 8.62,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-04",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "「渋谷」という名前が含まれるホテルを教えてください",
+        "answer": "渋谷駅周辺で「渋谷」が名前に含まれるホテルは2件あります。具体的には「ホテル渋谷」（座標:35.657198, 139.700482）と「ホテル渋谷」（座標:35.657198, 139.700482）です。",
+        "time_sec": 8.97,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-05",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+        "answer": "渋谷駅から北方向に約108mの場所にファミリーマートが24時間営業です。",
+        "time_sec": 3.0,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 73.3
+        }
+      },
+      {
+        "id": "L3-06",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+        "answer": "渋谷駅から500m以内で、電話番号とウェブサイトがあるカフェは2件あります。具体的には、1. フォーマット（48.32967, 139.69922）, 2. シンプルカフェ（48.32975, 139.69918）です。",
+        "time_sec": 8.82,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-07",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+        "answer": "渋谷駅から300m以内でカフェを検索すると、駅から約154mの場所に「カフェ フォーリン」があります。また、駅から約268mの場所に「カフェ ライフ」も該当します。さらに駅から約279mの場所に「カフェ クラウド」も条件を満たします。",
+        "time_sec": 9.33,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.0
+        }
+      },
+      {
+        "id": "L3-08",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+        "answer": "渋谷駅から北方向に約135mの場所に「渋谷病院」があります。ここは薬局（渋谷薬局）が約148mの距離にあります。",
+        "time_sec": 4.57,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 45.0
+        }
+      },
+      {
+        "id": "L3-09",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+        "answer": "渋谷駅から1km以内で、コンビニが3軒以上集まっているエリアは渋谷駅東側と駒場通り周辺です。具体的には、渋谷駅から北東方向に約500mの範囲です。",
+        "time_sec": 6.57,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-10",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+        "answer": "渋谷駅から500m以内でカフェではないバーとして、SUGAR（約473m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー・ラ・ローズ（約289m）, バー",
+        "time_sec": 46.23,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 75.0
+        }
+      },
+      {
+        "id": "L4-01",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+        "answer": "渋谷駅から北方向に保育園を開設するのが最適です。公園が近くにあるため、子供たちの遊ぶ場所として適しています。また、交番がないため、安全面でも良いでしょう。座標は（35.659124, 139.700828）です。",
+        "time_sec": 7.66,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L4-02",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+        "answer": "渋谷駅から北東方向に適したエリアは渋谷駅南側の渋谷駅前通り沿いです。ここでは渋谷病院（約104m）や渋谷総合病院（約235m）など、医療施設へのアクセスが良好です。次点として渋谷駅東側の渋谷駅前通り沿いも候補です。ここでは渋谷病院（約168m）、渋谷総合病院（約279m）に近いです。",
+        "time_sec": 12.36,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 82.0
+        }
+      },
+      {
+        "id": "L4-03",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+        "answer": "渋谷駅から近い順に、学習塾として適している候補地は以下です。1位: 三省堂書店（駅から約204m）, 2位: シンガポール料理レストラン（駅から約235m）, 3位: ファミリーマート（駅から約267m）, 4位: カフェラテ（駅から約289m）, 5位: ライブハウス（駅から約303m）, 6位: ジュエリー（駅から約312m）, 7位: レストラン（駅から約314m）, 8位: バー（駅から約321m）, 9位: パソコン販売店（駅から約322m）, 10位: ファミリーマート（駅から約323m）, 11位: ファミリーマート（駅から約324m）, 12位: ファミリーマート（駅から約325m）, 13位: ファミリーマート（駅から約326m）, 14位: ファミリーマート（駅から約327m）, 15位: ファミリーマート（駅から約328m）, 16位: ファミリーマート（駅から約329m）, 17位: ファミリーマート（駅から約330m）, 18位: ファミリーマート（駅から約331m）, 19位: ファミリーマート（駅から約332m）, 20位: ファミリーマート（駅から約33",
+        "time_sec": 46.58,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-04",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+        "answer": "渋谷駅から北方向に約100mの場所にある「カフェラテ」が最適な待ち合わせスポットです。ここはわかりやすく、周辺には飲食店が多くあります。次点は「カフェラテ」（約100m）です。",
+        "time_sec": 5.78,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.5
+        }
+      },
+      {
+        "id": "L4-05",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+        "answer": "渋谷駅から最も近い観光スポットとして、渋谷駅（約0m）, 渋谷駅前広場（約124m）, 渋谷駅前（約137m）があります。次に近いのは、渋谷駅東口（約156m）, 渋谷駅西口（約158m）です。これらの場所は観光客にとってアクセスしやすい場所です。",
+        "time_sec": 10.43,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-06",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+        "answer": "渋谷駅周辺の新規カフェ出店は向きです。競合として1km以内に20件あり、出店場所によっては競争が激しい可能性があります。一方、集客が見込めるPOIとしては駅（約500m）と商業施設（約300m）があり、良好な立地条件です。ただし、具体的な出店場所によりますので、詳細な分析が必要です。",
+        "time_sec": 9.81,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L4-07",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+        "answer": "渋谷駅周辺の新規コンビニ出店余地はありますが、駅周辺エリアでは既存コンビニが密集しています。駅から約500m以内の範囲で既存店数は12店舗あり、平均間隔は約41.7mです。駅から約1km以内の範囲で既存店数は23店舗あり、平均間隔は約43.5mです。駅から約2km以内の範囲で既存店数は38店舗あり、平均間隔は約52.6mです。",
+        "time_sec": 13.49,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-08",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+        "answer": "渋谷駅から北西方向に広がるエリアに新規ベーカリーを出店すると、既存の競合（10件）とカフェ（23件）との距離は約500m以内となります。また、駅から南東方向に広がるエリアでは、競合（14件）とカフェ（27件）との距離は約600m以内です。駅から北東方向に広がるエリアでは、競合（12件）とカフェ（28件）との距離は約700m以内です。駅から南西方向に広がるエリアでは、競合（10件）とカフェ（29件）との距離は約800m以内です。競合とカフェの数が多いエリアは駅から北西方向に広がるエリアです。カフェとの協業可能性が高いエリアは駅から南東方向に広がるエリアです。",
+        "time_sec": 19.65,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-09",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+        "answer": "渋谷駅から北側に位置するエリアが適しています。駅から約200m圏内に複数のバーがあり競合がありますが、約300m圏内には競合が少なく、駅からのアクセスも良好です。座標は（35.659187, 139.704998）。",
+        "time_sec": 8.29,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-10",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+        "answer": "渋谷駅から1km以内に20件の薬局があり、出店場所によっては競合が生じる可能性があります。また、1km以内には1件の医療施設があります。出店場所によっては競合と近接性が重複する可能性があるので注意が必要です。座標情報がないため詳細な分析はできません。",
+        "time_sec": 7.83,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 55.0
+        }
+      },
+      {
+        "id": "L5-01",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+        "answer": "検索半径300mでは12件、500mでは14件なので、結論は変わりません。",
+        "time_sec": 2.86,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 76.0
+        }
+      },
+      {
+        "id": "L5-02",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+        "answer": "はい、成立します。カフェを除くと、渋谷駅から1km以内の飲食店数は204件で、駅周辺全体（カフェ含む）の358件より少ないですが、それでも駅周辺は飲食店が充実しています。",
+        "time_sec": 6.03,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      },
+      {
+        "id": "L5-03",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+        "answer": "渋谷駅から約200m以内の範囲で「十分に多い」と言える状況です。",
+        "time_sec": 3.22,
+        "scores": {
+          "keyword_score": 20.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 38.0
+        }
+      },
+      {
+        "id": "L5-04",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+        "answer": "渋谷駅周辺では、医療施設が1件あり、薬局が2件あります。公共施設は郵便局1件、交番1件です。一方、恵比寿駅周辺では、医療施設が1件あり、薬局が1件あります。公共施設は郵便局1件、交番1件です。総合的に見ると、渋谷駅周辺の方が医療施設の数が多いです。座標情報では、渋谷駅は35.659708, 139.699482です。",
+        "time_sec": 13.52,
+        "scores": {
+          "keyword_score": 71.4,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.6
+        }
+      },
+      {
+        "id": "L5-05",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+        "answer": "渋谷駅周辺は子育て世帯向けの居住地として、公園や保育施設が比較的豊富で、総合的に評価すると良い条件があります。公園は1.2km圏内に10件あり、保育施設は1.5km圏内に4件あります。医療施設は1.5km圏内に1件あります。スーパーマーケットは1.5km圏内に3件あります。ただし、保育施設の数が少ないため注意が必要です。",
+        "time_sec": 11.92,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L5-06",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+        "answer": "渋谷駅周辺はビジネスパーソンにとって理想的な立地です。カフェは100m以内に2件あり、コンビニも3件あります。銀行は4件あり、ATMは10台以上あります。",
+        "time_sec": 4.97,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 86.7
+        }
+      },
+      {
+        "id": "L5-07",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+        "answer": "渋谷駅周辺は観光客向けのエリアとして、観光スポット（10件）、飲食店（23件）、宿泊施設（1件）を有しています。観光スポットは少ないですが、飲食店が豊富で宿泊施設もあるため、観光客のニーズを満たすことができます。ただし、観光スポットが少ないため、観光客の数は他のエリアに比べて少ないと判断します。座標は（35.657948, 139.700182）。",
+        "time_sec": 12.61,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L5-08",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+        "answer": "渋谷駅から約200m以内の「雰囲気の良い」カフェとして、カフェラテ（駅から約154m）, フォーリンカフェ（駅から約183m）, カフェラテ（駅から約179m）を推奨します。他の候補としては、カフェラテ（駅から約162m）, フォーリンカフェ（駅から約183m）, カフェラテ（駅から約179m）があります。ただし、評価項目が不足しているため、確実性は低いです。",
+        "time_sec": 13.66,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 76.0
+        }
+      },
+      {
+        "id": "L5-09",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+        "answer": "できる範囲で、「静かな」レストランは渋谷駅から約208mの場所に存在します。座標は（35.659147, 139.700624）。また、約208mの方向は北東にあります。",
+        "time_sec": 6.92,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L5-10",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+        "answer": "渋谷駅周辺のPOIデータによると、交番が1件あります。治安の観点からは、交番の数が少ないため、比較的治安が悪い可能性があります。ただし、データの限界として、他の要因（犯罪率、警察の配置など）が反映されていない点に注意が必要です。座標情報では渋谷駅から約207mの場所にあります。",
+        "time_sec": 8.97,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      }
+    ],
+    "rag": [
+      {
+        "id": "L1-01",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅は渋谷駅（座標: (35.659501, 139.701972)）と位置関係にあるため、駅から北東方向に約100mの距離にあります。",
+        "time_sec": 5.74,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-02",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "東宝シネマの座標は？",
+        "answer": "東宝シネマの座標は（35.6591861, 139.6988833）です。",
+        "time_sec": 3.52,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L1-03",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷東武ホテルはどこにありますか？",
+        "answer": "渋谷東武ホテルは渋谷駅から北西方向に約344mの場所にあります。座標は(35.6631863, 139.6989863)です。",
+        "time_sec": 5.76,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-04",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局は渋谷駅から北西方向に約472mの場所にあります。座標は(35.6619935, 139.7005742)です。",
+        "time_sec": 5.54,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-05",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "三菱UFJ銀行渋谷支店の座標は（35.6586895, 139.6970524）です。",
+        "time_sec": 4.43,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-06",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "渋谷駅周辺のコンビニとして、セブン-イレブン（35.6576823, 139.7027267）があります。",
+        "time_sec": 4.68,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L1-07",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷にあるカフェとして、Urth Caffé（座標: (35.658412, 139.7020575)）、Kitasando Coffee Lab（座標: (35.6613279, 139.7000807)）、The local coffee stand（座標: (35.6603885, 139.7067438)）を3つ挙げられます。",
+        "time_sec": 11.33,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L1-08",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷の映画館を教えてください",
+        "answer": "渋谷の映画館として、ヒューマントラストシネマ渋谷（座標: (35.6619728, 139.7027232)）があります。他にも東宝シネマ（(35.6591861, 139.6988833)）、シネクイント CINE QUINTO（(35.660874, 139.6998486)）、ホワイトシネクイント（(35.6619815, 139.6990987)）、Cinema Vera Shibuya（(35.6593506, 139.6953855)）があります。",
+        "time_sec": 18.39,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-09",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷周辺の薬局として、三千里薬局（35.6597258, 139.7000307）、ディアファーマシー（35.6608517, 139.7021074）、けやき薬局（35.6634122, 139.6958364）があります。",
+        "time_sec": 9.61,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L1-10",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるホテルを教えて",
+        "answer": "渋谷には5件のホテルがあります。",
+        "time_sec": 1.51,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-01",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+        "answer": "渋谷駅に最も近いコンビニはローソンで、約101.94mの距離です。座標は（35.659738, 139.702645）です。",
+        "time_sec": 5.75,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L2-02",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+        "answer": "東宝シネマから500m以内に2件のカフェがあります。Uplight Coffee (348m)とKitasando Coffee Lab (498m)です。",
+        "time_sec": 3.93,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-03",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+        "answer": "渋谷駅と原宿駅の中間地点から最も近いカフェはThe local coffee standで、距離は約100mです。次に近いのはSUZU CAFEで、約120mです。",
+        "time_sec": 5.56,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-04",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+        "answer": "渋谷神南郵便局の周辺200m以内にはGreen Lounge（約180m）があります。",
+        "time_sec": 2.89,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-05",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅から最も遠い映画館はどれですか？",
+        "answer": "ヒューマントラストシネマ渋谷が最も遠く、距離は約552mです。",
+        "time_sec": 2.78,
+        "scores": {
+          "keyword_score": 33.3,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 60.0
+        }
+      },
+      {
+        "id": "L2-06",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+        "answer": "渋谷駅周辺で飲食店が最も集中しているのは渋谷駅から北東方向に約150mの範囲です。ここでは4件の飲食店があります。次点は駅から南西方向に約200mの範囲で3件です。",
+        "time_sec": 7.2,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-07",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+        "answer": "渋谷駅周辺のカフェは149件で、バーは5件なので、カフェが多いです。",
+        "time_sec": 2.69,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-08",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+        "answer": "渋谷駅周辺は「商業エリア」の特性が強いです。飲食店が4件あり、そのうちバーが4件あるためです。住宅エリアとしては、WHO'S FOOD'Sと揚州商人が飲食店として該当しますが、商業施設の方が圧倒的に多いです。",
+        "time_sec": 7.08,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-09",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+        "answer": "渋谷駅周辺には1件の病院（アイシークリニック渋谷院）と4件の薬局（YOKOTA、渋谷みどり薬局、渋谷友好薬局、けやき薬局）があります。病院は渋谷駅から約377mの場所にあります。",
+        "time_sec": 7.38,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-10",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+        "answer": "渋谷駅周辺の宿泊施設の密度は低いです。渋谷駅から1km以内に4件の宿泊施設があります。これは周辺地域全体で約10件の宿泊施設の中でも40%に過ぎません。",
+        "time_sec": 6.28,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-11",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+        "answer": "渋谷駅の西側にカフェが58件あり、東側に51件ありますので、西側に7件多く存在します。",
+        "time_sec": 3.27,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-12",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+        "answer": "渋谷駅周辺では映画館が7件あり、劇場は0件です。したがって、映画館が多いです。",
+        "time_sec": 3.85,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-13",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+        "answer": "コンビニは4件あり、スーパーは2件あります。コンビニの数が多いので、生活利便性ではコンビニが充実しています。座標的にはコンビニが渋谷駅周辺に広く散らばっています。",
+        "time_sec": 5.41,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-14",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+        "answer": "渋谷駅周辺の銀行は比較的多くあり、郵便局も多数存在します。銀行は10件以上あります。郵便局は10件以上あります。ただし、具体的な数値や座標情報がないため、詳細な評価はできません。",
+        "time_sec": 6.19,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-15",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+        "answer": "渋谷駅周辺では飲食店が最多で3件あります。次に多いのは観光スポットで2件です。具体的には、飲食店として一番（1件）、WHO'S FOOD'S（1件）、4（1件）があります。次に観光スポットとして集（1件）、周辺案内（1件）があります。",
+        "time_sec": 7.46,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 57.5
+        }
+      },
+      {
+        "id": "L3-01",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+        "answer": "渋谷駅から徒歩5分以内にあるカフェとして、青山壹番館（35.6571132, 139.7077985）があります。距離は約350mです。",
+        "time_sec": 5.75,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L3-02",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "電話番号がわかっている渋谷の映画館を教えてください",
+        "answer": "渋谷駅周辺の映画館で電話番号が確認できるのはシネクイント CINE QUINTO (35.660874, 139.6998486)のみです。",
+        "time_sec": 5.2,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-03",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "ウェブサイトを持っている渋谷のレストランを教えてください",
+        "answer": "情報に基づいて、ウェブサイトを持つ渋谷のレストランは見つかりませんでした。",
+        "time_sec": 1.99,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 100,
+          "total_score": 40.0
+        }
+      },
+      {
+        "id": "L3-04",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "「渋谷」という名前が含まれるホテルを教えてください",
+        "answer": "「渋谷」が含まれるホテルは見つかりませんでした。",
+        "time_sec": 2.09,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 100,
+          "total_score": 33.3
+        }
+      },
+      {
+        "id": "L3-05",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+        "answer": "渋谷駅から約100m以内には24時間営業のコンビニがありません。nearestは東急ストア（約100m）です。",
+        "time_sec": 4.0,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-06",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+        "answer": "条件に合うカフェは見つかりませんでした。",
+        "time_sec": 1.21,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 100,
+          "total_score": 25.0
+        }
+      },
+      {
+        "id": "L3-07",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+        "answer": "渋谷駅から300m以内でカフェは見つかりません。",
+        "time_sec": 1.99,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.0
+        }
+      },
+      {
+        "id": "L3-08",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+        "answer": "アイシークリニック渋谷院（35.6562823, 139.7050228）の近くに渋谷みどり薬局（35.6555062, 139.7038616）があります（約134m）。",
+        "time_sec": 7.73,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L3-09",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+        "answer": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアは渋谷駅南側です。座標は（35.6573741, 139.6990103）から（35.663629, 139.698819）までです。",
+        "time_sec": 8.21,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-10",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+        "answer": "渋谷駅から500m以内のバーとして、Under Bar (35.6635856, 139.6993246)とCoins bar (35.6620594, 139.6973791)があります。",
+        "time_sec": 6.64,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-01",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+        "answer": "渋谷駅から最も近い保育園として、渋谷区立宮下公園（座標: (35.6614178, 139.7018742)）が候補となります。公園距離は約200mです。次点は（座標: (35.6620863, 139.7016864)）で約250mです。交番は近くにありません。",
+        "time_sec": 11.04,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-02",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+        "answer": "ディアファーマシー（薬局）が最寄りの場所にあり、約374mの距離です。次に近いのはデイリーヤマザキ（コンビニ）で、約477mです。したがって、ディアファーマシーのある場所が適しています。座標は（35.6608517, 139.7021074）。",
+        "time_sec": 9.85,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 40.0
+        }
+      },
+      {
+        "id": "L4-03",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+        "answer": "渋谷駅から最も近い場所としてKitasando Coffee Lab（約200m）を提案します。次に近いAbbot Choice（約250m）、4（約250m）があります。これらは駅からの距離が短いため、通学の利便性が高いです。また、コンビニとしてはJAM DINNING（約200m）が最寄りです。",
+        "time_sec": 8.87,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 82.0
+        }
+      },
+      {
+        "id": "L4-04",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+        "answer": "渋谷駅から最も近い場所として、JAM DINNING（35.6588222, 139.7025059）が最適です。次点は4（35.6606454, 139.7026029）です。これらは駅から約500m以内にあり、待ち合わせに適しています。",
+        "time_sec": 8.96,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 85.0
+        }
+      },
+      {
+        "id": "L4-05",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+        "answer": "渋谷駅周辺で観光客向けの案内所を設置するなら、渋谷駅から約330mの座標（35.6587836, 139.7029658）の「のりば案内」が効果的です。次点は約400mの座標（35.6620863, 139.7016864）の「渋谷区立宮下公園」です。",
+        "time_sec": 12.08,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-06",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+        "answer": "渋谷駅周辺のカフェ数は149件で、競合が多いため新規出店は厳しい状況です。競合数は149件中カフェが10件なので、既存カフェとの競争が激しいです。集客可能なPOIは駅（渋谷駅: 35.659752, 139.702842）と商業施設（伊勢丹: 35.6598644, 139.7033865, シネマシティ: 35.6619979, 139.7028366, ユナイテッド・シネマ: 35.6649295, 139.7003539）があります。駅と商業施設があるため、集客力は高いですが、競合数が多いので出店は難しいと考えられます。",
+        "time_sec": 21.51,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L4-07",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+        "answer": "渋谷駅周辺のコンビニの出店余地について、既存コンビニの分布と密度を考慮して分析します。座標情報に基づく結果では、コンビニの密集区域は渋谷駅周辺に広がっており、特に渋谷駅から北東方向にかけてのエリアで既存コンビニの数が多いです。一方、駅から南西方向にかけてのエリアでは既存コンビニの数が少ないため、新規出店の可能性が高いと考えられます。具体的には、渋谷駅から約300m以内の範囲で既存コンビニの数は1件のみであり、出店余地がある可能性があります。",
+        "time_sec": 15.05,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L4-08",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+        "answer": "渋谷駅周辺のベーカリーとして、マルヤマベーグルLOOP渋谷店（座標: (35.6583493, 139.7033801)）とFRUCTUS（座標: (35.6582369, 139.7021626)）が既存の競合となります。新規出店者はこれらの店舗と競合するため、価格帯や商品の特徴で差別化が必要です。また、カフェとの協業も検討すべきで、The local coffee stand（座標: (35.6603885, 139.7067438)）とマルヤマベーグルLOOP渋谷店（座標: (35.6583493, 139.7033801)）との距離が近いため、提携の可能性があります。",
+        "time_sec": 21.95,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-09",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+        "answer": "渋谷駅から約500m圏内に、JAM DINNING（35.6606466, 139.7025059）とTASUICHI（35.6609521, 139.6970184）があり、競合が予想されます。一方、駅から約300m圏内にはOne night stand（35.6622909, 139.6955751）とCoins bar（35.6620594, 139.6973791）があり、アクセス性が高いです。これらを考慮すると、駅から約300m以内で競合が少ない場所として、駅から約250mの場所（35.66155, 139.69625）を提案します。",
+        "time_sec": 20.88,
+        "scores": {
+          "keyword_score": 33.3,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L4-10",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+        "answer": "渋谷駅周辺の薬局として出店の可能性は低いです。既存の薬局が密集しており、競合が激しいです。特に渋谷駅から約100m圏内には4件の薬局があります。また、医療施設との距離も短いため、競争力が低下する可能性があります。具体的には、渋谷駅から約100mの位置に渋谷友好薬局があり、約150mの位置に渋谷みどり薬局があります。さらに、約200mの位置にけやき薬局があります。",
+        "time_sec": 13.75,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 55.0
+        }
+      },
+      {
+        "id": "L5-01",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+        "answer": "はい、「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えると成立します。半径300mでは37件、500mでは86件となり、半径を狭めると件数が減少しますが、それでも多くのカフェが存在します。",
+        "time_sec": 7.58,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      },
+      {
+        "id": "L5-02",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+        "answer": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立します。カフェを除くと、半径300mで4件、500mで347件の飲食店があります。飲食店の件数は大幅に増加し、カフェを含む場合よりも多くの飲食店が存在します。座標情報では、カフェを除いた飲食店の件数はカフェを含めた場合よりも多くなります。",
+        "time_sec": 11.0,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L5-03",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+        "answer": "渋谷駅から約200m以内で「十分に多い」と言える状況が見られます。",
+        "time_sec": 2.94,
+        "scores": {
+          "keyword_score": 20.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 38.0
+        }
+      },
+      {
+        "id": "L5-04",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+        "answer": "渋谷駅周辺と恵比寿駅周辺の比較では、医療施設の数は渋谷駅が2件（長岩医院、日本調剤宮益坂薬局）、恵比寿駅が1件（渋谷友好薬局）で渋谷駅が多いです。薬局の数も渋谷駅が2件（日本調剤宮益坂薬局、日本調剤渋谷駅前薬局）、恵比寿駅が1件（渋谷友好薬局）で渋谷駅が多いです。公共施設の有無では、渋谷駅周辺には郵便局（渋谷郵便局）がありますが、恵比寿駅周辺にはありません。したがって、医療施設と薬局の数、公共施設の有無においては渋谷駅周辺が有利です。",
+        "time_sec": 20.57,
+        "scores": {
+          "keyword_score": 85.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.3
+        }
+      },
+      {
+        "id": "L5-05",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+        "answer": "渋谷駅周辺には公園が少なく、子育て環境としては厳しい状況です。公園は4件しかありません。保育施設も4件と少ないです。医療施設は1件のみで、数が限られています。スーパーも4件しかありません。住宅は1件しかありません。総合的に見て、子育て環境としては不十分と言えます。",
+        "time_sec": 8.53,
+        "scores": {
+          "keyword_score": 85.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.3
+        }
+      },
+      {
+        "id": "L5-06",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+        "answer": "渋谷駅周辺はビジネスパーソン向けの立地として優れた条件を備えています。カフェは3件あり、コンビニは1件あります。金融機関は2件あります。カフェは主に駅から北側に集中しています。コンビニは駅から南側に位置しています。金融機関は駅から東側に配置されています。具体的な距離は以下の通りです：\n- カフェ：駅から約200m～500m\n- コンビニ：駅から約300m\n- 金融機関：駅から約200m\n座標情報は以下の通りです：\n- カフェ：(35.6606454, 139.7026029), (35.6605898, 139.7052299), (35.6619979, 139.7028366)\n- コンビニ：(35.6603885, 139.7067438)\n- 金融機関：(35.6586895, 139.6970524)",
+        "time_sec": 27.09,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 86.7
+        }
+      },
+      {
+        "id": "L5-07",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+        "answer": "渋谷駅周辺は観光客向けのエリアとして、飲食店（4件）が比較的多く存在し、強みとなります。一方で、宿泊施設は見つかりませんでした。また、観光スポットも見つかりませんでした。座標情報では、飲食店は駅から北西方向に広がっています。",
+        "time_sec": 8.11,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 86.7
+        }
+      },
+      {
+        "id": "L5-08",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+        "answer": "渋谷駅から最も近い「雰囲気の良い」カフェとして、Kitasando Coffee Lab（35.6613279, 139.7000807）を推奨します。次点はFRIEND（35.659045, 139.696265）です。ただし、評価項目が不足しているため、確実性は低いです。",
+        "time_sec": 9.62,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 76.0
+        }
+      },
+      {
+        "id": "L5-09",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+        "answer": "できる範囲で回答します。データからは「しばらく」が静かそうに見えます。座標は(35.6606472, 139.70257)です。ただし、他のレストランとの比較が難しいため、確実な評価はできません。",
+        "time_sec": 6.3,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L5-10",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+        "answer": "渋谷駅周辺には道玄坂上交番（約356m）と宇田川交番（約570m）があり、治安面では一定の保障があると考えられます。ただし、交番の距離は長いため、完全な安心感を得るのは難しいかもしれません。また、他の地域との比較不足で、より広範囲での評価が必要です。",
+        "time_sec": 8.64,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 46.0
+        }
+      }
+    ],
+    "ft_base": [
+      {
+        "id": "L1-01",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅は渋谷駅周辺に位置しています。座標は緯度35.659278、経度139.699408です。カテゴリは駅です。",
+        "time_sec": 4.87,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-02",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "東宝シネマの座標は？",
+        "answer": "東宝シネマは渋谷駅から北西方向に約254mの場所にあります。座標は緯度35.6590187、経度139.7028259です。カテゴリは映画館です。",
+        "time_sec": 6.57,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-03",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷東武ホテルはどこにありますか？",
+        "answer": "渋谷東武ホテルは渋谷駅から北西方向に約354mの場所にあります。座標は緯度35.6597218、経度139.702529です。カテゴリはホテルです。",
+        "time_sec": 5.81,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-04",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局は渋谷駅から北西方向に約425mの場所にあります。座標は緯度35.6597182、経度139.7026299です。カテゴリは郵便局です。",
+        "time_sec": 6.85,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-05",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "三菱UFJ銀行渋谷支店は渋谷駅から北西方向に約452mの場所にあります。座標は緯度35.6590781、経度139.7025282です。カテゴリは銀行です。",
+        "time_sec": 6.1,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-06",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "渋谷駅周辺のコンビニとして、ローソン（駅から約302m）, ドミノピザ（駅から約194m）, 7-ELEVEN（駅から約185m）があります。その他にも、ファミリーマート（駅から約262m）, コンビニエンスストア（駅から約223m）があります。",
+        "time_sec": 9.69,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 60.0
+        }
+      },
+      {
+        "id": "L1-07",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷駅周辺のカフェとして、1. バルサム（駅から約524m）, 2. カフェラテ（駅から約607m）, 3. フォーリンカフェ（駅から約589m）を提案します。",
+        "time_sec": 7.17,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L1-08",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷の映画館を教えてください",
+        "answer": "渋谷駅周辺の映画館として、シネマート新宿（駅から約452m）, シネマコンプレックス渋谷（駅から約370m）, ユナイテッドシネマ渋谷（駅から約198m）があります。",
+        "time_sec": 6.54,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 56.7
+        }
+      },
+      {
+        "id": "L1-09",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷駅周辺の薬局として、ファーマシー・スギ薬局（駅から約352m）, ファーマシー・スギ薬局（駅から約407m）, 薬屋（駅から約186m）, シンガポール薬局（駅から約298m）があります。",
+        "time_sec": 8.9,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 20.0
+        }
+      },
+      {
+        "id": "L1-10",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるホテルを教えて",
+        "answer": "渋谷駅周辺のホテルとして、ホテルニューオータニ（駅から約405m）, ホテルニューセントラル（駅から約392m）, ホテルニューグリーン（駅から約387m）があります。",
+        "time_sec": 6.58,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-01",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+        "answer": "渋谷駅に最も近いコンビニはファミリーマート（駅から約204m）です。次に近いのはローソン（約213m）です。",
+        "time_sec": 4.63,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-02",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+        "answer": "東宝シネマから500m以内に1件のカフェがあります。渋谷駅から約274mの場所にあります。座標は(35.659847, 139.702857)です。",
+        "time_sec": 5.55,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 85.0
+        }
+      },
+      {
+        "id": "L2-03",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+        "answer": "渋谷駅と原宿駅の中間地点から最も近いカフェは、スパイスカフェ（約504m）です。次に近いのは、カフェラテ（約512m）です。",
+        "time_sec": 5.04,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-04",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+        "answer": "渋谷神南郵便局の西方向約135mの場所にカフェラテがあります（座標：35.657948, 139.700482）。その他に、北東方向約120mの場所にカフェラテがあります（座標：35.657865, 139.700344）。",
+        "time_sec": 8.77,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 77.5
+        }
+      },
+      {
+        "id": "L2-05",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅から最も遠い映画館はどれですか？",
+        "answer": "渋谷駅から最も遠い映画館はシネマート新宿で、距離は約1.2kmです。座標は(35.659784, 139.702685)です。次に遠いのはシネマート渋谷で1.1kmです。",
+        "time_sec": 6.82,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L2-06",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+        "answer": "渋谷駅から北方向に最も飲食店が多く、約100件です。次点は東方向で約80件です。",
+        "time_sec": 3.18,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 57.5
+        }
+      },
+      {
+        "id": "L2-07",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+        "answer": "渋谷駅から約200m以内でカフェが14件、バーが13件あります。カフェの方が1件多いです。",
+        "time_sec": 3.5,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-08",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+        "answer": "渋谷駅周辺は「商業エリア」の特性が強いです。レストランやカフェが100件以上あり、逆に住宅関連のPOIは少ないです。",
+        "time_sec": 3.77,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-09",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+        "answer": "渋谷駅から北方向に広がる地域に最も多く、次いで東方向に次ぐ順に数が多いです。具体的には、北側で10件、東側で8件、南側で6件、西側で5件です。",
+        "time_sec": 5.78,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-10",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+        "answer": "渋谷駅周辺の宿泊施設の密度は非常に高いです。駅から約500m以内に12件あります。これは駅周辺エリア全体で約3.6%を占めています。駅周辺の宿泊施設は主にビジネスホテルやゲストハウスが目立つため、ビジネス利用者が多いためです。",
+        "time_sec": 7.59,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 74.0
+        }
+      },
+      {
+        "id": "L2-11",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+        "answer": "渋谷駅の西側にカフェが10件あり、東側に8件あります。したがって、西側にカフェが多いです。",
+        "time_sec": 3.48,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-12",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+        "answer": "渋谷駅から1km以内には映画館が2件、劇場が4件あります。劇場の方が多めです。",
+        "time_sec": 3.05,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-13",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+        "answer": "渋谷駅周辺ではコンビニが10件あり、スーパーが2件あります。コンビニの数が多いので、生活利便性ではコンビニの方が優れています。",
+        "time_sec": 4.02,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 74.0
+        }
+      },
+      {
+        "id": "L2-14",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+        "answer": "渋谷駅周辺では郵便局の方が数が多いです（銀行：10件、郵便局：24件）。郵便局は渋谷駅から北側に集中しています。銀行は駅周辺に広く散らばっています。",
+        "time_sec": 6.27,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-15",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+        "answer": "渋谷駅周辺で最多のPOIカテゴリは飲食店（102件）で、次いでカフェ（84件）、コンビニエンスストア（76件）です。",
+        "time_sec": 4.29,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 57.5
+        }
+      },
+      {
+        "id": "L3-01",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+        "answer": "渋谷駅から約400m以内に3件のカフェがあります。順に、1. フォーマット（約287m）, 2. ジェイコーズ（約369m）, 3. シンプルカフェ（約382m）です。",
+        "time_sec": 7.15,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 70.0
+        }
+      },
+      {
+        "id": "L3-02",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "電話番号がわかっている渋谷の映画館を教えてください",
+        "answer": "電話番号が確認できるのは以下2件です。渋谷シネマズ（30.28974, 139.69957）, シネマコンコルド（30.28975, 139.69957）",
+        "time_sec": 6.12,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 53.3
+        }
+      },
+      {
+        "id": "L3-03",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "ウェブサイトを持っている渋谷のレストランを教えてください",
+        "answer": "渋谷でウェブサイトを持つレストランとして、Sushi Kuro（45.65923, 139.69872）, Sushi Kuro（45.65923, 139.69872）があります。",
+        "time_sec": 6.42,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-04",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "「渋谷」という名前が含まれるホテルを教えてください",
+        "answer": "渋谷駅周辺で「渋谷」が名前に含まれるホテルは1件あります。那就是一家名为渋谷の宿（座標：35.659472, 139.702822）的酒店。",
+        "time_sec": 5.52,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-05",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+        "answer": "渋谷駅から北方向に約108mの場所にファミリーマートがあります。座標は(35.659745, 139.700822)です。",
+        "time_sec": 5.52,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 60.0
+        }
+      },
+      {
+        "id": "L3-06",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+        "answer": "渋谷駅から500m以内で、電話番号とウェブサイトがあるカフェは2件あります。1つ目は「Cafe&Bar トマト」で、駅から約478mの場所にあります。2つ目は「Cafe&Bar トマト」で、駅から約478mの場所にあります。",
+        "time_sec": 7.64,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-07",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+        "answer": "渋谷駅から300m以内でカフェを検索すると、駅から154.8mの場所に「Cafe&Bar トマト」があります。また、駅から200m以内で映画館を検索すると、「シネマート 渋谷」が駅から179.6mの距離にあります。したがって、条件を満たすカフェは存在します。",
+        "time_sec": 9.49,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L3-08",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+        "answer": "渋谷駅から北方向に約134mの場所に「渋谷病院」があります。ここは薬局（渋谷薬局）が隣接しているため、条件に合致します。次に近いのは約258mの場所に「渋谷内科・アレルギー科」があり、「渋谷眼科」も約267mの距離にあります。",
+        "time_sec": 9.23,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 45.0
+        }
+      },
+      {
+        "id": "L3-09",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+        "answer": "渋谷駅から北方向に約200mの範囲で、コンビニが4軒以上集まっています。具体的には、渋谷駅前通り沿いに3軒、渋谷駅前通りと渋谷駅前通り2丁目間の角に1軒です。座標は（35.65978, 139.70072）。",
+        "time_sec": 9.16,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L3-10",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+        "answer": "渋谷駅から500m以内のバーとして、SUGOCA BAR（約492m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ・ローズ（約387m）, バー・ラ",
+        "time_sec": 45.85,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 70.0
+        }
+      },
+      {
+        "id": "L4-01",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+        "answer": "渋谷駅から北西方向に約208mの場所にある「渋谷保育園」が最適かと思います。公園（渋谷公園通り）から約134mで、交番（渋谷警察署）も近くにあります。次点として、約257mの場所にある「渋谷駅前保育園」も候補として挙げられます。公園から約169mで、交番（渋谷警察署）も近くにあります。",
+        "time_sec": 11.1,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L4-02",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+        "answer": "渋谷駅から北東方向に適したエリアとして、渋谷駅から約500mの場所にある渋谷駅前通り周辺（座標：緯度35.6591274, 経度139.6988882）を挙げられます。次点として、渋谷駅から約600mの場所にある渋谷駅南口周辺（座標：緯度35.6588832, 経度139.6985642）も候補となります。これらのエリアには複数の医療施設があり、高齢者向けデイサービスの開設に適しています。",
+        "time_sec": 15.9,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-03",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+        "answer": "渋谷駅から近い順に、学習塾として適している候補地は以下です。1位: 三軒茶屋（駅から約402m）, 2位: 渋谷駅前（駅から約375m）, 3位: 渋谷駅東口（駅から約369m）, 4位: 渋谷駅西口（駅から約368m）, 5位: 渋谷駅南口（駅から約367m）, 6位: 渋谷駅北口（駅から約367m）, 7位: 渋谷駅東（駅から約366m）, 8位: 渋谷駅西（駅から約366m）, 9位: 渋谷駅北（駅から約366m）, 10位: 渋谷駅南（駅から約366m）, 11位: 渋谷駅東（駅から約366m）, 12位: 渋谷駅西（駅から約366m）, 13位: 渋谷駅北（駅から約366m）, 14位: 渋谷駅南（駅から約366m）, 15位: 渋谷駅東（駅から約366m）, 16位: 渋谷駅西（駅から約366m）, 17位: 渋谷駅北（駅から約366m）, 18位: 渋谷駅南（駅から約366m）, 19位: 渋谷駅東（駅から約366m）, 20位: 渋谷駅西（駅から約366m）, 21位: 渋谷駅北（駅から約366m）, 22位: 渋谷駅南（駅から約366m）, 23位: 渋谷駅",
+        "time_sec": 46.61,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-04",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+        "answer": "渋谷駅から北方向に約120mの場所にある「すみだ」（座標：緯度35.6594782、経度139.701552）が最適です。ここは駅から近いだけでなく、わかりやすい場所にあります。また、周辺には飲食店が多く、待ち合わせに適しています。次点は「すみだ」（座標：緯度35.6594782、経度139.701552）で、約120mの距離にあり、駅からも近く、わかりやすい場所です。",
+        "time_sec": 14.33,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L4-05",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+        "answer": "渋谷駅から最も近い観光スポットとして、渋谷駅（約0m）, 渋谷駅前（約12m）, 渋谷駅前交差点（約13m）があります。次に近いのは、渋谷駅東口（約45m）, 渋谷駅西口（約46m）, 渋谷駅南口（約47m）です。これらの場所は観光客にとってアクセスしやすい場所です。",
+        "time_sec": 11.46,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-06",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+        "answer": "渋谷駅周辺の新規カフェ出店は向きです。競合として1km以内に20件あり、出店場所によっては競争が激しい可能性があります。一方、集客が見込めるPOIとしては駅（約300m）と商業施設（約500m）があり、良好な立地条件です。",
+        "time_sec": 8.61,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L4-07",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+        "answer": "渋谷駅周辺の新規コンビニ出店余地はありますが、駅からほど遠い地域では限られています。駅周辺は既存コンビニが密集しています。駅から1km以内では、駅周辺の駅前通り、渋谷駅東口、渋谷駅西口、渋谷駅南口、渋谷駅北口付近で既存店が多く、出店余地は限られています。駅から2km以内では、駅北側の渋谷駅北口から約500mの場所に新規出店が可能でしょう。駅から2km以上は出店余地が広がります。",
+        "time_sec": 15.41,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-08",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+        "answer": "渋谷駅から北西方向に広がるエリアに新規ベーカリーを出店すると、既存の競合（10件）と近接します。また、カフェとの協業可能性も高いです（23件）。出店場所としては、渋谷駅から北東方向に配置すると、競合と距離が遠くなり、協業可能性も減少します。ただし、カフェとの協業による顧客獲得効果は低下します。",
+        "time_sec": 10.17,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-09",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+        "answer": "渋谷駅から北側の道玄坂エリアが適しています。駅から約300mで、駅からのアクセスが良好です。また、競合するバーの数も10件と比較的少ないです。",
+        "time_sec": 4.75,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-10",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+        "answer": "渋谷駅から1km以内に20件の薬局があり、出店場所によっては競合が生じる可能性があります。また、1km以内には1件の医療施設があります。出店場所によっては競合と近接性が重複する可能性があるので注意が必要です。座標情報がないため詳細な分析はできません。",
+        "time_sec": 7.98,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 55.0
+        }
+      },
+      {
+        "id": "L5-01",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+        "answer": "検索半径300mでは12件、500mでは14件なので、半径を狭めると数が減りますが、結論は変わりません。",
+        "time_sec": 3.78,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 76.0
+        }
+      },
+      {
+        "id": "L5-02",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+        "answer": "はい、成立します。カフェを除くと、渋谷駅から1km以内の飲食店数は209件で、駅周辺全体（カフェ含む）の345件より少ないですが、それでも十分に充実しています。",
+        "time_sec": 6.03,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      },
+      {
+        "id": "L5-03",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+        "answer": "渋谷駅から約200m以内の範囲で「十分に多い」と言える状態です。",
+        "time_sec": 2.59,
+        "scores": {
+          "keyword_score": 20.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 38.0
+        }
+      },
+      {
+        "id": "L5-04",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+        "answer": "渋谷駅周辺では、医療施設が1件あり、薬局が2件あります。公共施設は郵便局1件、交番1件です。一方、恵比寿駅周辺では、医療施設が1件あり、薬局が1件あります。公共施設は郵便局1件、交番1件です。渋谷駅の方が医療施設の数が多い点で有利です。",
+        "time_sec": 10.05,
+        "scores": {
+          "keyword_score": 71.4,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.6
+        }
+      },
+      {
+        "id": "L5-05",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+        "answer": "渋谷駅周辺は子育て世帯向けの居住地として平均的な評価です。公園は1.2km圏内に3件あり、保育施設は0.5km以内に4件あります。医療施設は0.5km以内に2件あり、スーパーは0.5km以内に2件あります。公園数は他の地域と比べて少ないですが、保育施設や医療施設、スーパーの数は適切です。座標は35.67893, 139.69858です。",
+        "time_sec": 12.69,
+        "scores": {
+          "keyword_score": 85.7,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.3
+        }
+      },
+      {
+        "id": "L5-06",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+        "answer": "渋谷駅周辺はビジネスパーソンにとって理想的な立地です。カフェは100m以内に2件あり、コンビニも100m以内に3件あります。銀行は100m以内に1件、ATMは100m以内に4件あります。",
+        "time_sec": 6.28,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 86.7
+        }
+      },
+      {
+        "id": "L5-07",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+        "answer": "渋谷駅周辺は観光客向けのエリアとして、観光スポット（10件）、飲食店（24件）、宿泊施設（1件）を有しています。観光スポットは少ないですが、飲食店が豊富で宿泊施設もあるため、観光客のニーズを満たすことができます。ただし、観光スポットが少ないため、観光客の数は他のエリアに比べて少ないと考えられます。座標は（35.657983, 139.700822）。",
+        "time_sec": 12.36,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L5-08",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+        "answer": "渋谷駅から約200m以内の「雰囲気の良い」カフェとして、カフェラテ（駅から約194m）を推奨します。次点はカフェラテ（駅から約185m）です。他の候補として、カフェラテ（駅から約176m）、カフェラテ（駅から約173m）、カフェラテ（駅から約170m）があります。 Cafe Latteは駅から約170mの場所にあり、評価は4.2点です。 Cafe Latteは駅から約173mの場所にあり、評価は4.2点です。 Cafe Latteは駅から約176mの場所にあり、評価は4.2点です。 Cafe Latteは駅から約185mの場所にあり、評価は4.2点です。 Cafe Latteは駅から約194mの場所にあり、評価は4.2点です。 Cafe Latteは駅から約200mの場所にあります。 Cafe Latteは駅から約200mの場所にあります。 Cafe Latteは駅から約200mの場所にあります。 Cafe Latteは駅から約200mの場所にあります。 Cafe Latteは駅から約200mの場所にあります。 Cafe Latteは駅から約200mの場所にあります。 Cafe Lat",
+        "time_sec": 46.38,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 76.0
+        }
+      },
+      {
+        "id": "L5-09",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+        "answer": "できる範囲で、「静かな」レストランは渋谷駅から約107mの位置に存在します。座標は緯度35.6592482、経度139.7028099です。また、約124mの場所には「静か」なレストランがあります。座標は緯度35.6591829、経度139.7027229です。約133mの場所には「静か」なレストランがあります。座標は緯度35.6591829、経度139.7027229です。しかし、「静か」なレストランは見つかりませんでした。",
+        "time_sec": 15.87,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L5-10",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+        "answer": "渋谷駅周辺のPOIデータによると、交番は1件のみです。これは比較的少ない数で、治安面での懸念材料となります。ただし、データの限界として、他の要因（犯罪率、警察の対応速度など）が反映されていない点に注意が必要です。",
+        "time_sec": 7.03,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      }
+    ],
+    "ft_rag": [
+      {
+        "id": "L1-01",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅は渋谷駅（座標: (35.659501, 139.701972)）と位置関係にあるため、北東方向に約100mの距離にあります。",
+        "time_sec": 5.55,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-02",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "東宝シネマの座標は？",
+        "answer": "東宝シネマの座標は（35.6591861, 139.6988833）です。",
+        "time_sec": 3.91,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L1-03",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷東武ホテルはどこにありますか？",
+        "answer": "渋谷東武ホテルは渋谷駅から北西方向に約338mの場所にあります。座標は(35.6631863, 139.6989863)です。",
+        "time_sec": 5.28,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-04",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局は渋谷駅から北西方向に約394mの場所にあります。座標は(35.6619935, 139.7005742)です。",
+        "time_sec": 6.24,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-05",
+        "level": 1,
+        "subcategory": "basic_location",
+        "prompt": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "三菱UFJ銀行渋谷支店の位置情報は、緯度35.6586895、経度139.6970524です。",
+        "time_sec": 4.1,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-06",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "渋谷駅周辺のコンビニとして、セブン-イレブン（35.6576823, 139.7027267）があります。",
+        "time_sec": 5.02,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L1-07",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷にあるカフェとして、Urth Caffé（座標: (35.658412, 139.7020575)）、Kitasando Coffee Lab（座標: (35.6613279, 139.7000807)）、The local coffee stand（座標: (35.6603885, 139.7067438)）を3つ挙げられます。",
+        "time_sec": 10.45,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L1-08",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷の映画館を教えてください",
+        "answer": "渋谷の映画館として、ヒューマントラストシネマ渋谷（座標: (35.6619728, 139.7027232)）があります。他にも東宝シネマ（(35.6591861, 139.6988833)）、シネクイント CINE QUINTO（(35.660874, 139.6998486)）、ホワイトシネクイント（(35.6619815, 139.6990987)）、Cinema Vera Shibuya（(35.6593506, 139.6953855)）があります。",
+        "time_sec": 18.0,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L1-09",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷周辺の薬局として、三千里薬局（35.6597258, 139.7000307）、ディアファーマシー（35.6608517, 139.7021074）があります。",
+        "time_sec": 6.85,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L1-10",
+        "level": 1,
+        "subcategory": "basic_category",
+        "prompt": "渋谷にあるホテルを教えて",
+        "answer": "渋谷には5件のホテルがあります。",
+        "time_sec": 1.48,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L2-01",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+        "answer": "渋谷駅に最も近いコンビニはローソンで、約101.94mの距離です。座標は（35.6591378, 139.707824）です。",
+        "time_sec": 5.77,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L2-02",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+        "answer": "東宝シネマから500m以内に2件のカフェがあります。Uplight Coffee (349m)とKitasando Coffee Lab (499m)です。",
+        "time_sec": 4.06,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 65.0
+        }
+      },
+      {
+        "id": "L2-03",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+        "answer": "渋谷駅と原宿駅の中間地点から最も近いカフェはThe local coffee standで、距離は約250mです。次に近いのはFRIENDで約260mです。",
+        "time_sec": 4.91,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L2-04",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+        "answer": "渋谷神南郵便局の周辺200m以内にはGreen Lounge（約180m）があります。",
+        "time_sec": 2.85,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-05",
+        "level": 2,
+        "subcategory": "spatial_proximity",
+        "prompt": "渋谷駅から最も遠い映画館はどれですか？",
+        "answer": "ヒューマントラストシネマ渋谷が最も遠く、距離は約352mです。次に遠いのはCinemariseで、約284mです。",
+        "time_sec": 4.58,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 70.0
+        }
+      },
+      {
+        "id": "L2-06",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+        "answer": "渋谷駅周辺で飲食店が最も集中しているのは渋谷駅から南方向に約200mの範囲です。ここでは4件の飲食店があります。次に多いのは駅から北東方向に約300mの範囲で3件です。",
+        "time_sec": 6.68,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-07",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+        "answer": "渋谷駅周辺のカフェは149件で、バーは5件あります。したがって、カフェの方が圧倒的に多いです。",
+        "time_sec": 3.43,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-08",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+        "answer": "渋谷駅周辺は「商業エリア」の特性が強いです。飲食店が4件あり、そのうちバーが4件あるためです。住宅エリアとしてはWHO'S FOOD'Sが1件あります。",
+        "time_sec": 5.03,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-09",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+        "answer": "渋谷駅周辺には1件の病院（アイシークリニック渋谷院）と4件の薬局（YOKOTA、渋谷みどり薬局、渋谷友好薬局、けやき薬局）があります。病院は渋谷駅から約450mの場所にあります。",
+        "time_sec": 7.67,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-10",
+        "level": 2,
+        "subcategory": "spatial_density",
+        "prompt": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+        "answer": "渋谷駅周辺の宿泊施設の密度は低いです。渋谷駅から1km以内に4件の宿泊施設があります。これは周囲の地域と比較して少ない数です。例えば、渋谷駅から約1.5kmの範囲では約10件の宿泊施設があります。",
+        "time_sec": 7.44,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-11",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+        "answer": "渋谷駅の西側にカフェが58件あり、東側に51件ありますので、西側に7件多く存在します。",
+        "time_sec": 3.4,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-12",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+        "answer": "渋谷駅周辺では、映画館が7件あり、劇場は0件です。したがって、映画館が多いです。",
+        "time_sec": 3.83,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-13",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+        "answer": "コンビニは4件あり、スーパーは2件あります。コンビニの数がスーパーに比べて多いので、コンビニの充実度が高いと言えます。座標的にはコンビニが渋谷駅周辺に広く散らばっているのに対し、スーパーは渋谷駅近くに集中している印象があります。",
+        "time_sec": 7.18,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 68.0
+        }
+      },
+      {
+        "id": "L2-14",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+        "answer": "渋谷駅周辺の銀行は比較的多く存在しますが、郵便局は少ないです。銀行の数は10件以上あります。一方、郵便局は2件のみです。したがって、銀行へのアクセスは良いですが、郵便局へのアクセスは劣る可能性があります。",
+        "time_sec": 6.8,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.5
+        }
+      },
+      {
+        "id": "L2-15",
+        "level": 2,
+        "subcategory": "spatial_comparison",
+        "prompt": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+        "answer": "渋谷駅周辺では飲食店が最多で3件あります。次いで観光スポットが2件あります。具体的には、飲食店: WHO'S FOOD'S, 4, 一番、観光スポット: 周辺案内, 集です。座標情報はありません。",
+        "time_sec": 6.8,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L3-01",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+        "answer": "渋谷駅から徒歩5分以内にあるカフェとして、青山壹番館（35.6571132, 139.7077985）があります。距離は約350mです。",
+        "time_sec": 5.28,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L3-02",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "電話番号がわかっている渋谷の映画館を教えてください",
+        "answer": "渋谷駅周辺の映画館で電話番号が確認できるのはシネクイント CINE QUINTO (35.660874, 139.6998486)のみです。",
+        "time_sec": 5.27,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-03",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "ウェブサイトを持っている渋谷のレストランを教えてください",
+        "answer": "情報に基づくと、ウェブサイトを持つ渋谷のレストランは1件あります。WHO'S FOOD'Sです。座標は(35.6612904, 139.7010324)です。",
+        "time_sec": 5.59,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-04",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "「渋谷」という名前が含まれるホテルを教えてください",
+        "answer": "「渋谷」が含まれるホテルは見つかりませんでした。",
+        "time_sec": 1.66,
+        "scores": {
+          "keyword_score": 66.7,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 100,
+          "total_score": 33.3
+        }
+      },
+      {
+        "id": "L3-05",
+        "level": 3,
+        "subcategory": "constraint_single",
+        "prompt": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+        "answer": "渋谷駅から約200m以内には24時間営業のコンビニが2件あります。座標は（35.6576823, 139.7027267）と（35.6586114, 139.7083098）。",
+        "time_sec": 8.1,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-06",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+        "answer": "条件に合うカフェは見つかりませんでした。",
+        "time_sec": 1.24,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 0,
+          "number_score": 0,
+          "poi_score": 100,
+          "total_score": 25.0
+        }
+      },
+      {
+        "id": "L3-07",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+        "answer": "渋谷駅から300m以内にカフェは存在しません。",
+        "time_sec": 2.03,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 72.0
+        }
+      },
+      {
+        "id": "L3-08",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+        "answer": "アイシークリニック渋谷院（35.6562823, 139.7050228）の近くに渋谷みどり薬局（35.6555062, 139.7038616）があります。距離は約120mです。",
+        "time_sec": 7.88,
+        "scores": {
+          "keyword_score": 75.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L3-09",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+        "answer": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアは渋谷駅南側です。座標は（35.6573741, 139.6990103）から（35.663629, 139.698819）までです。",
+        "time_sec": 7.86,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L3-10",
+        "level": 3,
+        "subcategory": "constraint_multi",
+        "prompt": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+        "answer": "渋谷駅から500m以内のバーとして、Under Bar（35.6635856, 139.6993246）が候補となります。",
+        "time_sec": 4.99,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 90.0
+        }
+      },
+      {
+        "id": "L4-01",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+        "answer": "渋谷駅から最も近い保育園として、渋谷区立宮下公園（座標: (35.6614178, 139.7018742)）が候補となります。公園距離は約100mです。また、交番は近くに存在します。",
+        "time_sec": 7.05,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-02",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+        "answer": "ディアファーマシー（薬局）が最も近い場所で、約374mの距離にあります。次に近いデイリーヤマザキ（コンビニ）も約475mです。これらはどちらも渋谷駅から北方向に位置しています。",
+        "time_sec": 6.91,
+        "scores": {
+          "keyword_score": 0.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 40.0
+        }
+      },
+      {
+        "id": "L4-03",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+        "answer": "渋谷駅から最も近い場所としてKitasando Coffee Lab（約300m）を提案します。次に近いAbbot Choice（約350m）、4（約350m）があります。これらは駅からの距離が短いため、通学に便利です。また、駅から約400mのAbbot Choiceはコンビニ（セブンイレブン）にも近いため、学習塾運営に適しています。",
+        "time_sec": 10.65,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-04",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+        "answer": "渋谷駅から最も近い場所として、One night stand（35.6622909, 139.6955751）が最適です。次に近いのはWHO'S FOOD'S（35.6612904, 139.7010324）です。どちらも駅から約500m以内にあります。",
+        "time_sec": 9.22,
+        "scores": {
+          "keyword_score": 25.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 47.5
+        }
+      },
+      {
+        "id": "L4-05",
+        "level": 4,
+        "subcategory": "decision_location",
+        "prompt": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+        "answer": "渋谷駅周辺で観光客向けの案内所を設置するなら、渋谷駅から約300mの位置にある「のりば案内」（座標: (35.6587836, 139.7029658)）が効果的です。ここは駅から約300mの距離にあり、渋谷駅から約300mの距離にあります。",
+        "time_sec": 10.19,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.0
+        }
+      },
+      {
+        "id": "L4-06",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+        "answer": "渋谷駅周辺のカフェ数は149件で、新規出店には競合が強い状況です。競合数は149件中、カフェは149件のうち4件（2.7%）に過ぎません。駅（4件）と商業施設（145件）との距離は近いため、集客には有利です。ただし、既存のカフェ数が多いことも考慮すると、出店は難しいかもしれません。座標情報では、カフェの出店は駅周辺に集中しているため、他の地域への展開も検討すべきです。",
+        "time_sec": 13.15,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 94.0
+        }
+      },
+      {
+        "id": "L4-07",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+        "answer": "渋谷駅周辺のコンビニの出店余地について、既存のコンビニの分布と密度を考慮して評価すると、出店余地はありますが、限られている状況です。渋谷駅から約500m以内の範囲で、コンビニは4件（デイリーヤマザキ2件、はるいち）しか見つかりませんでした。一方、飲食店は10件以上あります。コンビニの密度は約0.02件/km²で、飲食店は約0.04件/km²あります。飲食店の密度がコンビニより高いことから、コンビニの出店余地は限定的ですが、存在します。",
+        "time_sec": 15.7,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L4-08",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+        "answer": "渋谷駅周辺のベーカリーとして、マルヤマベーグルLOOP渋谷店（座標: (35.6583493, 139.7033801)）とFRUCTUS（座標: (35.6582369, 139.7021626)）が競合となります。新規出店者はこれら2店舗と競合し、市場シェアを奪う可能性があります。\n\n協業可能なカフェとしては、The local coffee stand（座標: (35.6603885, 139.7067438)）とTASUICHI（座標: (35.6609521, 139.6970184)）が考えられます。これら2店舗との協業により、顧客の来店頻度を増やすことができます。\n\n出店戦略として、競合店との差別化を図るため、独自の商品開発やサービス提供を行うことが重要です。また、協業可能なカフェとの連携により、顧客の来店頻度を高めることが期待できます。",
+        "time_sec": 25.86,
+        "scores": {
+          "keyword_score": 83.3,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L4-09",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+        "answer": "渋谷駅から約300m以内の場所として、One night stand（35.6622909, 139.6955751）とTASUICHI（35.6609521, 139.6970184）が最寄りです。駅からの距離は約350mと約400mです。これらは既存のバーと競合する可能性が高いです。",
+        "time_sec": 10.83,
+        "scores": {
+          "keyword_score": 33.3,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 50.0
+        }
+      },
+      {
+        "id": "L4-10",
+        "level": 4,
+        "subcategory": "decision_business",
+        "prompt": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+        "answer": "渋谷駅周辺の薬局として出店の可能性は低いです。既存の薬局が多いため、競合が避けられないからです。具体的には、友好的薬局（35.6583517, 139.6966995）、みどり薬局（35.6555062, 139.7038616）、けやき薬局（35.6634122, 139.6958364）、ディアファーマシー（35.6608517, 139.7021074）、YOKOTA（35.6605686, 139.6995348）の5件があります。また、近くには病院やクリニックも密集しています。",
+        "time_sec": 19.1,
+        "scores": {
+          "keyword_score": 83.3,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 95.0
+        }
+      },
+      {
+        "id": "L5-01",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+        "answer": "はい、「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えると成立します。半径300mでは37件、500mでは86件となり、500mの方が2.3倍に増加します。",
+        "time_sec": 7.81,
+        "scores": {
+          "keyword_score": 80.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 92.0
+        }
+      },
+      {
+        "id": "L5-02",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+        "answer": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立します。カフェを除くと、半径300mで4件、500mで347件の飲食店があります。飲食店の件数は大幅に増加し、カフェを含めても飲食店の割合が高いため、評価は成立します。座標情報では、カフェの中心地点から飲食店の中心地点までの距離は約130mです。",
+        "time_sec": 11.73,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L5-03",
+        "level": 5,
+        "subcategory": "advanced_sensitivity",
+        "prompt": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+        "answer": "渋谷駅から約200m以内で「十分に多い」と言える状況が確認できました。",
+        "time_sec": 2.7,
+        "scores": {
+          "keyword_score": 20.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 38.0
+        }
+      },
+      {
+        "id": "L5-04",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+        "answer": "渋谷駅周辺と恵比寿駅周辺の高齢者向け住宅の候補地としての条件を比較すると、以下のようになります。\n\n医療施設の数：\n渋谷駅周辺: 2件 (長岩医院、日本調剤宮益坂薬局)\n恵比寿駅周辺: 1件 (渋谷友好薬局)\n\n薬局の数：\n渋谷駅周辺: 2件 (日本調剤宮益坂薬局、日本調剤渋谷駅前店)\n恵比寿駅周辺: 1件 (渋谷友好薬局)\n\n公共施設（郵便局、交番）の有無：\n渋谷駅周辺: 1件 (渋谷郵便局)\n恵比寿駅周辺: なし\n\nしたがって、渋谷駅周辺の方が医療施設と薬局の数が多いため、高齢者向け住宅の候補地としては有利と言えるでしょう。ただし、公共施設の数は少ないため、注意が必要です。",
+        "time_sec": 24.81,
+        "scores": {
+          "keyword_score": 100.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 100.0
+        }
+      },
+      {
+        "id": "L5-05",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+        "answer": "渋谷駅周辺には公園が少なく、子育て環境としては不十分です。公園は4件しかありません。また、保育施設も少ないです。医療施設は2件あり、スーパーは4件あります。駅から最も近い公園は約1km、最も近い保育施設は約1.2km、最も近い医療施設は約1.1km、最も近いスーパーは約300mです。",
+        "time_sec": 10.19,
+        "scores": {
+          "keyword_score": 71.4,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 88.6
+        }
+      },
+      {
+        "id": "L5-06",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+        "answer": "渋谷駅周辺はビジネスパーソン向けの立地として優れた条件を備えています。カフェは3件あり、コンビニは2件あります。金融機関は1件あります。カフェは主に駅から北側に集中しています。コンビニは駅から南側に多く配置されています。銀行は駅から約500mの距離にあります。具体的な座標は以下の通りです：\n- カフェ：(35.6605898, 139.7052299), (35.6603885, 139.7067438), (35.6619979, 139.7028366)\n- コンビニ：(35.6606454, 139.7026029), (35.6606454, 139.7026029)\n- 銀行：(35.6586895, 139.6970524)",
+        "time_sec": 24.45,
+        "scores": {
+          "keyword_score": 83.3,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 93.3
+        }
+      },
+      {
+        "id": "L5-07",
+        "level": 5,
+        "subcategory": "advanced_comparison",
+        "prompt": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+        "answer": "渋谷駅周辺は観光客向けのエリアとして、飲食店（4件）が比較的多く存在し、観光地（4件）も存在しています。しかし、宿泊施設は見つかりませんでした。飲食店は4件あり、観光スポットは4件あります。座標情報では、飲食店は駅から約500m以内に集中しています。一方、観光スポットは駅から約1km以内に広がっています。このエリアには観光客向けの飲食店が比較的多いですが、宿泊施設が不足している点が弱点となります。",
+        "time_sec": 13.54,
+        "scores": {
+          "keyword_score": 50.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 80.0
+        }
+      },
+      {
+        "id": "L5-08",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+        "answer": "渋谷駅周辺のカフェとして、Kitasando Coffee Lab（座標: (35.6613279, 139.7000807)）が候補として挙げられます。ただし、具体的な評価データがないため、雰囲気の良さを直接判断することは難しいです。",
+        "time_sec": 8.05,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L5-09",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+        "answer": "できる範囲で回答します。データからは「しばらく」が静かそうに見えます。座標は(35.6606472, 139.70257)です。ただし、他のレストランとの比較情報がないため、確実な評価はできません。",
+        "time_sec": 6.07,
+        "scores": {
+          "keyword_score": 60.0,
+          "coord_score": 100,
+          "number_score": 100,
+          "poi_score": 100,
+          "total_score": 84.0
+        }
+      },
+      {
+        "id": "L5-10",
+        "level": 5,
+        "subcategory": "advanced_uncertainty",
+        "prompt": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+        "answer": "渋谷駅周辺には道玄坂上交番（約356m）と宇田川交番（約450m）があり、治安面では一定の保障があると考えられます。ただし、交番の距離は短いものの、数が少ないため完全な安心感を得るのは難しいかもしれません。",
+        "time_sec": 7.17,
+        "scores": {
+          "keyword_score": 40.0,
+          "coord_score": 0,
+          "number_score": 100,
+          "poi_score": 0,
+          "total_score": 46.0
+        }
+      }
+    ]
+  }
+}

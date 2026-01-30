@@ -354,14 +354,26 @@ PROXIMITY_PATTERNS = [
 - MapFan APIとの連携（基準点解決に住所検索/POI検索を活用）
 - 評価フレームワークの統合
 
-### 6.5 グラフRAG導入（Phase 6.3）
+### 6.5 グラフRAG導入（Phase 8）
 
 **目的**: POI間の関係性を活用
 
-**アプローチ**:
-- 近接関係グラフの構築
-- 同一建物・同一エリアの関係
-- 経路探索との統合
+**ステータス**: 実装完了、評価進行中
+
+**実装済みエッジタイプ**:
+- `NEAR_TO`: 近接関係（100m以内）
+- `SAME_CATEGORY`: 同一カテゴリ
+- `SAME_BRAND`: 同一チェーン店
+- `COMPLEMENTARY`: 相補的関係（ホテル↔レストラン等）
+- `COMPETITOR`: 競合関係（同カテゴリ・近距離）
+- `SAME_CUISINE`: 同一料理ジャンル
+- `SAME_HOURS`: 同一営業時間帯
+
+**初期比較結果**:
+- GraphRAG: 84.3%
+- 構造化RAG: 86.7%
+
+**詳細**: `docs/GRAPHRAG_EXPERIMENT_PLAN.md` および `docs/HANDOVER_SESSION_20260130.md` を参照
 
 ---
 
@@ -425,6 +437,8 @@ python -c "from src.geo_utils import enrich_all_pois; print('OK')"
 ### リポジトリ内ドキュメント
 
 - `docs/PHASE6_IMPROVEMENT_REPORT.md` - 改善プロセスの詳細
+- `docs/GRAPHRAG_EXPERIMENT_PLAN.md` - グラフRAG実験計画と構築手順
+- `docs/HANDOVER_SESSION_20260130.md` - グラフRAG実験セッション引き継ぎ
 - `results/phase621_eval_*.json` - 評価結果（生データ）
 - `results/phase621_report_*.md` - 評価レポート
 

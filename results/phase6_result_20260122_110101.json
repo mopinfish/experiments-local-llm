@@ -1,0 +1,28 @@
+{
+  "timestamp": "20260122_110101",
+  "phase": "Phase 6 - Structured RAG",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "poi_count": 1047,
+  "direction_distribution": {
+    "east": 82,
+    "north": 156,
+    "northwest": 278,
+    "west": 241,
+    "southwest": 36,
+    "south": 49,
+    "northeast": 143,
+    "southeast": 62
+  },
+  "east_west_comparison": {
+    "item1": {
+      "name": "東側",
+      "count": 287
+    },
+    "item2": {
+      "name": "西側",
+      "count": 555
+    },
+    "winner": "西側",
+    "difference": 268
+  }
+}

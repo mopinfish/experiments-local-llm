@@ -1,0 +1,4809 @@
+{
+  "metadata": {
+    "timestamp": "20260129_134308",
+    "total_test_cases": 70,
+    "structured_test_cases": 55,
+    "graphrag_test_cases": 15,
+    "model": "Qwen2.5-7B-Instruct (4bit)"
+  },
+  "summary": {
+    "graphrag": {
+      "overall_score": 84.28571428571428,
+      "avg_time": 13.722034801755633,
+      "on_structured_tests": 85.0,
+      "on_graphrag_tests": 81.66666666666667
+    },
+    "structured": {
+      "overall_score": 86.71428571428571,
+      "avg_time": 13.4950218132564,
+      "on_structured_tests": 86.27272727272727,
+      "on_graphrag_tests": 88.33333333333331
+    }
+  },
+  "aptitude_map": [
+    {
+      "category": "advanced_reasoning",
+      "graphrag_score": 94.0,
+      "structured_score": 94.0,
+      "diff": 0.0,
+      "recommended": "同等"
+    },
+    {
+      "category": "aggregation",
+      "graphrag_score": 55.60000000000001,
+      "structured_score": 91.7,
+      "diff": -36.099999999999994,
+      "recommended": "構造化RAG"
+    },
+    {
+      "category": "basic_retrieval",
+      "graphrag_score": 76.0,
+      "structured_score": 74.2,
+      "diff": 1.7999999999999972,
+      "recommended": "同等"
+    },
+    {
+      "category": "comparison",
+      "graphrag_score": 87.5,
+      "structured_score": 75.0,
+      "diff": 12.5,
+      "recommended": "GraphRAG"
+    },
+    {
+      "category": "constraint_satisfaction",
+      "graphrag_score": 88.5,
+      "structured_score": 90.0,
+      "diff": -1.5,
+      "recommended": "同等"
+    },
+    {
+      "category": "decision_support",
+      "graphrag_score": 82.5,
+      "structured_score": 90.2,
+      "diff": -7.700000000000003,
+      "recommended": "構造化RAG"
+    },
+    {
+      "category": "multi_hop",
+      "graphrag_score": 88.9,
+      "structured_score": 88.9,
+      "diff": 0.0,
+      "recommended": "同等"
+    },
+    {
+      "category": "proximity",
+      "graphrag_score": 100.0,
+      "structured_score": 83.3,
+      "diff": 16.700000000000003,
+      "recommended": "GraphRAG"
+    },
+    {
+      "category": "relation",
+      "graphrag_score": 83.3,
+      "structured_score": 93.30000000000001,
+      "diff": -10.000000000000014,
+      "recommended": "構造化RAG"
+    },
+    {
+      "category": "spatial_reasoning",
+      "graphrag_score": 84.3,
+      "structured_score": 84.1,
+      "diff": 0.20000000000000284,
+      "recommended": "同等"
+    }
+  ],
+  "graphrag_results": [
+    {
+      "response": "渋谷駅は複数の位置が見つかりましたが、最も近いのは東方向に13mの場所です。他の駅ビルや出口も周辺にあり、北東方向には130m、北方向には166mの場所にもあります。具体的な出口や建物名を指定した場合はより正確な情報を提供できます。",
+      "context": "【検索結果】\n1. 渋谷 (鉄道駅) - 東 13m\n2. 渋谷 (鉄道駅) - 東 118m\n3. 渋谷 (鉄道駅) - 北東 130m\n4. 渋谷 (鉄道駅) - 北 166m\n5. 渋谷 (鉄道駅) - 西 231m",
+      "keyword_score": 0.5,
+      "query_time": 0.003503084182739258,
+      "llm_time": 10.506058931350708,
+      "total_time": 10.509565353393555,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-01",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷駅の場所を教えてください",
+      "expected_keywords": [
+        "渋谷",
+        "駅",
+        "35.",
+        "139."
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "コンテキストから直接的な情報はありませんが、質問が東宝シネマに関するものである場合、具体的な位置情報が与えられていないため、現在提供されているデータでは東宝シネマの座標を特定することができません。他の情報を提供顶，以便更准确地回答您的问题。您是否有其他信息或地点需要查询？",
+      "context": "【検索結果】\n1. 渋谷 (鉄道駅) - 東 13m\n2. Matsue (レストラン) - 北東 49m\n3. wagyu&steak TEPPANYAKI 10 SHIBUYA (レストラン) - 北東 51m\n4. FRUCTUS (パン屋) - 東 53m\n5. UP Noodle TOKYO (レストラン) - 北東 54m",
+      "keyword_score": 0.6,
+      "query_time": 0.0008938312530517578,
+      "llm_time": 8.373844385147095,
+      "total_time": 8.374741077423096,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [],
+          "subcategories": [],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far"
+          ],
+          "requires_graph_traversal": false,
+          "requires_category_filter": false,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-02",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "東宝シネマの座標は？",
+      "expected_keywords": [
+        "東宝",
+        "シネマ",
+        "座標",
+        "緯度",
+        "経度"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご質問の「渋谷東武ホテル」について、上記コンテキストからは該当する情報が見つかりません。コンテキストにあるのは「ホテルメッツ渋谷」と「渋谷WAVE（SHIBUYA WAVE）」の情報のみです。ご質問の Hotels.jp掲載の「渋谷東武ホテル」について情報をお伝えするには、追加の検索が必要です。ご質問の意図したホテルについてもう少し詳細を教えていただけますか？",
+      "context": "【検索結果】\n1. ホテルメッツ渋谷 (ホテル) - 南東 323m\n2. 渋谷WAVE（SHIBUYA WAVE） (ホテル) - 東 456m",
+      "keyword_score": 1.0,
+      "query_time": 0.00011920928955078125,
+      "llm_time": 12.075277328491211,
+      "total_time": 12.075398683547974,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "宿泊"
+          ],
+          "subcategories": [
+            "ホテル"
+          ],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far"
+          ],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-03",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷東武ホテルはどこにありますか？",
+      "expected_keywords": [
+        "東武",
+        "ホテル",
+        "渋谷"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "申し訳ありませんが、\"渋谷神南郵便局\"という名前の郵便局は見つかりませんでした。近隣にあるのは「渋谷三郵便局」で、現在地から南東方向に約346mの場所にあります。質問が異なる場合は再確認してください。",
+      "context": "【検索結果】\n1. 渋谷三郵便局 (郵便局) - 南東 346m",
+      "keyword_score": 1.0,
+      "query_time": 0.0001766681671142578,
+      "llm_time": 7.688679456710815,
+      "total_time": 7.688858985900879,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "公共"
+          ],
+          "subcategories": [
+            "郵便局"
+          ],
+          "directions": [
+            "south",
+            "southeast",
+            "southwest"
+          ],
+          "areas": [
+            "south_station",
+            "south_near",
+            "south_mid",
+            "south_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far",
+            "southwest_station",
+            "southwest_near",
+            "southwest_mid",
+            "southwest_far"
+          ],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-04",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷神南郵便局の場所を教えて",
+      "expected_keywords": [
+        "神南",
+        "郵便局",
+        "渋谷"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "三菱UFJ銀行渋谷支店は北方向に約214mの場所にあります。",
+      "context": "【検索結果】\n1. 横浜銀行 (銀行) - 西 129m\n2. 三菱UFJ銀行 (銀行) - 西 140m\n3. みずほ銀行 (銀行) - 北 183m\n4. りそな銀行 (銀行) - 北東 190m\n5. 三菱UFJ銀行 (銀行) - 北 214m",
+      "keyword_score": 1.0,
+      "query_time": 0.0001633167266845703,
+      "llm_time": 3.7224631309509277,
+      "total_time": 3.722628593444824,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "金融"
+          ],
+          "subcategories": [
+            "銀行"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-05",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "三菱UFJ銀行渋谷支店の位置情報",
+      "expected_keywords": [
+        "三菱",
+        "UFJ",
+        "銀行",
+        "渋谷"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のコンビニはセブン-イレブンがあります。",
+      "context": "【同一エリア内のPOI関係】\n- セブン-イレブン と 渋谷 は同じエリア（area:west_mid）にあります\n- 大盛堂書店 と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と タイムズ は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- 啓文堂書店 と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.5,
+      "query_time": 0.007915496826171875,
+      "llm_time": 3.9456264972686768,
+      "total_time": 3.9535436630249023,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-06",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷駅周辺のコンビニを教えてください",
+      "expected_keywords": [
+        "コンビニ",
+        "ローソン",
+        "ファミリーマート",
+        "セブン"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷にあるカフェは以下の3つです：\n\n1. Urth Caffé\n2. スターバックス\n3. Real Drip Coffee No.12 by Ueshima Coffee House",
+      "context": "【検索結果】\n1. Urth Caffé (カフェ) - 北東 57m\n2. スターバックス (カフェ) - 東 67m\n3. Real Drip Coffee No.12 by Ueshima Coffee House (カフェ) - 東 76m\n4. 5 CROSSTIES COFFEE (カフェ) - 北東 86m\n5. タリーズコーヒー (カフェ) - 南 89m",
+      "keyword_score": 0.5,
+      "query_time": 0.000400543212890625,
+      "llm_time": 5.797525405883789,
+      "total_time": 5.797929048538208,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "飲食店"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-07",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷にあるカフェを3つ教えて",
+      "expected_keywords": [
+        "カフェ",
+        "コーヒー"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷エリアの映画館には以下があります：\n1. 東宝シネマ（北西 280m）\n2. シネクイント CINE QUINTO（北西 355m）\n3. ヒューマントラストシネマ渋谷（北 449m）\n4. Cinemarise（北西 471m）\n5. ホワイトシネクイント（北西 495m）\n\nこれらの映画館から選べます。",
+      "context": "【検索結果】\n1. 東宝シネマ (映画館) - 北西 280m\n2. シネクイント CINE QUINTO (映画館) - 北西 355m\n3. ヒューマントラストシネマ渋谷 (映画館) - 北 449m\n4. Cinemarise (映画館) - 北西 471m\n5. ホワイトシネクイント (映画館) - 北西 495m",
+      "keyword_score": 1.0,
+      "query_time": 0.00011968612670898438,
+      "llm_time": 11.76317310333252,
+      "total_time": 11.76329517364502,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "娯楽"
+          ],
+          "subcategories": [
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-08",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷の映画館を教えてください",
+      "expected_keywords": [
+        "映画館",
+        "シネマ",
+        "cinema"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷周辺の薬局は以下の場所があります：\n- オーエスドラッグ (西北方向中)\n- ＯＳドラッグ渋谷店 (西北方向中)\n- マツモトキヨシ (西北方向中)\n- 三千里薬局 (西北方向中)",
+      "context": "【同一エリア内のPOI関係】\n- オーエスドラッグ (northwest_mid)\n- ＯＳドラッグ渋谷店 (northwest_mid)\n- マツモトキヨシ (northwest_mid)\n- 三千里薬局 (northwest_mid)\n- YOKOTA (northwest_mid)",
+      "keyword_score": 1.0,
+      "query_time": 0.00017714500427246094,
+      "llm_time": 7.610713005065918,
+      "total_time": 7.610892295837402,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "医療"
+          ],
+          "subcategories": [
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-09",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷周辺の薬局はどこですか？",
+      "expected_keywords": [
+        "薬局",
+        "ドラッグ"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "以下が渋谷エリアのホテル情報です：\n\n1. 渋谷エクセルホテル東急 - 西 188m\n2. GRANDBEL HOTEL - 南 211m\n3. Tokyu Inn - 北 235m\n4. セルリアンタワー - 南西 280m\n5. ホテルメッツ渋谷 - 南東 323m\n\nこれらのホテルは渋谷駅周辺に位置しています。",
+      "context": "【検索結果】\n1. 渋谷エクセルホテル東急 (ホテル) - 西 188m\n2. GRANDBEL HOTEL (ホテル) - 南 211m\n3. Tokyu Inn (ホテル) - 北 235m\n4. セルリアンタワー (ホテル) - 南西 280m\n5. ホテルメッツ渋谷 (ホテル) - 南東 323m",
+      "keyword_score": 0.5,
+      "query_time": 0.0001327991485595703,
+      "llm_time": 12.151069641113281,
+      "total_time": 12.151205062866211,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "宿泊"
+          ],
+          "subcategories": [
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L1-10",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷にあるホテルを教えて",
+      "expected_keywords": [
+        "ホテル",
+        "宿泊"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅に最も近いコンビニはローソンです。距離は約102mです。",
+      "context": "【最寄りPOI情報】\n1. ローソン (コンビニ) - 渋谷駅から南へ102m\n2. セブン-イレブン (コンビニ) - 渋谷駅から東へ106m\n3. ファミリーマート (コンビニ) - 渋谷駅から南西へ135m\n4. ファミリーマート (コンビニ) - 渋谷駅から南西へ136m\n5. セブン-イレブン (コンビニ) - 渋谷駅から西へ168m",
+      "keyword_score": 0.8,
+      "query_time": 0.0001900196075439453,
+      "llm_time": 4.321392059326172,
+      "total_time": 4.32158350944519,
+      "metadata": {
+        "query_type": "proximity",
+        "analysis": {
+          "question_type": "proximity",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-01",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+      "expected_keywords": [
+        "コンビニ",
+        "近い",
+        "距離",
+        "m",
+        "メートル"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "東宝シネマから徒歩圏内（500m以内）にあるカフェとして、以下のような場所があります：\n\n1. カフェ フルール（原宿店）\n2. オリジナル スクエア（スクエアストア渋谷内）\n\nこれらのカフェは東宝シネマから比較的近いため、徒歩圏内と判断できます。具体的な位置や営業時間については、最新の情報確認をお勧めします。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.0004627704620361328,
+      "llm_time": 10.765470743179321,
+      "total_time": 10.76593542098999,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 500.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L2-02",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "徒歩",
+        "500m",
+        "圏内"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅と原宿駅の中間地点に近いカフェは見つかりませんでした。最寄りのカフェはUrth Caffé（北東 57m）、スターバックス（東 67m）、Real Drip Coffee No.12（東 76m）、5 CROSSTIES COFFEE（北東 86m）、タリーズコーヒー（南 89m）がありますが、これらは全て中間地点から若干離れた位置にあります。",
+      "context": "【検索結果】\n1. Urth Caffé (カフェ) - 北東 57m\n2. スターバックス (カフェ) - 東 67m\n3. Real Drip Coffee No.12 by Ueshima Coffee House (カフェ) - 東 76m\n4. 5 CROSSTIES COFFEE (カフェ) - 北東 86m\n5. タリーズコーヒー (カフェ) - 南 89m",
+      "keyword_score": 1.0,
+      "query_time": 0.0002808570861816406,
+      "llm_time": 14.133152484893799,
+      "total_time": 14.133435726165771,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-03",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+      "expected_keywords": [
+        "カフェ",
+        "中間",
+        "地点"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご指定の「渋谷神南郵便局」について直接情報はありませんが、近隣の郵便局から推測すると、周辺200m以内には飲食店は存在しない可能性が高いです。最寄りの「渋谷三郵便局」からも約300m離れているため、周辺には飲食店は見当たらないと思われます。近くの飲食店については、周辺の駅や主要道路沿いを探索することをお勧めします。",
+      "context": "【同一エリア内のPOI関係】\n- 渋谷松濤郵便局 (west_far)\n- 渋谷道玄坂郵便局 (west_far)\n- 渋谷青山通郵便局 (northeast_far)\n- 渋谷三郵便局 (southeast_mid)\n- 放送センター内郵便局 (northwest_far)",
+      "keyword_score": 1.0,
+      "query_time": 0.000125885009765625,
+      "llm_time": 12.150610446929932,
+      "total_time": 12.15073847770691,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "公共"
+          ],
+          "subcategories": [
+            "郵便局"
+          ],
+          "directions": [
+            "south",
+            "southeast",
+            "southwest"
+          ],
+          "areas": [
+            "south_station",
+            "south_near",
+            "south_mid",
+            "south_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far",
+            "southwest_station",
+            "southwest_near",
+            "southwest_mid",
+            "southwest_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 200.0,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-04",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+      "expected_keywords": [
+        "郵便局",
+        "200m",
+        "飲食店",
+        "周辺"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅から最も遠い映画館は「シネマート新宿」です。ただし、シネマート新宿は渋谷駅からバスや電車で約15-20分程かかります。最寄り駅は新宿駅になります。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 7.748603820800781e-05,
+      "llm_time": 12.825576305389404,
+      "total_time": 12.825655698776245,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "娯楽",
+            "交通"
+          ],
+          "subcategories": [
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L2-05",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅から最も遠い映画館はどれですか？",
+      "expected_keywords": [
+        "映画館",
+        "遠い",
+        "シネマ"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "コンテキスト情報から直接的に飲食店が集中しているエリアについて述べている情報はありませんが、一般的に渋谷駅周辺では「渋谷スクランブル交差点」や「渋谷109周辺」、「渋谷ヒカリエ周辺」などが飲食店が集中しています。これらのエリアは渋谷駅から徒歩数分圏内にあり、多くのレストラン、カフェ、バーなどが集まっています。ただし、具体的な情報がないため、正確な答えを出せません。近くの有料駐車場情報と混同しないように注意が必要です。",
+      "context": "【同一エリア内のPOI関係】\n- 高木ビル有料駐車場 (northwest_mid)\n- タイムズ (northwest_mid)\n- SHIBUYA FLAG PARKING (northwest_mid)\n- 渋谷 (northeast_near)\n- 渋谷 (west_mid)",
+      "keyword_score": 0.75,
+      "query_time": 0.0001347064971923828,
+      "llm_time": 13.544967889785767,
+      "total_time": 13.545105218887329,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-06",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+      "expected_keywords": [
+        "飲食店",
+        "集中",
+        "エリア",
+        "多い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "コンテキストから直接的な情報では、渋谷駅周辺のカフェとバーの数について具体的な数字は得られません。しかし、一般的な傾向として、渋谷は多くのカフェとバーが点在していますが、カフェの数が多い印象给您提供的信息来看，关于渋谷站周边的咖啡馆和酒吧数量并没有直接数据支持，但从一般经验来看，渋谷作为一个繁忙的商业和文化中心，咖啡馆的数量可能会多于酒吧。不过，这只是一个大致的推断，并非确切的数据。为了得到更准确的信息，建议查看最新的商业指南或在线地图服务。",
+      "context": "【同一エリア内のPOI関係】\n- ロッテリア と 渋谷 は同じエリア（area:west_mid）にあります\n- マクドナルド と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- マクドナルド と タイムズ は同じエリア（area:northwest_mid）にあります\n- マクドナルド と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- モスバーガー と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.06967544555664062,
+      "llm_time": 13.826028823852539,
+      "total_time": 13.895707607269287,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ",
+            "バー"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-07",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+      "expected_keywords": [
+        "カフェ",
+        "バー",
+        "多い",
+        "数"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のPOI構成から推定すると、「商業エリア」の特性がより強い傾向にあります。理由としては、多くの飲食店、ショッピング施設、映画館、ホテルなどが集積しているためです。また、大規模な地下鉄駅やバス Terminal があることも商業地域の特徴とされています。一方、住宅エリアの特徴である学校や公園は比較的少ない傾向があります。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.00011134147644042969,
+      "llm_time": 10.817565679550171,
+      "total_time": 10.817679405212402,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L2-08",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+      "expected_keywords": [
+        "商業",
+        "住宅",
+        "特性",
+        "POI"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺の医療施設（病院、クリニック、薬局）の分布は以下の通りです：\n\n1. area:north_mid：\n   - 湘南美容外科\n   - 渋谷サンクスクリニック\n   - ココカラファイン（薬局）\n\n2. area:west_mid：\n   - 松岡薬局\n\nこれらの施設は主に北中野地区と西中野地区に分散しています。",
+      "context": "【同一エリア内のPOI関係】\n- ポーラ 渋谷ビル 駐車場 と 湘南美容外科 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ディアファーマシー は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 渋谷サンクスクリニック は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ココカラファイン は同じエリア（area:north_mid）にあります\n- 渋谷 と 松岡薬局 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.0038404464721679688,
+      "llm_time": 11.52279782295227,
+      "total_time": 11.526642084121704,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "医療"
+          ],
+          "subcategories": [
+            "病院",
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-09",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+      "expected_keywords": [
+        "病院",
+        "クリニック",
+        "薬局",
+        "医療",
+        "分布"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "質問の内容から直接的なPOI情報が得られませんが、質問に答えると：\n\n渋谷駅周辺の宿泊施設の密度は高い可能性があります。理由は以下の通りです：\n\n1. 交通の便：渋谷駅は主要な鉄道駅であり、多くの路線が接続しています。これにより、国内外からのアクセスが容易です。\n\n2. 商業エリア：周辺には多くのショッピングモールや飲食店があり、観光客にとって魅力的な場所です。\n\n3. 文化施設：渋谷は若者文化の中心地として知られており、音楽、ファッション、映画など多くのイベントが開催されます。\n\nこれらの要素から、宿泊施設の需要が高まると推測できます。ただし、具体的なデータがないため、確実な断言はできません。",
+      "context": "【同一エリア内のPOI関係】\n- 高木ビル有料駐車場 (northwest_mid)\n- タイムズ (northwest_mid)\n- SHIBUYA FLAG PARKING (northwest_mid)\n- 渋谷 (northeast_near)\n- 渋谷 (west_mid)",
+      "keyword_score": 0.6,
+      "query_time": 0.00011181831359863281,
+      "llm_time": 18.38138508796692,
+      "total_time": 18.381499528884888,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-10",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "宿泊",
+        "密度",
+        "高い",
+        "低い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご質問に直接答えるためには、具体的なデータが必要ですが、現在の集計結果では飲食店の情報が0件しかないため、渋谷駅周辺のカフェの分布については評価できません。他の情報源からデータを集め直すことで、より正確な回答ができるかと思います。ご了承ください。",
+      "context": "【集計結果】\n- 飲食店: 0件",
+      "keyword_score": 0.25,
+      "query_time": 0.00025773048400878906,
+      "llm_time": 7.851033687591553,
+      "total_time": 7.851293325424194,
+      "metadata": {
+        "east_pois": 51,
+        "west_pois": 58,
+        "query_type": "comparison",
+        "analysis": {
+          "question_type": "aggregation",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast",
+            "west",
+            "northwest",
+            "southwest"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far",
+            "west_station",
+            "west_near",
+            "west_mid",
+            "west_far",
+            "northwest_station",
+            "northwest_near",
+            "northwest_mid",
+            "northwest_far",
+            "southwest_station",
+            "southwest_near",
+            "southwest_mid",
+            "southwest_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-11",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+      "expected_keywords": [
+        "カフェ",
+        "東",
+        "西",
+        "多い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺の映画館は3つあります：\n1. 東宝シネマ\n2. Cinemarise\n\n劇場は2つあります：\n1. SHIBUYA FLAG PARKING\n2. タイムズ\n\nしたがって、映画館の方が1つ多いです。",
+      "context": "【同一エリア内のPOI関係】\n- 東宝シネマ と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 東宝シネマ と タイムズ は同じエリア（area:northwest_mid）にあります\n- 東宝シネマ と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- Cinemarise と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- Cinemarise と タイムズ は同じエリア（area:northwest_mid）にあります",
+      "keyword_score": 0.75,
+      "query_time": 0.0014801025390625,
+      "llm_time": 8.092183113098145,
+      "total_time": 8.093666315078735,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "娯楽",
+            "交通"
+          ],
+          "subcategories": [
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-12",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+      "expected_keywords": [
+        "映画館",
+        "劇場",
+        "数",
+        "多い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺ではコンビニが比較的充実しています。主にファミリーマートやローソンなどが多く点在しています。一方、大型スーパーは比較的少ない傾向にあります。セブンイレブン、全家、コモディティなどのコンビニチェーンが生活利便性を高めていますが、スーパーマーケットとしてはセブン-イレブン スーパー やマックスバリュ渋谷店などが近くにあります。したがって、コンビニは比較的充実しているものの、スーパーに関しては若干不足している印象です。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.01458430290222168,
+      "llm_time": 13.303818225860596,
+      "total_time": 13.318405866622925,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ",
+            "スーパー"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L2-13",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+      "expected_keywords": [
+        "コンビニ",
+        "スーパー",
+        "生活",
+        "利便性",
+        "充実"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺の主要な金融機関は「ポーラ 渋谷ビル 駐車場」エリアに集中しています。ここには日本生活金融公庫、野村證券、セブン銀行、三井住友信託銀行、東日本銀行などの金融機関があります。これらの金融サービスを利用したい場合、「ポーラ 渋谷ビル 駐車場」エリアは便利な場所と言えるでしょう。\n\nただし、郵便局については具体的な情報がありませんので、最寄りの郵便局も併せて検討することをお勧めします。例えば、渋谷郵便局や渋谷駅前の郵便局などがあります。",
+      "context": "【同一エリア内のPOI関係】\n- ポーラ 渋谷ビル 駐車場 と 日本生活金融公庫 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 野村證券 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と セブン銀行 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 三井住友信託銀行 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 東日本銀行 は同じエリア（area:north_mid）にあります",
+      "keyword_score": 0.75,
+      "query_time": 0.003902912139892578,
+      "llm_time": 15.811747789382935,
+      "total_time": 15.815654277801514,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "金融",
+            "公共"
+          ],
+          "subcategories": [
+            "銀行",
+            "郵便局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-14",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+      "expected_keywords": [
+        "銀行",
+        "郵便局",
+        "金融",
+        "アクセス"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のPOIカテゴリ上位3つは以下の通りです：\n\n1. 商業施設（タイムズ、高木ビル有料駐車場）\n2. 停車場（SHIBUYA FLAG PARKING、高木ビル有料駐車場）\n3. 住居/交通（渋谷駅）\n\nこれらのPOIが最も密集しているため、これが最も多いPOIカテゴリとなります。",
+      "context": "【同一エリア内のPOI関係】\n- 高木ビル有料駐車場 (northwest_mid)\n- タイムズ (northwest_mid)\n- SHIBUYA FLAG PARKING (northwest_mid)\n- 渋谷 (northeast_near)\n- 渋谷 (west_mid)",
+      "keyword_score": 0.75,
+      "query_time": 0.00011754035949707031,
+      "llm_time": 9.467939376831055,
+      "total_time": 9.468059062957764,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L2-15",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+      "expected_keywords": [
+        "カテゴリ",
+        "多い",
+        "上位",
+        "ランキング"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅から徒歩5分以内に以下のカフェがあります：\n\n1. ファンタスティックアイシング（Fantastic Icing）\n2. 渋谷CAFE&BAR ZOZEN\n3. カフェラッセ アリオ渋谷\n\nこれらのカフェは、渋谷駅から近接しています。ご希望の場所にexactに位置しているか確認の上、お訪ねください。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.75,
+      "query_time": 8.58306884765625e-05,
+      "llm_time": 9.80592942237854,
+      "total_time": 9.80601716041565,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 400.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L3-01",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "徒歩",
+        "5分",
+        "400m"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "現在の検索結果では、どの映画館も電話番号が提供されていません。他の情報が必要です。電話番号が公表されている渋谷の映画館について知りたい場合は、具体的な映画館名を教えていただけますか？",
+      "context": "【検索結果】\n1. 東宝シネマ (映画館) - 北西 280m\n2. シネクイント CINE QUINTO (映画館) - 北西 355m\n3. ヒューマントラストシネマ渋谷 (映画館) - 北 449m\n4. Cinemarise (映画館) - 北西 471m\n5. ホワイトシネクイント (映画館) - 北西 495m",
+      "keyword_score": 1.0,
+      "query_time": 0.00014591217041015625,
+      "llm_time": 7.359819412231445,
+      "total_time": 7.359967231750488,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "娯楽"
+          ],
+          "subcategories": [
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-02",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "電話番号がわかっている渋谷の映画館を教えてください",
+      "expected_keywords": [
+        "映画館",
+        "電話",
+        "番号"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご質問の条件に合致する情報はありません。リストされたレストランの中でウェブサイトの情報は提供されていません。しかし、これらのレストランの近くにはウェブサイトが存在する可能性があります。例えば、最寄りの「Matsue」や「wagyu&steak TEPPANYAKI 10 SHIBUYA」などの公式ウェブサイトをご確認いただけます。",
+      "context": "【検索結果】\n1. Matsue (レストラン) - 北東 49m\n2. wagyu&steak TEPPANYAKI 10 SHIBUYA (レストラン) - 北東 51m\n3. UP Noodle TOKYO (レストラン) - 北東 54m\n4. 天ぷら　天寅 (レストラン) - 東 55m\n5. 半笑 (レストラン) - 北東 59m",
+      "keyword_score": 1.0,
+      "query_time": 0.0004982948303222656,
+      "llm_time": 8.750923156738281,
+      "total_time": 8.751424312591553,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "飲食店"
+          ],
+          "subcategories": [
+            "レストラン"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-03",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "ウェブサイトを持っている渋谷のレストランを教えてください",
+      "expected_keywords": [
+        "レストラン",
+        "ウェブサイト",
+        "サイト"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "「渋谷」という名前が含まれるホテルはありません。ただし、近くには「渋谷エクセルホテル東急」があります。",
+      "context": "【検索結果】\n1. 渋谷エクセルホテル東急 (ホテル) - 西 188m\n2. GRANDBEL HOTEL (ホテル) - 南 211m\n3. Tokyu Inn (ホテル) - 北 235m\n4. セルリアンタワー (ホテル) - 南西 280m\n5. ホテルメッツ渋谷 (ホテル) - 南東 323m",
+      "keyword_score": 1.0,
+      "query_time": 0.00012969970703125,
+      "llm_time": 4.764563322067261,
+      "total_time": 4.764695167541504,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "宿泊"
+          ],
+          "subcategories": [
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-04",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "「渋谷」という名前が含まれるホテルを教えてください",
+      "expected_keywords": [
+        "渋谷",
+        "ホテル",
+        "名前"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "はい、渋谷駅周辺にはセブン-イレブンがあります。セブン-イレブンはarea:west_midに位置し、24時間営業のコンビニとして知られています。",
+      "context": "【同一エリア内のPOI関係】\n- セブン-イレブン と 渋谷 は同じエリア（area:west_mid）にあります\n- 大盛堂書店 と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と タイムズ は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- 啓文堂書店 と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.0075800418853759766,
+      "llm_time": 6.41173791885376,
+      "total_time": 6.419320106506348,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-05",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+      "expected_keywords": [
+        "コンビニ",
+        "24時間",
+        "営業"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅から500m以内にある「cafe COFFIX」は、電話番号が03-6451-8222、ウェブサイトがhttp://www.coffix.co.jp/ です。このカフェでは美味しいコーヒーと食事を楽しむことができます。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.00010704994201660156,
+      "llm_time": 7.270395517349243,
+      "total_time": 7.2705042362213135,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 500.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L3-06",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "500m",
+        "電話",
+        "ウェブサイト"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺では、『SHIBUYA CINEMA complex』という複合施設内に『Café & Restaurant Cinema』があります。ここは映画館と直結しており、駅から約100m、映画館からも近い位置にあります。カフェ利用後にはすぐに映画鑑賞が楽しめます。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.6,
+      "query_time": 0.13326668739318848,
+      "llm_time": 8.165868520736694,
+      "total_time": 8.299139022827148,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "娯楽",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ",
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 300.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L3-07",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+      "expected_keywords": [
+        "カフェ",
+        "駅",
+        "300m",
+        "映画館",
+        "200m"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "松岡薬局が近い渋谷駅周辺の clinic は「渋谷サンクスクリニック」があります。",
+      "context": "【同一エリア内のPOI関係】\n- ポーラ 渋谷ビル 駐車場 と 湘南美容外科 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ディアファーマシー は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 渋谷サンクスクリニック は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ココカラファイン は同じエリア（area:north_mid）にあります\n- 渋谷 と 松岡薬局 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.5,
+      "query_time": 0.008354425430297852,
+      "llm_time": 5.027555227279663,
+      "total_time": 5.035912752151489,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "医療"
+          ],
+          "subcategories": [
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 200.0,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-08",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+      "expected_keywords": [
+        "薬局",
+        "クリニック",
+        "200m",
+        "近く"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアは「area:west_mid」です。このエリアにはセブン-イレブンと啓文堂書店、そして渋谷駅自体にもコンビニが存在するため、合計で3軒以上のコンビニが集中しています。",
+      "context": "【同一エリア内のPOI関係】\n- セブン-イレブン と 渋谷 は同じエリア（area:west_mid）にあります\n- 大盛堂書店 と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と タイムズ は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- 啓文堂書店 と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.007531881332397461,
+      "llm_time": 9.006436586380005,
+      "total_time": 9.013970613479614,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L3-09",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+      "expected_keywords": [
+        "コンビニ",
+        "3軒",
+        "集まっている",
+        "エリア"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご指定の条件（渋谷駅から500m以内でカフェではなくバー）に該当する情報はありません。現在のデータでは、近隣のPOIはカフェや美容室が主であり、バーは見つかりません。近くのバー情報を追加いただければ、より具体的な提案ができるかもしれません。",
+      "context": "【経路上のPOI】\n- カフェ・ド・クリエ から 48m の位置に Tachikichi Shibuya があります\n- EYES CAFE から 73m の位置に Tokyo Salon があります",
+      "keyword_score": 1.0,
+      "query_time": 0.0004899501800537109,
+      "llm_time": 7.511656999588013,
+      "total_time": 7.512149095535278,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ",
+            "バー"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 500.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L3-10",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+      "expected_keywords": [
+        "バー",
+        "500m",
+        "カフェ",
+        "ではなく"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で保育園を開設する場合、最適な場所は「渋谷公園通り」付近が推奨されます。この地域は、渋谷公園通りにある公園が近くにあり、子供たちの遊ぶ場所として適しています。また、渋谷交番も近くに位置しているため、安全性面でも良好です。ただし、具体的な施設の場所は開設計画や利用者の利便性を考慮した上で決定されるべきです。",
+      "context": "【同一エリア内のPOI関係】",
+      "keyword_score": 1.0,
+      "query_time": 0.0001659393310546875,
+      "llm_time": 11.717774391174316,
+      "total_time": 11.717942476272583,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "レジャー"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-01",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+      "expected_keywords": [
+        "保育園",
+        "公園",
+        "交番",
+        "最適",
+        "場所"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で高齢者向けデイサービスを開設する場合、医療施設へのアクセスを重視すると、**渋谷（west_mid）**エリアが最適です。このエリアには渋谷駅がありますので、周辺には多くの医療施設や病院が集まっています。例えば、渋谷病院や渋谷赤十字病院などがあります。また、交通アクセスも良好で、高齢者の方々にとって利便性が高まります。",
+      "context": "【同一エリア内のPOI関係】\n- 高木ビル有料駐車場 (northwest_mid)\n- タイムズ (northwest_mid)\n- SHIBUYA FLAG PARKING (northwest_mid)\n- 渋谷 (northeast_near)\n- 渋谷 (west_mid)",
+      "keyword_score": 0.8,
+      "query_time": 0.00010442733764648438,
+      "llm_time": 12.285903215408325,
+      "total_time": 12.286009311676025,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-02",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+      "expected_keywords": [
+        "高齢者",
+        "デイサービス",
+        "医療",
+        "アクセス",
+        "適している"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で学習塾を開設する場合、以下の場所が適しています：\n\n1. **渋谷スクランブル交差点**  \n   - 渋谷駅から徒歩約3分\n   - コンビニ：ファミリーマート渋谷スクランブル前原町店（徒歩約1分）\n\n2. **渋谷109前**  \n   - 渋谷駅から徒歩約5分\n   - コンビニ：ローソン渋谷109前店（徒歩約1分）\n\n3. **渋谷ヒカリエ前**  \n   - 渋谷駅から徒歩約5分\n   - コンビニ：セブンイレブン渋谷ヒカリエ店（徒歩約2分）\n\nこれらの場所は、渋谷駅からのアクセスが良く、コンビニも近くにあるため、生徒や保護者の利便性が高くなります。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.8,
+      "query_time": 0.007591724395751953,
+      "llm_time": 20.86509943008423,
+      "total_time": 20.872694969177246,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L4-03",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+      "expected_keywords": [
+        "学習塾",
+        "駅",
+        "アクセス",
+        "コンビニ",
+        "候補"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で待ち合わせスポットとして最適な場所は「SHIBUYA FLAG PARKING」（northwest_mid）です。ここはわかりやすく、周囲には飲食店も多数ありますので便利です。",
+      "context": "【同一エリア内のPOI関係】\n- 高木ビル有料駐車場 (northwest_mid)\n- タイムズ (northwest_mid)\n- SHIBUYA FLAG PARKING (northwest_mid)\n- 渋谷 (northeast_near)\n- 渋谷 (west_mid)",
+      "keyword_score": 0.75,
+      "query_time": 0.00012612342834472656,
+      "llm_time": 6.1726109981536865,
+      "total_time": 6.172738790512085,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-04",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+      "expected_keywords": [
+        "待ち合わせ",
+        "最適",
+        "わかりやすい",
+        "飲食店"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で観光客向けの案内所を設置するなら、東口の「渋谷109」前の広場が効果的です。ここは多くの観光客が出入りする場所であり、渋谷駅から徒歩1分の距離にあります。また、周辺には渋谷スクランブル交差点や渋谷ヒカリエなど、人気の観光スポットが多く集中しています。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.8,
+      "query_time": 0.00010919570922851562,
+      "llm_time": 11.28341269493103,
+      "total_time": 11.283524751663208,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L4-05",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+      "expected_keywords": [
+        "観光",
+        "案内所",
+        "効果的",
+        "スポット",
+        "アクセス"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺はすでに多くのカフェが存在しますが、具体的な競合となるカフェの数は情報がありません。ただし、周辺には主要な交通アクセスや商業施設があるため、潜在的な顧客層は広い可能性があります。\n\n**向き：**\n1. **渋谷駅**: 大量の通勤・通学客が集まるため、朝夕の人気時間帯に営業すれば高い集客が期待できます。\n2. **モスバーガー**: カジュアルな食事場所としての需要があり、新たなカフェが位置することで補完的な役割を果たす可能性があります。\n3. **ロッテリア**: 子供や家族連れからの人気が高いので、ファミリーフレンドリーなカフェを提供すれば好評価を得やすいでしょう。\n\n**不向き：**\n1. **競合の多さ**: カフェ業界は非常に競争が激しく、既存のカフェと差別化が必要です。\n2. **既存の飲食施設**: ロッテリアやモスバーガーが近くにあるため、これらとの競合が予想されます。\n\n**総括：**\n出店は可能ですが、新たなコンセプトや特徴を明確にし、既存の飲食施設との差別化が必要です。また、朝夕の人気時間帯の営業や、家族連れ向けのサービスを強化すると効果的かもしれません。",
+      "context": "【同一エリア内のPOI関係】\n- ロッテリア と 渋谷 は同じエリア（area:west_mid）にあります\n- マクドナルド と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- マクドナルド と タイムズ は同じエリア（area:northwest_mid）にあります\n- マクドナルド と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- モスバーガー と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.8,
+      "query_time": 0.06762337684631348,
+      "llm_time": 31.503257274627686,
+      "total_time": 31.57088351249695,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-06",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+      "expected_keywords": [
+        "カフェ",
+        "出店",
+        "競合",
+        "集客",
+        "判断"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のコンビニエンスストアの分布を見ると、主要な交通路や商業施設の近くには既に多くの店舗が存在しています。具体的な分布は最新のデータを確認する必要がありますが、一般的な状況では以下のポイントを考慮すると新規コンビニの出店余地について推測できます：\n\n1. **渋谷駅周辺**：駅直結の複数店舗があり、出店余地は限られています。\n2. **渋公前通り**：多くの店舗が密集しています。\n3. **原宿駅周辺**：一部の商店街には店舗が点在しています。\n4. **代々木上原**：比較的広大なエリアで、一部の空白地帯がありますが、既存店舗も密接に配置されています。\n\nこれらの観察から、渋谷駅周辺の中心部での新規出店は難しい可能性が高いですが、代々木上原やその他の一部地域では出店余地があるかもしれません。最新の調査や地図データを確認することでより正確な判断ができるでしょう。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.8,
+      "query_time": 0.0077342987060546875,
+      "llm_time": 24.82287359237671,
+      "total_time": 24.830610513687134,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L4-07",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+      "expected_keywords": [
+        "コンビニ",
+        "出店",
+        "余地",
+        "分布",
+        "密度"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で新規ベーカリーを出店する際の戦略は以下の通りです：\n\n1. **ロッテリア**：\n   - 同じエリア（area:west_mid）に存在し、直接的な競合となる可能性があります。\n   - 競合分析を行い、市場シェアや顧客層を把握。\n\n2. **モスバーガー**：\n   - 同じエリア（area:west_mid）にあり、客層が一部重複する可能性があります。\n   - ベーカリーとハンバーガーの組み合わせで新たな顧客層を開拓。\n\n3. **SHIBUYA FLAG PARKING, TIME'S, 高木ビル有料駐車場**：\n   - 同じエリア（area:northwest_mid）にあり、駐車場利用者へのアピールが可能。\n   - 周辺のカフェとの協業を検討し、駐車場利用者向けの飲食サービスを提供。\n\n4. **協業可能性のカフェ**：\n   - **SHIBUYA FLAG PARKING周辺のカフェ**：駐車場利用者へのアピールが可能。\n   - **TIME'S周辺のカフェ**：ビジネス利用者が多いため、会議や打ち合わせの休憩スポットとして活用できる。\n   - **高木ビル周辺のカフェ**：ビジネス利用者や周辺のオフィス利用者にアピール可能。\n\n5. **戦略的配置**：\n   - 渋谷駅周辺の主要な交通路口や商業施設に近い位置に配置。\n   - SHIBUYA FLAG PARKINGやTIME'Sなどの駐車場周辺にも出店を検討。\n\n6. **プロモーション戦略**：\n   - カフェとのコラボレーションメニューを展開。\n   - 周辺のカフェからのリファーラル集客を促進するための提携プログラムを設ける。\n\nこれらの戦略により、新規ベーカリーは競合と協業の両面から強固な立場を築くことができます。",
+      "context": "【同一エリア内のPOI関係】\n- ロッテリア と 渋谷 は同じエリア（area:west_mid）にあります\n- マクドナルド と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- マクドナルド と タイムズ は同じエリア（area:northwest_mid）にあります\n- マクドナルド と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- モスバーガー と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.8333333333333334,
+      "query_time": 0.07398509979248047,
+      "llm_time": 45.55701947212219,
+      "total_time": 45.63100838661194,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-08",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+      "expected_keywords": [
+        "パン屋",
+        "ベーカリー",
+        "出店",
+        "競合",
+        "カフェ",
+        "戦略"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で深夜営業のバーを出店する際、既存のバーとの競合を避けるためには、以下のエリアを提案します：\n\n1. **原宿通り沿い**：ここは渋谷駅から徒歩約5分と便利で、若者層が多いため、バーの客層に適しています。また、他のバーが少ないエリアであるため競合を避けられます。\n\n2. **代官山方面**：渋谷駅から徒歩約10分で到着でき、代官山の夜の文化と連携しやすい場所です。このエリアは高級感があり、深夜営業のバーもいくつか存在しているため、既存の競合を避けつつ、新しい選択肢を提供できます。\n\n3. **神泉通り**：渋谷駅から徒歩約15分と少し離れており、より落ち着いた雰囲気を提供できる可能性があります。このエリアは比較的静かで、バーの競合が少ないため、新たなバーの開設に適しています。\n\nこれらのエリアはそれぞれ異なる魅力と特徴を持ち、競合を避ける Meanwhile, they also offer unique advantages for a new bar. したがって、具体的な場所を選定する際は、周辺の環境やターゲットとなる客層をさらに詳細に調査することをお勧めします。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.8333333333333334,
+      "query_time": 0.13535642623901367,
+      "llm_time": 28.9978609085083,
+      "total_time": 29.133222341537476,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "バー"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L4-09",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+      "expected_keywords": [
+        "バー",
+        "深夜",
+        "出店",
+        "競合",
+        "アクセス",
+        "エリア"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で薬局を出店する場合、以下の点を考慮すると、出店の可否を判断できます：\n\n1. **競合店との距離**：\n   - 渋谷駅周辺には松岡薬局があります。同様の地域（area:west_mid）にあるため、直接的な競合が予想されます。\n\n2. **医療施設との近接性**：\n   - ポーラ 渋谷ビル 駐車場付近には湘南美容外科やディアファーマシー、ココカラファイン、そして渋谷サンクスクリニックがあります。これらの医療施設と近接しているため、患者の医療需要が既に高いエリアにあると考えられます。\n\n総合的に判断すると、渋谷駅周辺での新規出店は、既存の薬局（特に松岡薬局）との競合が予想される一方で、医療施設密集地帯であるため、潜在的な顧客層は多いですが、競争が厳しいエリアと言えるでしょう。具体的な出店決定には、市場調査や詳細な商圈分析が必要となります。",
+      "context": "【同一エリア内のPOI関係】\n- ポーラ 渋谷ビル 駐車場 と 湘南美容外科 は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ディアファーマシー は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と 渋谷サンクスクリニック は同じエリア（area:north_mid）にあります\n- ポーラ 渋谷ビル 駐車場 と ココカラファイン は同じエリア（area:north_mid）にあります\n- 渋谷 と 松岡薬局 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.8333333333333334,
+      "query_time": 0.0038132667541503906,
+      "llm_time": 25.678730487823486,
+      "total_time": 25.682547092437744,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "医療"
+          ],
+          "subcategories": [
+            "病院",
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L4-10",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+      "expected_keywords": [
+        "薬局",
+        "出店",
+        "競合",
+        "病院",
+        "クリニック",
+        "可否"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のカフェ数について、検索半径を500mと300mで比較すると、結果は異なる可能性があります。カフェの配置や種類が変わる可能性があるため、正確な数値を得るには実地調査が必要ですが、一般的には以下のように推測できます：\n\n1. **500m検索**：広い範囲では多くのカフェが見つかる可能性があります。渋谷スクランブル交差点周辺、渋谷109通り、渋谷公園通りなど、多くのカフェが集中しています。\n\n2. **300m検索**：狭い範囲ではカフェの数が減る可能性があります。中心的な場所ほどカフェが多くなる傾向にあるため、周辺地域では数が減少します。\n\n結論として、「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変更しても依然として成立しますが、具体的な数値は変わります。300m検索でも多くのカフェが見つかるため、カフェの密集度は変わらないものの、全体的な数は減少します。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.06655740737915039,
+      "llm_time": 25.35131287574768,
+      "total_time": 25.41787338256836,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": 500.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-01",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+      "expected_keywords": [
+        "カフェ",
+        "500m",
+        "300m",
+        "比較",
+        "成立"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺の飲食店が充実しているという評価は、カフェを除外した場合でも成立します。理由は以下の通りです：\n\n1. ロッテリア：ハンバーガーチェーン店\n2. モスバーガー：ハンバーガーチェーン店\n\nこれらの飲食店は全て「ロードサイド」や「通り沿い」に位置しており、多くの人々が立ち寄りやすい場所に設置されています。また、両店とも24時間営業を行っているため、夜遅くまで利用可能で便利です。\n\n一方、SHIBUYA FLAG PARKINGやタイムズ、高木ビル有料駐車場は駐車場を提供している施設であり、飲食店ではありません。よって、カフェを除いた飲食店についての評価では、「渋谷駅周辺は飲食店が充実している」という評価は依然として成り立ちます。",
+      "context": "【同一エリア内のPOI関係】\n- ロッテリア と 渋谷 は同じエリア（area:west_mid）にあります\n- マクドナルド と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- マクドナルド と タイムズ は同じエリア（area:northwest_mid）にあります\n- マクドナルド と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- モスバーガー と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.06986236572265625,
+      "llm_time": 20.84981679916382,
+      "total_time": 20.919682025909424,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L5-02",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+      "expected_keywords": [
+        "飲食店",
+        "充実",
+        "カフェ",
+        "除外",
+        "成立"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径は約0.3km（300m）以内です。これは「セブン-イレブン」が渋谷エリア（area:west_mid）に存在するため、300m以内にコンビニがあることを意味します。",
+      "context": "【同一エリア内のPOI関係】\n- セブン-イレブン と 渋谷 は同じエリア（area:west_mid）にあります\n- 大盛堂書店 と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と タイムズ は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- 啓文堂書店 と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.007385969161987305,
+      "llm_time": 8.974902868270874,
+      "total_time": 8.982291460037231,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L5-03",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+      "expected_keywords": [
+        "コンビニ",
+        "密度",
+        "十分",
+        "最小",
+        "半径"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺と恵比寿駅周辺の比較では、直接的なPOI情報が提示されていないため、提供できる情報は限られています。しかし、渋谷駅周辺の情報を元に推測します。\n\n### 渋谷駅周辺（評価軸）\n\n1. **医療施設の数**\n   - 具体的な医療施設の情報はありませんが、渋谷駅周辺には複数の病院や診療所が存在します。例えば、渋谷病院、渋谷総合医療センターなどがあります。\n\n2. **薬局の数**\n   - 薬局については具体的な情報がありませんが、駅周辺には薬局がいくつか存在することが予想されます。\n\n3. **公共施設（郵便局、交番）の有無**\n   - **郵便局**: 渋谷中央街郵便局が存在します（area:west_mid）。\n   - **交番**: 宇田川交番（area:northwest_mid）があります。ただし、宇田川交番は宇田川駅周辺に位置していますので、直接渋谷駅周辺の情報とは一致しません。\n\n### 恵比寿駅周辺（評価軸）\n\n1. **医療施設の数**\n   - 恵比寿駅周辺には特定の医療施設の情報がありません。\n\n2. **薬局の数**\n   - 薬局の情報もありません。\n\n3. **公共施設（郵便局、交番）の有無**\n   - **郵便局**: 具体的な情報はありません。\n   - **交番**: 提供された情報からは確認できません。\n\n### 結論\n\n渋谷駅周辺の方が、医療施設や公共施設（特に郵便局と交番）の数が多いため、高齢者向け住宅の候補地としては優れた選択肢と言えるでしょう。恵比寿駅周辺の情報が不足しているため、より詳細な評価を行う場合は、これらの施設の実際の数や距離などの追加情報を検討することをお勧めします。",
+      "context": "【同一エリア内のPOI関係】\n- ポーラ 渋谷ビル 駐車場 と 渋谷神南郵便局 は同じエリア（area:north_mid）にあります\n- 渋谷 と 渋谷中央街郵便局 は同じエリア（area:west_mid）にあります\n- SHIBUYA FLAG PARKING と 宇田川交番 は同じエリア（area:northwest_mid）にあります\n- タイムズ と 宇田川交番 は同じエリア（area:northwest_mid）にあります\n- 高木ビル有料駐車場 と 宇田川交番 は同じエリア（area:northwest_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.0013909339904785156,
+      "llm_time": 48.08200287818909,
+      "total_time": 48.083396911621094,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "交通",
+            "公共",
+            "医療"
+          ],
+          "subcategories": [
+            "郵便局",
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "L5-04",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+      "expected_keywords": [
+        "高齢者",
+        "渋谷",
+        "恵比寿",
+        "比較",
+        "医療",
+        "薬局",
+        "公共"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺は子育て世帯向けの居住地として、いくつかの要素で評価できます：\n\n1. **公園**：渋谷公園通り、代々木公園、武蔵野台地など、複数の広大な公園があり、子供たちの遊ぶ場所として適しています。\n\n2. **保育施設**：周辺には多種多様な保育園が点在しており、子育て支援体制が整っています。\n\n3. **医療施設**：渋谷区立渋谷病院や渋谷駅前メディカルセンターなど、子供の健康を守るための医療施設が充実しています。\n\n4. **スーパー**：ライフ、セブンイレブン、ローソンなど、コンビニエンスストアが密集しており、日常的な買い物は非常に便利です。\n\n総合的に見ると、渋谷駅周辺は子育て世帯にとって理想的な居住地の一つと言えます。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.007456541061401367,
+      "llm_time": 21.55310082435608,
+      "total_time": 21.56056022644043,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "商店",
+            "交通",
+            "レジャー"
+          ],
+          "subcategories": [
+            "スーパー"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-05",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+      "expected_keywords": [
+        "子育て",
+        "居住",
+        "公園",
+        "保育",
+        "医療",
+        "スーパー",
+        "総合"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺はビジネスパーソンにとって理想的な立地です。以下、カフェ、コンビニ、金融機関について評価します：\n\n1. **カフェ（作業場所）**\n   - 豊富な選択肢：SHIBUYA 109カフェ、スターバックス、カフェデルモントなど\n   - 気候対策：屋内と屋外の座席が用意されているため、天候に関係なく作業できる\n\n2. **コンビニ（利便性）**\n   - 24時間営業：セブンイレブン、ローソン、ファミリーマートなど多数存在\n   - ディスカウントストア：コープスクリーンなどもあり、食料品も購入可能\n\n3. **金融機関（銀行、ATM）**\n   - 複数の銀行支店：三井住友銀行、三菱UFJ銀行、りそな銀行などが渋谷駅周辺に多数設置\n   - ATM：コンビニ内や銀行支店内に多数設置されており、24時間利用可能\n\nこれらの要素により、渋谷駅周辺はビジネスパーソンにとって非常に便利な場所となっています。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 1.2443809509277344,
+      "llm_time": 27.068041563034058,
+      "total_time": 28.312427520751953,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "商店",
+            "交通",
+            "金融"
+          ],
+          "subcategories": [
+            "カフェ",
+            "コンビニ",
+            "銀行"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-06",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+      "expected_keywords": [
+        "ビジネス",
+        "カフェ",
+        "コンビニ",
+        "金融",
+        "銀行",
+        "評価"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺は観光客にとって魅力的なエリアです。以下に観光スポット、飲食店、宿泊施設の観点から強みと弱みを分析します。\n\n### 観光スポット\n**強み：**\n- **表参道ヒルズ**：高級ブランドショップが並び、ショッピングの中心地。\n- **渋谷スクランブル交差点**：世界で最も混雑する交差点の一つで、写真撮影スポットとしても人気。\n- **SHIBUYA109**：若者文化の象徴で、音楽、ファッションイベントなど多数開催。\n\n**弱み：**\n- **観光情報不足**：一部の外国人観光客は、特定の観光スポットやイベントについて情報が不足している可能性がある。\n- **観光客の過密**：繁忙期には観光客が多く、混雑が生じることがある。\n\n### 飲食店\n**強み：**\n- **多様な食文化**：和食、洋食、アジア各国料理など、様々なジャンルの飲食店が揃う。\n- **夜の飲食店**：深夜営業の飲食店が多く、観光客が滞在中でも食事を楽しむことができる。\n\n**弱み：**\n- **価格帯の広さ**：高級レストランから低価格の立ち食い寿司まで幅広くありますが、高価格帯の飲食店が多い。\n\n### 宿泊施設\n**強み：**\n- **アクセスの良さ**：渋谷駅周辺には多くのホテルがあり、交通機関へのアクセスが良好。\n- **多様性**：ビジネスホテルからリゾートスタイルのホテルまで、さまざまなタイプの宿泊施設が存在。\n\n**弱み：**\n- **宿泊費が高い**：渋谷は東京の中心部に位置し、高層ビル街であるため、宿泊料金は比較的高い傾向にある。\n- **宿泊施設の数が限られている**：特に高級ホテルは予約が困難な場合もある。\n\n### 結論\n渋谷駅周辺は観光客にとって魅力的なエリアであり、多様な",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.00012803077697753906,
+      "llm_time": 46.10510206222534,
+      "total_time": 46.10523247718811,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-07",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+      "expected_keywords": [
+        "観光",
+        "飲食店",
+        "宿泊",
+        "強み",
+        "弱み",
+        "分析"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺で「雰囲気の良い」カフェとして、以下の場所を推荐します：\n\n1. **cafe FUGUE（フージュ）**\n   - 地址：渋谷区渋谷1-14-2 渋谷スクランブルスクエア 5F\n   - 雰围感：店内はコンテンポラリーなデザインで、落ち着いた雰囲気を楽しめます。\n\n2. **TOKYO BAKERY & CAFE（東京ベーカリー&カフェ）**\n   - 地址：渋谷区道玄坂2-3-8 タカシマヤ 6F\n   - 雰围感：高級感のあるインテリアで、コーヒーとスイーツが楽しめる大人の雰囲気のカフェです。\n\nこれらのカフェは、雰囲気重視の観点から評価が高く、多くの訪問者から好評を得ています。\n\nただし、カフェの雰囲気は時間帯や季節によって変化する可能性があります。また、最新の営業状況やメニューの変更については直接各店舗へ確認することをお勧めします。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.4,
+      "query_time": 0.06668806076049805,
+      "llm_time": 25.53882145881653,
+      "total_time": 25.605512380599976,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-08",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+      "expected_keywords": [
+        "雰囲気",
+        "カフェ",
+        "推薦",
+        "判断",
+        "限界"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "できる：\n- 渋谷駅周辺には多くのレストランがありますが、「静かな」レストランを探しているので、カフェやバー、個室があるレストランなどが候補となります。\n- POI情報から直接的に「静か」さを示す情報は得られませんが、営業時間やアクセス状況、評価などを参考に、比較的静かな雰囲気の可能性が高いレストランを提案できます。\n\nできない：\n- 「静か」さの主観的な感覚を完全に把握することはできません。そのため、具体的なレストラン名やその詳細については推測しかできません。\n- また、リアルタイムでの店内の騒音レベルや混み具合などの情報を提供することはできません。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.06723833084106445,
+      "llm_time": 14.742409944534302,
+      "total_time": 14.809652328491211,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "交通"
+          ],
+          "subcategories": [
+            "レストラン"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-09",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+      "expected_keywords": [
+        "静か",
+        "レストラン",
+        "推測",
+        "できる",
+        "できない"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅周辺のPOIデータに基づいて推測すると、以下の点が治安についての洞察を提供できます：\n\n1. **交番の位置**：近くに警察署や交番がある場合、治安が良好である可能性が高いと推測できます。例えば、渋谷警察署は渋谷駅のすぐ南に位置しています。\n\n2. **防犯カメラの設置**：多くの商業施設や主要道路沿いに防犯カメラが設置されていることが多く、これは治安管理の一環として機能します。\n\n3. **公共施設の数**：図書館や公民館などの公共施設が多いエリアは、治安が比較的良いと考えられます。\n\n4. **夜間の照明**：適切な照明が整備されているエリアは、犯罪予防に役立ちます。\n\nしかし、POIデータには限界もあります：\n\n- **データの完全性**：一部の小さな商店や個人的な施設はデータに含まれていない可能性があります。\n- **時間帯の違い**：夜間の治安は日中の状況と異なる場合があり、データはその点を反映していない可能性があります。\n- **個々の事件の詳細**：特定の犯罪の詳細や頻度は、単純なPOIデータからは推測できません。\n\n以上の点を踏まえ、渋谷駅周辺は治安が比較的良い地域と推測できますが、具体的な犯罪率や事件の詳細については、より詳しい統計データが必要となります。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.00011944770812988281,
+      "llm_time": 30.40240502357483,
+      "total_time": 30.402527332305908,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "交通"
+          ],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "L5-10",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+      "expected_keywords": [
+        "治安",
+        "交番",
+        "推測",
+        "データ",
+        "限界"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "チャングミが該当します。チャングミは渋谷駅の東側にあるカフェで、同じエリア（area:northwest_far）にローソンやセブン-イレブンなどのコンビニが存在しています。",
+      "context": "【同一エリア内のPOI関係】\n- チャングミ と ローソン は同じエリア（area:northwest_far）にあります\n- チャングミ と ファミリーマート は同じエリア（area:northwest_far）にあります\n- チャングミ と セブン-イレブン は同じエリア（area:northwest_far）にあります\n- チャングミ と セブン-イレブン は同じエリア（area:northwest_far）にあります\n- チャングミ と ローソン は同じエリア（area:northwest_far）にあります",
+      "keyword_score": 1.0,
+      "query_time": 1.0463838577270508,
+      "llm_time": 6.533098220825195,
+      "total_time": 7.579486131668091,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ",
+            "コンビニ"
+          ],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-01",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "渋谷駅の東側にあるカフェで、同じエリアにコンビニもある場所はどこですか？",
+      "expected_keywords": [
+        "カフェ",
+        "コンビニ",
+        "東"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ご質問の条件に該当する情報はありません。提供されたPOI情報には銀行は含まれておりません。ただし、カフェが複数存在する場所として、渋谷エリアのUrth Caffé, Starbucks, Real Drip Coffee No.12, 5 CROSSTIES COFFEE, タリーズコーヒーの近くが挙げられます。近くのカフェを探索する際はこれらの場所をご参考ください。",
+      "context": "【検索結果】\n1. Urth Caffé (カフェ) - 北東 57m\n2. スターバックス (カフェ) - 東 67m\n3. Real Drip Coffee No.12 by Ueshima Coffee House (カフェ) - 東 76m\n4. 5 CROSSTIES COFFEE (カフェ) - 北東 86m\n5. タリーズコーヒー (カフェ) - 南 89m",
+      "keyword_score": 1.0,
+      "query_time": 0.0002982616424560547,
+      "llm_time": 10.392075538635254,
+      "total_time": 10.392375946044922,
+      "metadata": {
+        "analysis": {
+          "question_type": "simple",
+          "categories": [
+            "飲食店",
+            "金融"
+          ],
+          "subcategories": [
+            "カフェ",
+            "銀行"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": false,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-02",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "銀行とカフェが両方あるエリアを教えてください",
+      "expected_keywords": [
+        "銀行",
+        "カフェ",
+        "エリア"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "チャングミの近くにはロッテリアやモスバーガーがあります。また、lyf Shibuya Tokyoの近くにもチャングミがあります。これらのレストランはすべて渋谷エリアのnorthwest_far区域に位置しています。",
+      "context": "【同一エリア内のPOI関係】\n- チャングミ と 渋谷東武ホテル (Tobu Hotel) は同じエリア（area:northwest_far）にあります\n- チャングミ と lyf Shibuya Tokyo は同じエリア（area:northwest_far）にあります\n- ロッテリア と capsule hotel et sauna は同じエリア（area:west_mid）にあります\n- ロッテリア と ホテルインディゴ東京渋谷 は同じエリア（area:west_mid）にあります\n- モスバーガー と capsule hotel et sauna は同じエリア（area:west_mid）にあります",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.09007501602172852,
+      "llm_time": 6.0019001960754395,
+      "total_time": 6.091978073120117,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "宿泊"
+          ],
+          "subcategories": [
+            "レストラン",
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-03",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "ホテルの近くにあるレストランを教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "レストラン",
+        "近く"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷エリア内では、セブン-イレブンと渋谷駅は同じエリア（area:west_mid）にありますが、薬局は明記されていません。したがって、直接的な回答としては駅周辺で薬局とコンビニが同じ場所にある情報はありません。ただし、近くにある可能性はあります。例えば、近くには大盛堂書店がありますが、これは薬局ではありません。",
+      "context": "【同一エリア内のPOI関係】\n- セブン-イレブン と 渋谷 は同じエリア（area:west_mid）にあります\n- 大盛堂書店 と SHIBUYA FLAG PARKING は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と タイムズ は同じエリア（area:northwest_mid）にあります\n- 大盛堂書店 と 高木ビル有料駐車場 は同じエリア（area:northwest_mid）にあります\n- 啓文堂書店 と 渋谷 は同じエリア（area:west_mid）にあります",
+      "keyword_score": 1.0,
+      "query_time": 0.013914823532104492,
+      "llm_time": 10.251680612564087,
+      "total_time": 10.26559853553772,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "商店",
+            "交通",
+            "医療"
+          ],
+          "subcategories": [
+            "コンビニ",
+            "薬局"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-04",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "駅周辺で、薬局とコンビニが同じ場所にあるところはありますか？",
+      "expected_keywords": [
+        "薬局",
+        "コンビニ",
+        "駅"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "東宝シネマの近くにはロッテリアがあります。これはカフェとして知られています。",
+      "context": "【同一エリア内のPOI関係】\n- チャングミ と ヨシモト∞ホール は同じエリア（area:northwest_far）にあります\n- チャングミ と パルコ劇場 は同じエリア（area:northwest_far）にあります\n- チャングミ と ヨシモト∞ドーム は同じエリア（area:northwest_far）にあります\n- ロッテリア と Tokyo Comedy Bar は同じエリア（area:west_mid）にあります\n- マクドナルド と 東宝シネマ は同じエリア（area:northwest_mid）にあります",
+      "keyword_score": 0.5,
+      "query_time": 0.12706375122070312,
+      "llm_time": 3.7935750484466553,
+      "total_time": 3.920642375946045,
+      "metadata": {
+        "query_type": "relation",
+        "analysis": {
+          "question_type": "relation",
+          "categories": [
+            "飲食店",
+            "娯楽"
+          ],
+          "subcategories": [
+            "カフェ",
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": true,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-05",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "映画館の近くにあるカフェはどこですか？",
+      "expected_keywords": [
+        "映画館",
+        "カフェ"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "すみません、具体的なカフェ名や場所が指定されていないため、正確な書店の情報を提供できません。ご指定のカフェ名や近隣の主要な交差点など、補足情報を提供いただけますと幸いです。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.0010368824005126953,
+      "llm_time": 5.660165071487427,
+      "total_time": 5.66120457649231,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "商店"
+          ],
+          "subcategories": [
+            "カフェ",
+            "書店"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 50.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "GR-06",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "カフェを起点に、そこから50m以内にある書店を教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "書店",
+        "50m"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅から100m以内のコンビニは以下の通りです：\n- ドトールコーヒーショップから22mにあるローソン\n- カフェ・ベローチェから25mにあるローソン\n\nまた、これらのコンビニから近いカフェは：\n- ドトールコーヒーショップから22mにあるローソン\n- カフェ・ベローチェから25mにあるローソン\n\n上島珈琲店からはファミリーマートが35mにありますが、これは100mを少し超えています。",
+      "context": "【経路上のPOI】\n- カフェ・ベローチェ から 25m の位置に ローソン があります\n- ドトールコーヒーショップ から 22m の位置に ローソン があります\n- 上島珈琲店 から 35m の位置に ファミリーマート があります",
+      "keyword_score": 1.0,
+      "query_time": 0.0003635883331298828,
+      "llm_time": 14.213838338851929,
+      "total_time": 14.214204549789429,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "商店",
+            "交通"
+          ],
+          "subcategories": [
+            "カフェ",
+            "コンビニ"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 100.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "GR-07",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "渋谷駅から100m以内のコンビニと、そこから近いカフェを教えてください",
+      "expected_keywords": [
+        "コンビニ",
+        "カフェ",
+        "100m"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "ホテルから徒歩で行ける範囲にあるレストランとカフェは以下の通りです：\n\n1. つけ麺大臣渋谷店 - ドトールコーヒーショップから94mの位置にあります。\n2. サイゼリヤ - ドトールコーヒーショップから96mの位置にあります。\n3. TRATTORIA PIZZERIA - スターバックスから88mの位置にあります。\n4. My Hamburger Watanabe - カフェ・ド・クリエから45mの位置にあります。\n5. Shinpachi Shokudō Shibuya Meijidōri - カフェ・ド・クリエから51mの位置にあります。",
+      "context": "【経路上のPOI】\n- ドトールコーヒーショップ から 94m の位置に つけ麺大臣渋谷店 があります\n- ドトールコーヒーショップ から 96m の位置に サイゼリヤ があります\n- スターバックス から 88m の位置に TRATTORIA PIZZERIA があります\n- カフェ・ド・クリエ から 45m の位置に My Hamburger Watanabe があります\n- カフェ・ド・クリエ から 51m の位置に Shinpachi Shokudō Shibuya Meijidōri があります",
+      "keyword_score": 1.0,
+      "query_time": 0.00038743019104003906,
+      "llm_time": 16.02452039718628,
+      "total_time": 16.02491044998169,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "飲食店",
+            "宿泊"
+          ],
+          "subcategories": [
+            "カフェ",
+            "レストラン",
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 2
+        }
+      },
+      "test_id": "GR-08",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "ホテルから徒歩で行ける範囲にあるレストランとカフェを教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "レストラン",
+        "カフェ"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "根据提供的信息，饮食店的数量最多，共有829家，但具体是哪个地点的饮食店最多则无法从现有数据中得知。需要更详细的数据来确定特定区域内的最多饮食店位置。不过可以推测，通常这样的数量可能集中在如涩谷站周边等繁华商业区。",
+      "context": "【集計結果】\n- 飲食店: 829件\n- 商店: 82件\n- 医療: 36件\n- 観光: 29件\n- 金融: 20件\n- 娯楽: 14件\n- 宿泊: 13件\n- 公共: 12件\n- 交通: 9件\n- 施設: 2件",
+      "keyword_score": 0.0,
+      "query_time": 0.00010466575622558594,
+      "llm_time": 8.01722264289856,
+      "total_time": 8.017329692840576,
+      "metadata": {
+        "query_type": "aggregation",
+        "analysis": {
+          "question_type": "aggregation",
+          "categories": [],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": false,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-09",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "飲食店が最も多いエリアはどこですか？",
+      "expected_keywords": [
+        "飲食店",
+        "エリア",
+        "多い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "回答するためには具体的な集計結果が必要ですが、仮に北側と南側のPOIの数が提供されている場合の解答例を示します：\n\n【回答】\n北側のPOIが25個、南側のPOIが30個である場合、南側でPOIの数が多いです。\n\n実際の数字を入力していただければ、正確な回答が可能です。",
+      "context": "【集計結果】",
+      "keyword_score": 1.0,
+      "query_time": 8.368492126464844e-05,
+      "llm_time": 8.80100393295288,
+      "total_time": 8.8010892868042,
+      "metadata": {
+        "query_type": "comparison",
+        "analysis": {
+          "question_type": "aggregation",
+          "categories": [],
+          "subcategories": [],
+          "directions": [
+            "north",
+            "northeast",
+            "northwest",
+            "south",
+            "southeast",
+            "southwest"
+          ],
+          "areas": [
+            "north_station",
+            "north_near",
+            "north_mid",
+            "north_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "northwest_station",
+            "northwest_near",
+            "northwest_mid",
+            "northwest_far",
+            "south_station",
+            "south_near",
+            "south_mid",
+            "south_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far",
+            "southwest_station",
+            "southwest_near",
+            "southwest_mid",
+            "southwest_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": false,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-10",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "北側と南側でPOIの数が多いのはどちらですか？",
+      "expected_keywords": [
+        "北",
+        "南",
+        "数",
+        "多い"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷で最も多く存在するPOIのカテゴリは飲食店です。上位3つのカテゴリは以下の通りです：\n\n1. 飲食店 (829件)\n2. 商店 (82件)\n3. 医療 (36件)",
+      "context": "【集計結果】\n- 飲食店: 829件\n- 商店: 82件\n- 医療: 36件\n- 観光: 29件\n- 金融: 20件\n- 娯楽: 14件\n- 宿泊: 13件\n- 公共: 12件\n- 交通: 9件\n- 施設: 2件",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.00013065338134765625,
+      "llm_time": 6.676118612289429,
+      "total_time": 6.676251411437988,
+      "metadata": {
+        "query_type": "aggregation",
+        "analysis": {
+          "question_type": "aggregation",
+          "categories": [],
+          "subcategories": [],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": false,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-11",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "渋谷で最も多いカテゴリのPOIは何ですか？上位3つを教えてください",
+      "expected_keywords": [
+        "カテゴリ",
+        "多い",
+        "上位"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "EAST側の飲食店のカテゴリ多様性が高いです。東側には287件のPOIがあるのに対して、西側には555件あります。ただし、飲食店の数自体は西側が多いものの、質問ではカテゴリ多様性が焦点なので、具体的な飲食店の種類やカテゴリーの数を知らなければ断定できません。東側の多様性が高いことを示す直接的な情報はありません。",
+      "context": "【比較結果】\n- all: 東側 287件、西側 555件",
+      "keyword_score": 1.0,
+      "query_time": 0.0008089542388916016,
+      "llm_time": 10.225219011306763,
+      "total_time": 10.226029634475708,
+      "metadata": {
+        "east_pois": 287,
+        "west_pois": 555,
+        "query_type": "comparison",
+        "analysis": {
+          "question_type": "comparison",
+          "categories": [],
+          "subcategories": [],
+          "directions": [
+            "east",
+            "northeast",
+            "southeast",
+            "west",
+            "northwest",
+            "southwest"
+          ],
+          "areas": [
+            "east_station",
+            "east_near",
+            "east_mid",
+            "east_far",
+            "northeast_station",
+            "northeast_near",
+            "northeast_mid",
+            "northeast_far",
+            "southeast_station",
+            "southeast_near",
+            "southeast_mid",
+            "southeast_far",
+            "west_station",
+            "west_near",
+            "west_mid",
+            "west_far",
+            "northwest_station",
+            "northwest_near",
+            "northwest_mid",
+            "northwest_far",
+            "southwest_station",
+            "southwest_near",
+            "southwest_mid",
+            "southwest_far"
+          ],
+          "requires_graph_traversal": true,
+          "requires_category_filter": false,
+          "requires_area_filter": true,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": true,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-12",
+      "source": "graphrag",
+      "category": "comparison",
+      "subcategory": "comparison",
+      "question": "東側と西側で、飲食店のカテゴリ多様性が高いのはどちらですか？",
+      "expected_keywords": [
+        "東",
+        "西",
+        "飲食店",
+        "多様性"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "駅の近く（200m以内）にホテルが多いです。具体的には、4つのホテル（渋谷エクセルホテル東急、GRANDBEL HOTEL、Tokyu Inn、ホテルメッツ渋谷）が200m以内にあり、一方でセルリアンタワーだけが500m以上離れています。",
+      "context": "【最寄りPOI情報】\n1. 渋谷エクセルホテル東急 (ホテル) - 渋谷駅から西へ188m\n2. GRANDBEL HOTEL (ホテル) - 渋谷駅から南へ211m\n3. Tokyu Inn (ホテル) - 渋谷駅から北へ235m\n4. セルリアンタワー (ホテル) - 渋谷駅から南西へ280m\n5. ホテルメッツ渋谷 (ホテル) - 渋谷駅から南東へ323m",
+      "keyword_score": 0.75,
+      "query_time": 0.00012302398681640625,
+      "llm_time": 8.84191107749939,
+      "total_time": 8.842036485671997,
+      "metadata": {
+        "query_type": "proximity",
+        "analysis": {
+          "question_type": "proximity",
+          "categories": [
+            "宿泊",
+            "交通"
+          ],
+          "subcategories": [
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": true,
+          "requires_comparison": true,
+          "distance_constraint": 200.0,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-13",
+      "source": "graphrag",
+      "category": "comparison",
+      "subcategory": "comparison",
+      "question": "駅の近く（200m以内）と遠く（500m以上）で、どちらにホテルが多いですか？",
+      "expected_keywords": [
+        "駅",
+        "近く",
+        "遠く",
+        "ホテル"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅に最も近いホテルは渋谷エクセルホテル東急です。",
+      "context": "【最寄りPOI情報】\n1. 渋谷エクセルホテル東急 (ホテル) - 渋谷駅から西へ188m\n2. GRANDBEL HOTEL (ホテル) - 渋谷駅から南へ211m\n3. Tokyu Inn (ホテル) - 渋谷駅から北へ235m\n4. セルリアンタワー (ホテル) - 渋谷駅から南西へ280m\n5. ホテルメッツ渋谷 (ホテル) - 渋谷駅から南東へ323m",
+      "keyword_score": 1.0,
+      "query_time": 0.00011968612670898438,
+      "llm_time": 3.5386099815368652,
+      "total_time": 3.538731336593628,
+      "metadata": {
+        "query_type": "proximity",
+        "analysis": {
+          "question_type": "proximity",
+          "categories": [
+            "宿泊",
+            "交通"
+          ],
+          "subcategories": [
+            "ホテル"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": true,
+          "requires_relation": false,
+          "requires_multi_hop": false,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": null,
+          "hop_count": 1
+        }
+      },
+      "test_id": "GR-14",
+      "source": "graphrag",
+      "category": "proximity",
+      "subcategory": "proximity",
+      "question": "渋谷駅に最も近いホテルはどこですか？",
+      "expected_keywords": [
+        "駅",
+        "近い",
+        "ホテル"
+      ],
+      "system": "graphrag"
+    },
+    {
+      "response": "渋谷駅から300m以内にある映画館の情報を提供します（実際の情報は変動する可能性がありますので、最新の情報をご確認ください）：\n\n1. 東急プラザ渋谷内の「シネマート新宿」 - 約20m\n2. 渋谷109内の「シネマートShibuya 109」 - 約80m\n3. パルコ内の「シネマートShibuya PARCO」 - 約150m\n\nこれらの映画館はすべて渋谷駅周辺にあり、指定された距離内にあります。最新の営業時間や上映スケジュールについては、各映画館の公式ウェブサイトをご確認ください。",
+      "context": "【経路上のPOI】",
+      "keyword_score": 1.0,
+      "query_time": 0.0002486705780029297,
+      "llm_time": 16.117759466171265,
+      "total_time": 16.11801028251648,
+      "metadata": {
+        "query_type": "multi_hop",
+        "analysis": {
+          "question_type": "multi_hop",
+          "categories": [
+            "娯楽",
+            "交通"
+          ],
+          "subcategories": [
+            "映画館"
+          ],
+          "directions": [],
+          "areas": [],
+          "requires_graph_traversal": true,
+          "requires_category_filter": true,
+          "requires_area_filter": false,
+          "requires_proximity": false,
+          "requires_relation": false,
+          "requires_multi_hop": true,
+          "requires_aggregation": false,
+          "requires_comparison": false,
+          "distance_constraint": 300.0,
+          "hop_count": 2
+        }
+      },
+      "test_id": "GR-15",
+      "source": "graphrag",
+      "category": "proximity",
+      "subcategory": "proximity",
+      "question": "渋谷駅から300m以内にある映画館を距離順に教えてください",
+      "expected_keywords": [
+        "映画館",
+        "300m",
+        "距離"
+      ],
+      "system": "graphrag"
+    }
+  ],
+  "structured_results": [
+    {
+      "response": "渋谷駅は東京都渋谷区に位置しています。具体的には、渋谷駅前通り沿いにあります。JR山手線、JR中央線、東京メトロ丸ノ内線、東京メトロ半蔵門線、都営大江戸線が乗り入れる主要な駅です。",
+      "context": "",
+      "keyword_score": 0.5,
+      "query_time": 0.22809338569641113,
+      "llm_time": 8.208225965499878,
+      "total_time": 8.43632173538208,
+      "test_id": "L1-01",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷駅の場所を教えてください",
+      "expected_keywords": [
+        "渋谷",
+        "駅",
+        "35.",
+        "139."
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "東宝シネマ（東京都渋谷区神南1-15-8）の座標は、緯度35.674929、経度139.700110です。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.03157830238342285,
+      "llm_time": 5.447585821151733,
+      "total_time": 5.479166030883789,
+      "test_id": "L1-02",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "東宝シネマの座標は？",
+      "expected_keywords": [
+        "東宝",
+        "シネマ",
+        "座標",
+        "緯度",
+        "経度"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷東武ホテルは渋谷駅東口から徒歩約1分の場所にあります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.01372838020324707,
+      "llm_time": 3.0829052925109863,
+      "total_time": 3.096635341644287,
+      "test_id": "L1-03",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷東武ホテルはどこにありますか？",
+      "expected_keywords": [
+        "東武",
+        "ホテル",
+        "渋谷"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷神南郵便局の場所は、東京都渋谷区神南1-20-1です。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013858556747436523,
+      "llm_time": 4.028352737426758,
+      "total_time": 4.042213201522827,
+      "test_id": "L1-04",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "渋谷神南郵便局の場所を教えて",
+      "expected_keywords": [
+        "神南",
+        "郵便局",
+        "渋谷"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "三菱UFJ銀行渋谷支店の位置情報は、東京都渋谷区渋谷2-15-10 柳ビル 1Fです。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013890266418457031,
+      "llm_time": 4.0822155475616455,
+      "total_time": 4.096107244491577,
+      "test_id": "L1-05",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_location",
+      "question": "三菱UFJ銀行渋谷支店の位置情報",
+      "expected_keywords": [
+        "三菱",
+        "UFJ",
+        "銀行",
+        "渋谷"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の主要なコンビニエンスストアは以下の通りです：\n\n1. 7-Eleven 渋谷駅前店\n2. コンビニエンスストア デイリーモール 渋谷駅前店\n3. ドトールコーヒーショップ 渋谷駅前店（併設）\n\nこれらの店舗は渋谷駅から徒歩数分以内に位置しています。時間帯やサービスによって異なる場合がありますので、最新の営業時間やサービス内容については店頭の表示をご確認ください。",
+      "context": "",
+      "keyword_score": 0.25,
+      "query_time": 0.012598991394042969,
+      "llm_time": 12.718071699142456,
+      "total_time": 12.730672121047974,
+      "test_id": "L1-06",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷駅周辺のコンビニを教えてください",
+      "expected_keywords": [
+        "コンビニ",
+        "ローソン",
+        "ファミリーマート",
+        "セブン"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "以下は渋谷エリアにある人気のカフェ3つです：\n\n1. 豊臣の森珈琲店\n   - 渋谷駅から徒歩約5分\n   - 広々とした空間と美味しいコーヒーが特徴\n\n2. カフェ・ド・ラ・グランデ\n   - 東口改札から徒歩約1分\n   - フレンチトーストやパウンドケーキなどの人気メニューあり\n\n3. CAFÉ&BOOKS COCOARK\n   - 渋谷109ビル内にあるカフェ\n   - 本屋も併設されており、読書しながらカフェutil利用できる",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.01596212387084961,
+      "llm_time": 14.001238584518433,
+      "total_time": 14.017202615737915,
+      "test_id": "L1-07",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷にあるカフェを3つ教えて",
+      "expected_keywords": [
+        "カフェ",
+        "コーヒー"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷には複数の映画館があります。代表的なものには「シネマート新宿」（渋谷店）、「シネマート渋谷」、「ロードshow 代官山」などがあります。",
+      "context": "",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.01341390609741211,
+      "llm_time": 5.384193420410156,
+      "total_time": 5.397609233856201,
+      "test_id": "L1-08",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷の映画館を教えてください",
+      "expected_keywords": [
+        "映画館",
+        "シネマ",
+        "cinema"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷周辺の薬局は以下の場所があります：\n\n1. 渋谷スクランブル交差点近く - 薬局 さくら\n2. 淺井手町3-9-11 - 東急ストア渋谷店内の薬局\n3. 渋谷駅西口改札前 - 薬局 みずほ\n\nこれらの薬局は比較的アクセスがしやすく、急な症状や薬の補充が必要なときにおすすめです。",
+      "context": "",
+      "keyword_score": 0.5,
+      "query_time": 0.01665520668029785,
+      "llm_time": 11.122796297073364,
+      "total_time": 11.139453172683716,
+      "test_id": "L1-09",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷周辺の薬局はどこですか？",
+      "expected_keywords": [
+        "薬局",
+        "ドラッグ"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷には多くのホテルがあります。代表的なものとして、渋谷ヒカリエサザン Cross Hotel、シェラトン東京ホテル、SHIBUYA 109 HOTELなどがあります。ご予算やニーズに合わせて選択いただけます。",
+      "context": "",
+      "keyword_score": 0.5,
+      "query_time": 0.013551950454711914,
+      "llm_time": 6.793654918670654,
+      "total_time": 6.80720853805542,
+      "test_id": "L1-10",
+      "source": "structured",
+      "category": "basic_retrieval",
+      "subcategory": "basic_category",
+      "question": "渋谷にあるホテルを教えて",
+      "expected_keywords": [
+        "ホテル",
+        "宿泊"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "ご指定の条件に該当するコンビニ情報が見つかりませんでした。現在、渋谷エリアには0件のコンビニが登録されています。可能であれば、近くの駅や主要な道路沿いにあるコンビニについてお知らせできるよう調整させていただきますが、詳細な位置情報がないため、正確な距離は推定できません。ご周辺のコンビニ情報を探してみるか、他の情報が必要な場合は教えてください。",
+      "context": "「コンビニ」に該当するPOIが見つかりませんでした。\n\n【コンビニの集計】\n総数: 0件",
+      "keyword_score": 0.4,
+      "query_time": 0.017104387283325195,
+      "llm_time": 10.68203330039978,
+      "total_time": 10.69913911819458,
+      "test_id": "L2-01",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅に最も近いコンビニはどれですか？距離も推定してください",
+      "expected_keywords": [
+        "コンビニ",
+        "近い",
+        "距離",
+        "m",
+        "メートル"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷の東宝シネマから徒歩圏内（500m以内）にあるカフェとして、以下がおすすめです：\n\n1. キャラメルカフ（SHIBUYA）\n   住所：渋谷区渋谷2-14-10 シンガポールタワーB1F\n\n2. 花畑（はなばた）\n   住所：渋谷区渋谷3-2-14 SHIBUYA T-SITE B1F\n\nこれらのカフェは、東宝シネマから比較的近い場所にあり、映画鑑賞後の休憩や食事に適しています。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013698577880859375,
+      "llm_time": 14.283491849899292,
+      "total_time": 14.297192096710205,
+      "test_id": "L2-02",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "東宝シネマから徒歩圏内（500m以内）にあるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "徒歩",
+        "500m",
+        "圏内"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅と原宿駅の中間地点近くには「SHIBUYA CAFÉ FARM」があります。このカフェは渋谷15丁目交差点付近に位置し、両駅から比較的近い場所にあります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013501644134521484,
+      "llm_time": 5.8713788986206055,
+      "total_time": 5.8848817348480225,
+      "test_id": "L2-03",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅と原宿駅の中間地点に近いカフェはありますか？",
+      "expected_keywords": [
+        "カフェ",
+        "中間",
+        "地点"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷神南郵便局周辺200m以内の飲食店は以下の通りです：\n\n1. 渋谷スクランブル東口の「カフェラヴェ」\n2. 渋谷ヒカリエ前の「カフェ・ド・クリエ」\n3. 東急プラザ渋谷内の「バーミキュラ」\n\nこれらの飲食店はすべて徒歩約1分～2分の距離にあります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013593912124633789,
+      "llm_time": 9.75487995147705,
+      "total_time": 9.768475532531738,
+      "test_id": "L2-04",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷神南郵便局の周辺200m以内にある飲食店を教えてください",
+      "expected_keywords": [
+        "郵便局",
+        "200m",
+        "飲食店",
+        "周辺"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "現在、渋谷エリアには映画館が存在しないため、最も遠い映画館という概念自体が適用できません。ご確認いただいている情報に基づき、回答を提供させていただきます。",
+      "context": "\n【映画館の集計】\n総数: 0件",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.01526021957397461,
+      "llm_time": 4.651092290878296,
+      "total_time": 4.666353940963745,
+      "test_id": "L2-05",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_proximity",
+      "question": "渋谷駅から最も遠い映画館はどれですか？",
+      "expected_keywords": [
+        "映画館",
+        "遠い",
+        "シネマ"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で飲食店が最も集中しているのは「渋谷スクランブル交差点」周辺と「代々木上原駅」近くです。特にスクランブル交差点周辺には多くのカフェやレストランが集中しています。また、代々木上原駅付近も幅広いジャンルの飲食店が点在しています。",
+      "context": "\n【鉄道駅の集計】\n総数: 0件",
+      "keyword_score": 0.5,
+      "query_time": 0.013143777847290039,
+      "llm_time": 8.89215898513794,
+      "total_time": 8.905304431915283,
+      "test_id": "L2-06",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺で最も飲食店が集中しているのはどのあたりですか？",
+      "expected_keywords": [
+        "飲食店",
+        "集中",
+        "エリア",
+        "多い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺のカフェとバーの数は同じで、どちらも0件です。",
+      "context": "\n【カフェの集計】\n総数: 0件\n\n【カテゴリ比較: カフェ vs バー】\nカフェとバーは同数（0件）",
+      "keyword_score": 0.75,
+      "query_time": 0.014080047607421875,
+      "llm_time": 3.318528890609741,
+      "total_time": 3.332610607147217,
+      "test_id": "L2-07",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺のカフェとバー、どちらが多いですか？",
+      "expected_keywords": [
+        "カフェ",
+        "バー",
+        "多い",
+        "数"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺は「商業エリア」の特性が強いと推定できます。理由として、多くのショッピングモール、百貨店、飲食店、映画館などの商業施設が集中しています。また、主要な交通結節点であるため、ビジネスパーソンや観光客が多く訪れる地域でもあります。住宅エリアの要素も存在しますが、商業施設の数と規模が圧倒的に多いことから、「商業エリア」の特性が強いと言えます。",
+      "context": "",
+      "keyword_score": 0.75,
+      "query_time": 0.013545513153076172,
+      "llm_time": 11.43425464630127,
+      "total_time": 11.447802782058716,
+      "test_id": "L2-08",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺は「商業エリア」と「住宅エリア」のどちらの特性が強いですか？POI構成から推定してください",
+      "expected_keywords": [
+        "商業",
+        "住宅",
+        "特性",
+        "POI"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の医療施設の分布は以下の通りです：\n\n1. **渋谷駅前**：\n   - 渋谷病院\n   - 住友病院\n\n2. **渋谷駅南口**：\n   - 東京歯科大学渋谷診療所\n   - 薬王会渋谷薬局\n\n3. **渋谷駅西口**：\n   - 渋谷ファミリークリニック\n   - 薬王会渋谷薬局\n\n4. **渋谷駅北口**：\n   - すいせん渋谷病院\n   - 渋谷千種薬局\n\n5. **渋谷駅東口**：\n   - 渋谷区立渋谷保健所\n   - 渋谷眼科医院\n\nこれらの施設は主に渋谷駅の周辺に点在しています。必要に応じて最寄りの医療施設を利用できます。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.015401363372802734,
+      "llm_time": 21.492042303085327,
+      "total_time": 21.507445096969604,
+      "test_id": "L2-09",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺で医療施設（病院、クリニック、薬局）の分布を教えてください",
+      "expected_keywords": [
+        "病院",
+        "クリニック",
+        "薬局",
+        "医療",
+        "分布"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の宿泊施設の密度は非常に高いです。理由としては以下の通りです：\n\n1. 地理的優位性：渋谷駅は東京都心部に位置し、多くの交通手段が利用可能で、ビジネスマンや観光客にとってアクセスが良好です。\n\n2. 観光地集中：渋谷はショッピング、エンターテイメント、飲食店など多くの観光スポットがあり、滞在客を引きつける魅力があります。\n\n3. 仕事の拠点：多くの企業が渋谷周辺に本社を置いており、ビジネスパーソンの宿泊需要が高めています。\n\n4. 宿泊施設の供給過多：渋谷には多くのホテルや宿泊施設が存在し、供給が需要を上回っているため、宿泊施設の密度が高いです。\n\nこれらの要因から、渋谷駅周辺は宿泊施設の密集地帯となっています。",
+      "context": "",
+      "keyword_score": 0.8,
+      "query_time": 0.013059616088867188,
+      "llm_time": 20.608213901519775,
+      "total_time": 20.621275663375854,
+      "test_id": "L2-10",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_density",
+      "question": "渋谷駅周辺の宿泊施設の密度は高いですか？低いですか？理由も教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "宿泊",
+        "密度",
+        "高い",
+        "低い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅の東側と西側にはどちらもカフェが0件あります。そのため、どちらにカフェが多いか比较することはできません。",
+      "context": "\n【カフェの分析】\n総数: 0件\n\n方向別:\n\n東西比較:\n  東側と西側は同数（0件）\n\n【東西比較: カフェ】\n東側と西側は同数（0件）\n\n詳細:",
+      "keyword_score": 1.0,
+      "query_time": 0.0256497859954834,
+      "llm_time": 4.282388210296631,
+      "total_time": 4.308040380477905,
+      "test_id": "L2-11",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅の東側と西側、どちらにカフェが多いですか？",
+      "expected_keywords": [
+        "カフェ",
+        "東",
+        "西",
+        "多い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の映画館と劇場の数は同じで、どちらも0件です。",
+      "context": "\n【映画館の集計】\n総数: 0件\n\n【カテゴリ比較: 映画館 vs 劇場】\n映画館と劇場は同数（0件）",
+      "keyword_score": 0.75,
+      "query_time": 0.014517545700073242,
+      "llm_time": 3.606085777282715,
+      "total_time": 3.6206047534942627,
+      "test_id": "L2-12",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺の映画館と劇場、どちらが多いですか？それぞれの数も教えてください",
+      "expected_keywords": [
+        "映画館",
+        "劇場",
+        "数",
+        "多い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には多くのコンビニとスーパーが存在しますが、両者の数は同じではありません。コンビニは複数のチェーンが多数店舗展開しており、日常生活の様々なニーズに対応しています。一方、スーパーマーケットは比較的少数ですが、より広範で品ぞろえの豊富な商品を提供しています。\n\n生活利便性の観点からは、コンビニは24時間営業で場所も駅周辺に密集しているため、急な買い物や深夜の利用にも便利です。一方、スーパーは通常営業時間がありますが、品ぞろえが豊富で価格競争力が高い傾向があります。\n\nしたがって、頻繁な小規模な買い物や深夜の利用にはコンビニ、週末や大量の買い物にはスーパーが適していると言えるでしょう。どちらも充実していますが、用途によって選択が異なると言えるでしょう。",
+      "context": "\n【カテゴリ比較: コンビニ vs 鉄道駅】\nコンビニと鉄道駅は同数（0件）",
+      "keyword_score": 1.0,
+      "query_time": 0.014485359191894531,
+      "llm_time": 21.065131664276123,
+      "total_time": 21.079618453979492,
+      "test_id": "L2-13",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺のコンビニとスーパー、生活利便性の観点からどちらが充実していますか？",
+      "expected_keywords": [
+        "コンビニ",
+        "スーパー",
+        "生活",
+        "利便性",
+        "充実"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には銀行や郵便局が同数に存在しています（各0件）。ただし、具体的な施設の評価には場所やサービス内容など個別の要素も考慮する必要があります。渋谷駅自体が非常に交通量が多く、多くの金融機関が集まっている地域なので、駅周辺の金融サービスへのアクセスは比較的便利と言えるでしょう。しかし、特定の銀行や郵便局の評価については、それぞれの施設のサービス品質や待ち時間などを考慮して判断することをお勧めします。",
+      "context": "\n【カテゴリ比較: 鉄道駅 vs 銀行】\n鉄道駅と銀行は同数（0件）",
+      "keyword_score": 1.0,
+      "query_time": 0.01419687271118164,
+      "llm_time": 12.289046049118042,
+      "total_time": 12.303244829177856,
+      "test_id": "L2-14",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺の銀行と郵便局、金融サービスへのアクセスはどちらが良いですか？",
+      "expected_keywords": [
+        "銀行",
+        "郵便局",
+        "金融",
+        "アクセス"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺では、具体的なPOIカテゴリが十分に登録されていないため、正確なランキングは確認できません。ただし、一般的に以下のようなカテゴリが上位にランクインすることが多いです：\n\n1. 飲食店\n2. 買い物施設\n3. 娯楽施設\n\nこれらが上位3つのPOIカテゴリとなることが多いですが、実際の数は不明です。詳細な情報は追加のデータを確認する必要があります。",
+      "context": "\n【POIカテゴリランキング】\n  1位: 不明 (1046件)",
+      "keyword_score": 1.0,
+      "query_time": 0.019643306732177734,
+      "llm_time": 10.382299184799194,
+      "total_time": 10.401944637298584,
+      "test_id": "L2-15",
+      "source": "structured",
+      "category": "spatial_reasoning",
+      "subcategory": "spatial_comparison",
+      "question": "渋谷駅周辺で最も多いPOIカテゴリは何ですか？上位3つを教えてください",
+      "expected_keywords": [
+        "カテゴリ",
+        "多い",
+        "上位",
+        "ランキング"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅から徒歩5分以内にあるカフェとして、以下がおすすめです：\n\n1. ワンダーコーヒー 渋谷スクランブル交差点前店\n2. カフェデルレ 渋谷スクランブルスクエア店\n3. 豊島屋 渋谷店 のカフェエリア\n\nこれらのカフェは、渋谷駅から近接しており、多くの場合徒歩5分圏内にあります。ただし、最新の営業時間や利用可能否は公式サイトや各店舗で確認することをお勧めします。",
+      "context": "",
+      "keyword_score": 0.75,
+      "query_time": 0.013251781463623047,
+      "llm_time": 12.309399127960205,
+      "total_time": 12.32265305519104,
+      "test_id": "L3-01",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "渋谷駅から徒歩5分以内（約400m）にあるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "徒歩",
+        "5分",
+        "400m"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷の具体的な映画館の電話番号について確認しましたが、特定の映画館の電話番号が直接記載されていません。一般的な情報として、渋谷にあるユナイテッドシネマ渋谷の電話番号は03-6459-8000です。他の映画館も同様に公式ウェブサイトやSNSなどで連絡先情報を掲載していますので、そちらをご確認ください。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013365983963012695,
+      "llm_time": 10.271462440490723,
+      "total_time": 10.28482985496521,
+      "test_id": "L3-02",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "電話番号がわかっている渋谷の映画館を教えてください",
+      "expected_keywords": [
+        "映画館",
+        "電話",
+        "番号"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷エリアにはウェブサイトを持つレストランが多数あります。例えば、「SHIBUYA HALL」や「SHIBUYA CAFÉ&RESTAURANT LADY MUGEN」などがあります。これらのレストランのウェブサイトから詳細情報を得ることができます。具体的なレストランをお探しなら、もう少し条件を指定していただけますか？",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.012638330459594727,
+      "llm_time": 8.123340129852295,
+      "total_time": 8.135980367660522,
+      "test_id": "L3-03",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "ウェブサイトを持っている渋谷のレストランを教えてください",
+      "expected_keywords": [
+        "レストラン",
+        "ウェブサイト",
+        "サイト"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷エリアに「渋谷」という名前のホテルはありませんが、近隣に「ホテル渋谷」があります。このホテルは渋谷駅から徒歩約5分の場所に位置しています。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.01319432258605957,
+      "llm_time": 5.120611667633057,
+      "total_time": 5.133807897567749,
+      "test_id": "L3-04",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "「渋谷」という名前が含まれるホテルを教えてください",
+      "expected_keywords": [
+        "渋谷",
+        "ホテル",
+        "名前"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には24時間営業のコンビニが複数あります。例えば、セブンイレブン 渋谷駅前店やファミリーマート 渋谷駅前店などがあります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.014246940612792969,
+      "llm_time": 6.426470994949341,
+      "total_time": 6.4407196044921875,
+      "test_id": "L3-05",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_single",
+      "question": "渋谷駅周辺で24時間営業のコンビニはありますか？",
+      "expected_keywords": [
+        "コンビニ",
+        "24時間",
+        "営業"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅から500m以内のカフェですが、具体的なカフェ名と電話番号、ウェブサイトについての情報はすぐに見つけることができませんでした。近隣のカフェの中でも特に人気のある「cafe COFFiE」は近くにあるのですが、その情報には電話番号やウェブサイトが含まれていません。他のカフェについても同様です。ご指定の条件に合致する情報を提供できるよう、再度検索しますが、現在のところ適切な情報を得られませんでした。他に条件を追加または変更していただけますか？",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013134479522705078,
+      "llm_time": 12.414545774459839,
+      "total_time": 12.427681922912598,
+      "test_id": "L3-06",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅から500m以内で、電話番号とウェブサイトの両方がわかるカフェを教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "500m",
+        "電話",
+        "ウェブサイト"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で駅から300m以内、映画館から200m以内にあるカフェは「SHIBUYA CINEMA CITY」の地下にある「CINEMA CITY CAFE」が該当します。こちらのカフェからは渋谷駅まで約100m、近くにはシネマシティも隣接しています。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.019844770431518555,
+      "llm_time": 8.258191347122192,
+      "total_time": 8.278038263320923,
+      "test_id": "L3-07",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、駅から近く（300m以内）、かつ映画館の近く（200m以内）にあるカフェはありますか？",
+      "expected_keywords": [
+        "カフェ",
+        "駅",
+        "300m",
+        "映画館",
+        "200m"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で薬局が近いクリニックとして、以下のような施設があります：\n\n1. 渋谷病院\n   - 住所：東京都渋谷区宇田川町35-1\n   - 薬局：同施設内にある薬局\n   - 距離：渋谷駅から約150m\n\n2. 東京慈惠会渋谷病院\n   - 住所：東京都渋谷区宇田川町36-1\n   - 薬局：同施設内にある薬局\n   - 距離：渋谷駅から約200m\n\nこれらの病院では、診療後すぐに薬局で処方箋を調剤してもらうことができます。ただし、混雑状況によっては待ち時間が発生する場合がありますので、予め確認することをお勧めします。",
+      "context": "",
+      "keyword_score": 0.75,
+      "query_time": 0.013952493667602539,
+      "llm_time": 19.854572534561157,
+      "total_time": 19.868526697158813,
+      "test_id": "L3-08",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、薬局が近く（200m以内）にあるクリニックを教えてください",
+      "expected_keywords": [
+        "薬局",
+        "クリニック",
+        "200m",
+        "近く"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺でコンビニが3軒以上集まっているエリアは、渋谷駅前と渋谷スクランブル交差点周辺です。特にこれらの交差点周辺にはセブンイレブン、ローソン、ファミリーマートなど複数のコンビニエンスストアが密集しています。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013776302337646484,
+      "llm_time": 7.945087671279907,
+      "total_time": 7.958865404129028,
+      "test_id": "L3-09",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅周辺で、コンビニが3軒以上集まっているエリアはどこですか？",
+      "expected_keywords": [
+        "コンビニ",
+        "3軒",
+        "集まっている",
+        "エリア"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅から500m以内でバーを探しましたが、直接的な情報はありません。周辺には複数のバーがありますが、少し距離を離れたところも含めると以下の候補があります：\n\n1. 渋谷スクランブルスクエア内の「BISTRO PAPA」\n2. 淺井戸通り沿いの「THE BAR 1946」\n\nこれらのバーは比較的近い場所にあり、雰囲気のあるバーとして知られています。ただし、具体的な場所は渋谷駅から500m以内ではありませんのでご了承ください。近くのバーを探す際は、再度地図アプリをご利用いただくことをおすすめします。",
+      "context": "",
+      "keyword_score": 0.5,
+      "query_time": 0.013049602508544922,
+      "llm_time": 14.750813007354736,
+      "total_time": 14.763864278793335,
+      "test_id": "L3-10",
+      "source": "structured",
+      "category": "constraint_satisfaction",
+      "subcategory": "constraint_multi",
+      "question": "渋谷駅から500m以内で、カフェではなくバーを探しています。候補を教えてください",
+      "expected_keywords": [
+        "バー",
+        "500m",
+        "カフェ",
+        "ではなく"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で保育園を開設する場合、最適な場所は「渋谷第二保育園」が提唱されます。この保育園は、渋谷駅から徒歩約5分の距離にあり、近くには千種公園があり、子供たちの遊ぶ場所として適しています。また、最寄りの交番も近くに位置しており、安全性面でも良好な環境と言えるでしょう。ただし、具体的な開設可能性については地元の自治体や関連機関に確認することをお勧めします。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.017473220825195312,
+      "llm_time": 11.99325156211853,
+      "total_time": 12.010726690292358,
+      "test_id": "L4-01",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で保育園を開設する場合、最適な場所はどこですか？公園の近さと交番の有無を考慮してください",
+      "expected_keywords": [
+        "保育園",
+        "公園",
+        "交番",
+        "最適",
+        "場所"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で高齢者向けデイサービスを開設する場合、医療施設へのアクセスを重視すると、以下のようなエリアが適しています：\n\n1. 渋谷駅南口周辺：JR線や私鉄の複数路線が利用可能で、近隣には渋谷病院などの医療施設があります。\n\n2. 代々木上原周辺：小田急線沿線で、代々木病院や国立病院機構渋谷医療センターなどの医療施設が近くにあります。\n\n3. 渋谷スクランブル交差点周辺：複数の路線が利用可能で、渋谷病院や渋谷総合医療センターなどの医療施設が徒歩圏内です。\n\nこれらのエリアは、公共交通機関の利便性と医療施設へのアクセスの両面で優れた条件を備えています。",
+      "context": "",
+      "keyword_score": 0.8,
+      "query_time": 0.016939163208007812,
+      "llm_time": 20.0447039604187,
+      "total_time": 20.061644554138184,
+      "test_id": "L4-02",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で高齢者向けデイサービスを開設するなら、どのエリアが適していますか？医療施設へのアクセスを重視してください",
+      "expected_keywords": [
+        "高齢者",
+        "デイサービス",
+        "医療",
+        "アクセス",
+        "適している"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の学習塾開設候補地として、以下の場所を提案します：\n\n1. 渋谷スクランブル交差点近く（道玄坂通り沿い）\n- 駅から徒歩5分以内\n- コンビニ（セブンイレブン渋谷道玄坂店）徒歩1分\n\n2. 渋谷ヒカリエ前\n- 駅から徒歩3分以内\n- コンビニ（ファミリーマート渋谷ヒカリエ店）徒歩1分\n\n3. 東急ストア渋谷店周辺\n- 駅から徒歩5分以内\n- コンビニ（セブンイレブン渋谷東口店）徒歩2分\n\nこれらの場所は、渋谷駅からのアクセスが良好で、また近隣にコンビニがあるため、利便性が高いです。具体的な物件については不動産会社にご相談ください。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.01351308822631836,
+      "llm_time": 21.22471523284912,
+      "total_time": 21.23823118209839,
+      "test_id": "L4-03",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で学習塾を開設する場合、駅からのアクセスとコンビニの近さを考慮して、候補地を提案してください",
+      "expected_keywords": [
+        "学習塾",
+        "駅",
+        "アクセス",
+        "コンビニ",
+        "候補"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で待ち合わせスポットとして最適な場所は「渋谷スクランブル交差点」です。この場所はわかりやすく、多くの人流量があり、迷うことがありません。また、近くにはカフェや飲食店が多くありますので、待ち時間を楽しむことができます。例えば、「HANAVI SHIBUYA」や「SHIBUYA109」内のレストランなどがあります。",
+      "context": "",
+      "keyword_score": 0.75,
+      "query_time": 0.02122974395751953,
+      "llm_time": 8.575617551803589,
+      "total_time": 8.596849203109741,
+      "test_id": "L4-04",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で待ち合わせスポットとして最適な場所はどこですか？わかりやすさと周辺の飲食店を考慮してください",
+      "expected_keywords": [
+        "待ち合わせ",
+        "最適",
+        "わかりやすい",
+        "飲食店"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で観光客向けの案内所を設置するなら、以下の場所が効果的です：\n\n1. **渋谷109前**：多くの観光客が立ち寄るショッピングスポットであり、多くの外国人旅行者も利用しています。\n2. **渋谷スクランブル交差点**：主要な交差点であり、多くの観光客が通り過ぎる場所です。\n3. **東急プラザ渋谷**：観光情報や地図を提供できる場所であり、多くの外国人観光客が利用しています。\n4. **渋谷ヒカリエ**：最新の商業施設であり、若い観光客に人気があります。\n\nこれらの場所は、観光スポットへのアクセスが良く、多くの観光客が通過するため、効果的な案内所設置地点と言えるでしょう。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013075590133666992,
+      "llm_time": 19.580864906311035,
+      "total_time": 19.593941926956177,
+      "test_id": "L4-05",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_location",
+      "question": "渋谷駅周辺で観光客向けの案内所を設置するなら、どこが効果的ですか？観光スポットと駅からのアクセスを考慮してください",
+      "expected_keywords": [
+        "観光",
+        "案内所",
+        "効果的",
+        "スポット",
+        "アクセス"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺は既存カフェの数がまだゼロ件なので、新規出店には非常に有利な状況です。競合が存在しないため、お客様の獲得が比較的容易に考えられます。\n\n集客に有利なPOIとしては以下のものがあります：\n1. 渋谷駅：大量の通勤・通学客が出入りする大規模な交通拠点です。\n2. 悪天候時の避難場所としての大型商業施設（SCMAGLEV PARK SHIBUYA, 渋谷109等）\n\nこれらの要素から、出店は非常に向きと判断できます。ただし、競合の増加を見越して、独自性のあるメニュー開発やサービス提供を検討することをおすすめします。",
+      "context": "\n【カフェの集計】\n総数: 0件",
+      "keyword_score": 1.0,
+      "query_time": 0.013774633407592773,
+      "llm_time": 16.254860639572144,
+      "total_time": 16.26863694190979,
+      "test_id": "L4-06",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規カフェの出店を検討しています。競合（既存カフェ）の数と、集客が見込めるPOI（駅、商業施設）を考慮して、出店の向き不向きを判断してください",
+      "expected_keywords": [
+        "カフェ",
+        "出店",
+        "競合",
+        "集客",
+        "判断"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺のコンビニの分布を分析すると、主要道路沿いと駅周辺には既存のコンビニが密集しています。例えば、渋谷駅前には「セブンイレブン 渋谷駅前店」「ローソン 渋谷駒場東口店」などが存在し、渋谷1丁目には「ファミリーマート 渋谷1丁目店」があります。また、代官山方面にも多くのコンビニが点在しています。\n\nこれらの既存店舗の配置から見ると、新規コンビニの出店余地は限られています。特に主要道路沿いや駅周辺では既存店が多数存在しているため、新たな出店は難しいと考えられます。一方、人流量がまだ十分でない隣接地域や、コンビニが少ない地域に新規出店する可能性はあります。\n\nただし、新しい商業施設や住宅開発が進む場合など、新たな需要が生じれば出店余地も広がる可能性があります。詳細な調査が必要ですが、現時点では渋谷駅周辺での新規コンビニ出店は難しい状況にあると推測できます。",
+      "context": "",
+      "keyword_score": 0.8,
+      "query_time": 0.013420343399047852,
+      "llm_time": 25.73041796684265,
+      "total_time": 25.743839979171753,
+      "test_id": "L4-07",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規コンビニの出店余地はありますか？既存コンビニの分布と密度から判断してください",
+      "expected_keywords": [
+        "コンビニ",
+        "出店",
+        "余地",
+        "分布",
+        "密度"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には多くのカフェとベーカリーが存在し、競合 rivalry が激しくなっています。以下に具体的な出店戦略を提案します：\n\n1. 目標顧客の特定：学生やOLを中心にした若年層をターゲットとします。\n\n2. 独特のパンのラインナップ：伝統的なフランスパンだけでなく、健康的なオーガニック素材を使用したパンを販売します。\n\n3. ドリンクの強化：コーヒーだけでなく、抹茶やフルーツジュースなど、多様なドリンクメニューを提供します。\n\n4. パンのデリバリーサービスの導入：近隣のカフェとの提携により、デリバリーサービスを展開します。\n\n5. イベントの企画：季節ごとのイベントやワークショップを開催し、地域コミュニティとの連携を図ります。\n\n6. 個人的な接客：親しみやすい雰囲気を作り、個別に対応する接客を心がけます。\n\n7. SNSでの宣伝：SNSを通じて、新商品やイベント情報を発信し、認知度を高めます。\n\nこれらの戦略を組み合わせることで、渋谷駅周辺の競合と協業可能性を最大化し、成功への道筋を整えることができます。",
+      "context": "",
+      "keyword_score": 0.8333333333333334,
+      "query_time": 0.013515233993530273,
+      "llm_time": 28.585142850875854,
+      "total_time": 28.59865927696228,
+      "test_id": "L4-08",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で新規ベーカリー（パン屋）を出店する場合、既存の競合と周辺のカフェ（協業可能性）を考慮して、出店戦略を提案してください",
+      "expected_keywords": [
+        "パン屋",
+        "ベーカリー",
+        "出店",
+        "競合",
+        "カフェ",
+        "戦略"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺で深夜営業のバーを出店する際、既存のバーとの競合を避けるためには、人流量が少ない時間帯でも多くの客が訪れる場所を選定することが重要です。また、駅からのアクセス性も考慮に入れると、以下のエリアが適していると考えられます：\n\n1. **スクランブル交差点北側**：この地域は渋谷駅から徒歩約5分と非常に便利です。また、周辺には複数の飲食店が存在し、夜遅くまで営業しているバーも多くあります。ただし、既存のバーが多く競合が予想されるため、独自の特色を打ち出すことが重要です。\n\n2. **代々木公園周辺**：代々木公園は渋谷駅から徒歩約3分で、特に夜遅くまで人通りが絶えないエリアです。また、ここは若者を中心に人気があり、深夜営業のバーを求める客層が多いため、競合が比較的少なくなります。\n\n3. **明治神宮前**：明治神宮前は渋谷駅から徒歩約7分で、周辺には多くのカフェやバーが点在しています。しかし、明治神宮前は週末や祭りの時期には多くの観光客が訪れるため、深夜営業のバーとしては人気がありますが、競合が若干多いです。\n\nこれらのエリアはそれぞれ異なる特徴を持ち、競合を避けるためにも、具体的な立地を選び、その地域の特性を生かしたビジネスモデルを構築することが重要です。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013226985931396484,
+      "llm_time": 34.385396003723145,
+      "total_time": 34.398624658584595,
+      "test_id": "L4-09",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で深夜営業のバーを出店する場合、既存バーとの競合、駅からのアクセスを考慮して、適切なエリアを提案してください",
+      "expected_keywords": [
+        "バー",
+        "深夜",
+        "出店",
+        "競合",
+        "アクセス",
+        "エリア"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺は交通の便が良く、多くの人々が通る場所であるため、薬局出店には適しています。しかし、既存の薬局との競合や医療施設との近接性を考慮すると、次のような点が重要です：\n\n1. **競合店との距離**：既存の薬局との距離が近ければ近いほど競合が生じます。例えば、渋谷駅周辺には既存薬局が複数存在し、特に住宅街や商業施設内に密集している場合、新規出店には注意が必要です。\n\n2. **医療施設との距離**：病院やクリニックなど医療施設との距離も重要な要素です。これらの施設近くでは、患者の医薬品調剤や処方箋薬局としての需要が高い可能性がありますが、一方で既存の薬局との競合も高まります。\n\n3. **人流量**：駅周辺の高人流量は薬局にとってプラス要因ですが、密集した商業地域では既存の薬局と競合する可能性が高くなります。\n\n4. **立地特性**：具体的な立地（駅直結、商業施設内、住宅街など）により、顧客層や需要が異なるため、その特徴を踏まえた戦略が重要です。\n\n5. **地域の医療需要**：地域の医療需要や人口構成（特に高齢者比率）も考慮すべき要素です。需要が高ければ、競合にもかかわらず出店が有利となる可能性があります。\n\nこれらの要素を総合的に評価し、市場調査と分析を行った上で、最終的な出店決定を行うことが推奨されます。",
+      "context": "",
+      "keyword_score": 0.8333333333333334,
+      "query_time": 0.013826131820678711,
+      "llm_time": 36.661953926086426,
+      "total_time": 36.67578196525574,
+      "test_id": "L4-10",
+      "source": "structured",
+      "category": "decision_support",
+      "subcategory": "decision_business",
+      "question": "渋谷駅周辺で薬局を出店する場合、既存薬局との競合と、医療施設（病院、クリニック）との近接性を考慮して、出店の可否を判断してください",
+      "expected_keywords": [
+        "薬局",
+        "出店",
+        "競合",
+        "病院",
+        "クリニック",
+        "可否"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺のカフェ数を500mと300mの検索半径で比較すると、どちらの半径でも「カフェ」が存在しないため、「渋谷駅周辺はカフェが多い」という結論は両方において成立しません。具体的には、両方の半径でのカフェ数が0件であるため、結論は同じく成立しません。",
+      "context": "【カフェの半径別件数比較】\n半径300m以内に「カフェ」はありません\n\n【結論】\n小さい半径では「カフェ」が存在しないため、結論は成立しません。\n\n【カフェの集計】\n総数: 0件\n\n【カテゴリ比較: カフェ vs 鉄道駅】\nカフェと鉄道駅は同数（0件）",
+      "keyword_score": 1.0,
+      "query_time": 0.018115520477294922,
+      "llm_time": 9.820740699768066,
+      "total_time": 9.838858127593994,
+      "test_id": "L5-01",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "「渋谷駅周辺はカフェが多い」という結論は、検索半径を500mから300mに変えても成立しますか？両方の範囲でのカフェ数を比較して判断してください",
+      "expected_keywords": [
+        "カフェ",
+        "500m",
+        "300m",
+        "比較",
+        "成立"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しません。これは、半径300m以内にカフェが存在しないという情報から推測できます。つまり、他の飲食店は存在しているかもしれませんが、カフェについては確認できていないため、 Café を含まない評価では不完全となります。",
+      "context": "【カフェの半径別件数比較】\n半径300m以内に「カフェ」はありません\n\n【結論】\n小さい半径では「カフェ」が存在しないため、結論は成立しません。",
+      "keyword_score": 1.0,
+      "query_time": 0.019643306732177734,
+      "llm_time": 8.623094081878662,
+      "total_time": 8.642738819122314,
+      "test_id": "L5-02",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "「渋谷駅周辺は飲食店が充実している」という評価は、カフェを除外した場合でも成立しますか？",
+      "expected_keywords": [
+        "飲食店",
+        "充実",
+        "カフェ",
+        "除外",
+        "成立"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺のコンビニ密度についてのデータがありませんので、正確な最小半径を指定することはできません。コンビニの「十分に多い」と感じる最小半径は主観的な感想にもよりますが、一般的には1km以内に2〜3店舗があるとコンビニのアクセスが良好とされることが多いです。ただし、より严格的な基準を設ければ、半径500m以内に1店舗がある場合も「十分に多い」と感じるかもしれません。正確な情報を得るためには、実際のコンビニ分布データを分析する必要があります。",
+      "context": "\n【コンビニの集計】\n総数: 0件",
+      "keyword_score": 1.0,
+      "query_time": 0.013312578201293945,
+      "llm_time": 13.054922819137573,
+      "total_time": 13.068236589431763,
+      "test_id": "L5-03",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_sensitivity",
+      "question": "渋谷駅周辺のコンビニ密度について、「十分に多い」と言える最小半径はどのくらいですか？",
+      "expected_keywords": [
+        "コンビニ",
+        "密度",
+        "十分",
+        "最小",
+        "半径"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺と恵比寿駮周辺の高齢者向け住宅の候補地を比較すると以下のようになります：\n\n**評価軸1: 医療施設の数**\n- 渋谷駅周辺: 複数の病院や診療所が点在しています。具体的には渋谷病院、渋谷中央病院などがあります。\n- 恵比寿駅周辺: 恵比寿病院や荏原中央病院があり、医療施設の数は渋谷駅周辺と同等かそれ以上です。\n\n**評価軸2: 薬局の数**\n- 渋谷駅周辺: 多数の薬局が存在します。例えば、三共薬品、大塚製薬などがあります。\n- 恵比寿駅周辺: 同様に多数の薬局があり、例えばファーマシー・エス・プラス、ファーマシー・アール・プラスなどがあります。\n\n**評価軸3: 公共施設（郵便局、交番）の有無**\n- 渋谷駅周辺: 郵便局（渋谷郵便局）と交番（渋谷警察署）があります。\n- 恵比寿駅周辺: 郵便局（恵比寿郵便局）と交番（恵比寿警察署）があります。\n\n以上の比較から、両エリアは医療施設の数、薬局の数、公共施設の有無において同等かそれ以上となっています。どちらも高齢者向け住宅に適した環境と言えます。ただし、具体的な物件選定時には周辺の居住環境、交通アクセス、費用面などの要因も考慮することをお勧めします。",
+      "context": "\n【鉄道駅の集計】\n総数: 0件\n\n【カテゴリ比較: 鉄道駅 vs 郵便局】\n鉄道駅と郵便局は同数（0件）",
+      "keyword_score": 1.0,
+      "query_time": 0.013695716857910156,
+      "llm_time": 38.683515548706055,
+      "total_time": 38.69721269607544,
+      "test_id": "L5-04",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "高齢者向け住宅の候補地として、渋谷駅周辺と恵比寿駅周辺を比較してください。評価軸は：医療施設の数、薬局の数、公共施設（郵便局、交番）の有無としてください",
+      "expected_keywords": [
+        "高齢者",
+        "渋谷",
+        "恵比寿",
+        "比較",
+        "医療",
+        "薬局",
+        "公共"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺は子育て世帯にとって理想的な居住地の一つと評価できます。以下、公園、保育施設、医療施設、スーパーについて詳細に説明します：\n\n1. 公園：\n- 赤坂庭園：緑豊かな公園で、子供たちが遊べる広大な芝生があります。\n- 渋谷公園：子供用の遊具や広場があり、散歩やピクニックにも適しています。\n\n2. 保育施設：\n- 渋谷区立保育所：数多くあり、地域に分散しています。\n- 商業施設内保育園：複数の大型商業施設内にあります。\n\n3. 医療施設：\n- 渋谷病院：小児科や産科を含む総合病院。\n- 渋谷駅前クリニック：小児科専門の診療所。\n\n4. スーパー：\n- 東急東横店：多種多様な商品を取り扱う大型スーパー。\n- デイリーヤマザキ：コンビニエンスストアで日常的な買い物に便利。\n\nこれらの施設の充実度により、渋谷駅周辺は子育て環境が良好な地域と言えます。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013575077056884766,
+      "llm_time": 27.08999729156494,
+      "total_time": 27.10357356071472,
+      "test_id": "L5-05",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "子育て世帯向けの居住地として、渋谷駅周辺を評価してください。公園、保育施設、医療施設、スーパーの観点から総合的に判断してください",
+      "expected_keywords": [
+        "子育て",
+        "居住",
+        "公園",
+        "保育",
+        "医療",
+        "スーパー",
+        "総合"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺はビジネスパーソンにとって理想的な立地と言えるでしょう。以下、各ポイントについて評価します：\n\n1. **カフェ**：\n   - 多数のカフェが集中しており、ビジネスミーティングや作業場所として適しています。\n   - 「スターバックスコーヒー 渋谷スクランブル交差点店」など、人気の店舗が多数あります。\n   - また、「カプチーノの街 渋谷」や「タワーレコード 渋谷109店」内にあるカフェもおすすめです。\n\n2. **コンビニ**：\n   - 距離に関わらず、24時間営業のコンビニが複数存在し、利便性が高いです。\n   - 主要なコンビニチェーンの「セブンイレブン」「ローソン」「ファミリーマート」などが渋谷駅周辺には多数点在しています。\n\n3. **金融機関**：\n   - 「みずほ銀行 渋谷支店」「三井住友銀行 渋谷支店」など、主要銀行が複数店舗展開しています。\n   - ATMも駅周辺に多数設置されており、利便性が高く、急な出費にも対応できます。\n\n総合的に見ても、渋谷駅周辺はビジネスパーソンにとって非常に便利な立地と言えます。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.012828588485717773,
+      "llm_time": 30.30319046974182,
+      "total_time": 30.316020488739014,
+      "test_id": "L5-06",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "ビジネスパーソン向けの立地として、渋谷駅周辺を評価してください。カフェ（作業場所）、コンビニ（利便性）、金融機関（銀行、ATM）の観点から判断してください",
+      "expected_keywords": [
+        "ビジネス",
+        "カフェ",
+        "コンビニ",
+        "金融",
+        "銀行",
+        "評価"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺は東京の中心部に位置し、観光客にとって魅力的なエリアです。以下に、観光スポット、飲食店、宿泊施設の観点から強みと弱みを分析します。\n\n**強み:**\n\n1. **観光スポット:** 渋谷駅周辺には多くの有名な観光スポットがあります。例えば、スクランブル交差点や原宿、表参道、代官山などがあり、それぞれ異なる雰囲気と魅力を持っています。また、渋谷ヒカリエや渋谷109などのショッピング施設も人気があります。\n\n2. **飲食店:** 渋谷には多種多様な飲食店が存在し、国内外の料理を楽しむことができます。特に、カフェやスイーツショップが多く、観光客には人気があります。\n\n3. **宿泊施設:** 交通の便が良く、多くのホテルや旅館が集中しています。また、ビジネスユースでもレジャー用でも様々な選択肢があります。\n\n**弱み:**\n\n1. **混雑:** 特に週末や休日には非常に混雑することがあります。特に観光スポットやショッピング街では、観光客同士や地元の人々との混在により、混雑が顕著です。\n\n2. **料金:** 人気エリアゆえに、飲食店や宿泊施設の料金は比較的高くなる傾向があります。\n\n3. **駐車場:** 車での移動は不便です。公共の交通機関が主に利用されるため、自転車や徒歩での移動が一般的です。\n\nこれらの強みと弱みを踏まえた上で、観光客は渋谷駅周辺を訪れる際は、事前に計画を立て、混雑時間帯を避けることをおすすめします。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.01771259307861328,
+      "llm_time": 45.95896935462952,
+      "total_time": 45.97668433189392,
+      "test_id": "L5-07",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_comparison",
+      "question": "観光客向けのエリアとして、渋谷駅周辺を評価してください。観光スポット、飲食店、宿泊施設の観点から、強みと弱みを分析してください",
+      "expected_keywords": [
+        "観光",
+        "飲食店",
+        "宿泊",
+        "強み",
+        "弱み",
+        "分析"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺の「雰囲気の良い」カフェとしておすすめするのは「cafe COFFEE RESEARCH」です。店内は木目調の温かい雰囲気で、コーヒーの香りが広がっています。また、スイーツも充実しており、ゆっくりとした時間をお過ごしできます。\n\nただし、 Cafeの雰囲気は主観的な要素が大きいため、個人の好みによって異なる可能性があります。また、時間帯や季節によって雰囲気は変わることもありますので、訪れる際には実際に店舗を確認することをお勧めします。",
+      "context": "",
+      "keyword_score": 0.4,
+      "query_time": 0.020413637161254883,
+      "llm_time": 26.40769076347351,
+      "total_time": 26.428106546401978,
+      "test_id": "L5-08",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺で「雰囲気の良い」カフェを探しています。データから判断できる範囲で推薦し、判断の限界も説明してください",
+      "expected_keywords": [
+        "雰囲気",
+        "カフェ",
+        "推薦",
+        "判断",
+        "限界"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "できる：\n- 渋谷駅周辺にはいくつかの静かなレストランがある可能性があります。\n- 「静かな」レストランは通常、落ち着いた雰囲気や少ない客足を特徴とするため、カフェや小さなレストランが該当しそうです。\n\nできない：\n- 具体的なレストラン名を提案することはできません。\n- 客足の多寡や店内の雰囲気については、最新の情報がないため推測できません。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.05160927772521973,
+      "llm_time": 10.579466819763184,
+      "total_time": 10.631077527999878,
+      "test_id": "L5-09",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺で「静かな」レストランを探しています。データから推測できることと、できないことを区別して回答してください",
+      "expected_keywords": [
+        "静か",
+        "レストラン",
+        "推測",
+        "できる",
+        "できない"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺のPOIデータを基に推測すると、以下のような点が言えます：\n\n1. **交番の存在**：渋谷駅周辺には警察署や交番が複数存在します（渋谷警察署、渋谷交番など）。交番の密集度合いは治安の良し悪しを示唆する可能性があります。\n\n2. **人流量**：渋谷は大規模な交通結節点であり、常に多くの人々が往来しています。高密度の人流は犯罪の発生率を低下させる傾向があります。\n\n3. **商業施設の多さ**：周辺には多くのショッピングモールや飲食店があり、夜間でも多くの人々が活動しています。商業施設の多さは治安維持に寄与する可能性があります。\n\n4. **観光地**：渋谷スクランブル交差点やSHIBUYA 109など、観光地が多いことも治安維持に役立つと考えられます。\n\n**データの限界**：\n- POIデータには犯罪の実際の発生数や種類が含まれていないため、具体的な犯罪率の推測は困難です。\n- 交番の数だけで治安の良し悪しを判断することは不十分であり、地域の特性や社会経済的要因も重要な要素となります。\n- POIデータは特定の時点での情報であり、時間経過とともに変化する治安状況を反映していない可能性があります。\n\n以上のように、POIデータは一定の視点から渋谷の治安を推測するのに有用ですが、総合的な評価には他の情報源も必要となります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013187646865844727,
+      "llm_time": 33.92442774772644,
+      "total_time": 33.93761682510376,
+      "test_id": "L5-10",
+      "source": "structured",
+      "category": "advanced_reasoning",
+      "subcategory": "advanced_uncertainty",
+      "question": "渋谷駅周辺のPOIデータに基づいて、このエリアの「治安」について推測できることはありますか？交番の有無などから判断し、データの限界も述べてください",
+      "expected_keywords": [
+        "治安",
+        "交番",
+        "推測",
+        "データ",
+        "限界"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅東口から東へ少し進んだ交差点にある「SHIBUYA CAFÉ TERRACE」周辺は該当します。この場所ではカフェが複数あり、近くにはセブンイレブン 渋谷道玄坂店もございます。",
+      "context": "",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.01460886001586914,
+      "llm_time": 7.162945985794067,
+      "total_time": 7.17755651473999,
+      "test_id": "GR-01",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "渋谷駅の東側にあるカフェで、同じエリアにコンビニもある場所はどこですか？",
+      "expected_keywords": [
+        "カフェ",
+        "コンビニ",
+        "東"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷スクランブル交差点周辺には銀行である「みずほ銀行 渋谷支店」や「三井住友銀行 渋谷支店」があり、同地区には「コインズ 渋谷スクランブル店」というカフェも営業しています。このエリアは BANKS CAFE 区域と呼ばれ、銀行とカフェが両方存在する場所として知られています。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.014299631118774414,
+      "llm_time": 8.658601999282837,
+      "total_time": 8.672903537750244,
+      "test_id": "GR-02",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "銀行とカフェが両方あるエリアを教えてください",
+      "expected_keywords": [
+        "銀行",
+        "カフェ",
+        "エリア"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には多くのレストランがありますが、具体的なホテル名が分かっていないため、一般の例を挙げます。例えば「渋谷ヒカリエ」の近くには「SHIBUYA CAFÉ LARUMIE」や「SHIBUYA KATAGIRI」などがあります。「leanor」ホテルの近隣では、「ブルーノ・トラスティ渋谷店」や「タカシマヤ カフェ&バー」がおすすめです。詳細なホテル名を教えていただければ、より適切な情報を提供できます。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.027149677276611328,
+      "llm_time": 11.713350772857666,
+      "total_time": 11.740502119064331,
+      "test_id": "GR-03",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "ホテルの近くにあるレストランを教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "レストラン",
+        "近く"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷エリアでは、駅周辺にある薬局とコンビニが同じ場所にある場所は確認しましたが、具体的な店舗名や場所は見つかりませんでした。他の地域やより広い範囲を検索すれば見つかる可能性もありますが、現在の情報では該当する場所はありません。近くの主要駅周辺であれば、薬局やコンビニが別々の建物内に併設されていることが多いです。詳細な情報が必要な場合は、具体的な駅名を教えていただけますと助かります。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013751029968261719,
+      "llm_time": 17.89466881752014,
+      "total_time": 17.908421516418457,
+      "test_id": "GR-04",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "駅周辺で、薬局とコンビニが同じ場所にあるところはありますか？",
+      "expected_keywords": [
+        "薬局",
+        "コンビニ",
+        "駅"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷エリアの映画館近くのカフェはいくつかあります。具体的なカフェ名を挙げるには場所や種類などの詳細が必要ですが、一般的に「SHIBUYA 109」の近くにある「Café Saison Shibuya」や「SHIBUYA CINEMA堂」の隣にある「CAFE&BOOKS堂」がおすすめです。詳しく知りたい場合は、映画館の名称を教えていただけますか？",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.0765843391418457,
+      "llm_time": 12.179996728897095,
+      "total_time": 12.256582498550415,
+      "test_id": "GR-05",
+      "source": "graphrag",
+      "category": "relation",
+      "subcategory": "relation",
+      "question": "映画館の近くにあるカフェはどこですか？",
+      "expected_keywords": [
+        "映画館",
+        "カフェ"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "すみません、具体的なカフェ名を教えていただけますか？そうすれば、そのカフェから50m以内にある書店を確認できます。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.013498306274414062,
+      "llm_time": 3.581744432449341,
+      "total_time": 3.5952441692352295,
+      "test_id": "GR-06",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "カフェを起点に、そこから50m以内にある書店を教えてください",
+      "expected_keywords": [
+        "カフェ",
+        "書店",
+        "50m"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅から100m以内にあるコンビニは「セブンイレブン 渋谷駅前店」があります。このコンビニから数歩先には「STARCAFE SHIBUYA」が近隣に位置しています。",
+      "context": "",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.017393112182617188,
+      "llm_time": 5.906445026397705,
+      "total_time": 5.923839807510376,
+      "test_id": "GR-07",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "渋谷駅から100m以内のコンビニと、そこから近いカフェを教えてください",
+      "expected_keywords": [
+        "コンビニ",
+        "カフェ",
+        "100m"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅周辺には多くのレストランとカフェがあります。例えば、徒歩約5分圏内には「SHIBUYA CAFÉ LARUMIE」や「TOKYO CAFÉ&GRILL 渋谷スクランブルスクエア店」などがあります。また、ホテルから約8分の場所には「SHIBUYA CAFE&ROASTERY」や「Café de la Paix」もおすすめです。これらはすべて徒歩圏内ですので、お食事に出かけるのに便利な場所です。",
+      "context": "",
+      "keyword_score": 1.0,
+      "query_time": 0.012830257415771484,
+      "llm_time": 11.624542713165283,
+      "total_time": 11.637373685836792,
+      "test_id": "GR-08",
+      "source": "graphrag",
+      "category": "multi_hop",
+      "subcategory": "multi_hop",
+      "question": "ホテルから徒歩で行ける範囲にあるレストランとカフェを教えてください",
+      "expected_keywords": [
+        "ホテル",
+        "レストラン",
+        "カフェ"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "現在の情報では、具体的な飲食店が最も多いエリアのPOI情報がありません。不明确なPOIが最多ですが、その中には飲食店も含まれている可能性があります。詳細な情報を提供していただければと思います。",
+      "context": "\n【POIカテゴリランキング】\n  1位: 不明 (1046件)",
+      "keyword_score": 1.0,
+      "query_time": 0.013496875762939453,
+      "llm_time": 5.924728155136108,
+      "total_time": 5.938226222991943,
+      "test_id": "GR-09",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "飲食店が最も多いエリアはどこですか？",
+      "expected_keywords": [
+        "飲食店",
+        "エリア",
+        "多い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "現在のデータでは、東側と西側のPOIの数は同じで、北側と南側のPOIの数についての情報はありません。すべてのPOIが不明なカテゴリーに分類されているため、北側と南側での分布については具体的な情報がありません。",
+      "context": "\n【POI集計データ】\n総数: 1046件\n\nカテゴリ別:\n  - 不明: 1046件\n\n東西比較:\n  東側と西側は同数（0件）\n\n【空間フィルタ結果】\n条件に合うPOI: 1046件\n  - None: 0m (不明)\n  - None: 0m (不明)\n  - None: 0m (不明)\n  - None: 0m (不明)\n  - None: 0m (不明)",
+      "keyword_score": 0.75,
+      "query_time": 0.013496637344360352,
+      "llm_time": 6.797170639038086,
+      "total_time": 6.8106689453125,
+      "test_id": "GR-10",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "北側と南側でPOIの数が多いのはどちらですか？",
+      "expected_keywords": [
+        "北",
+        "南",
+        "数",
+        "多い"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷エリアで最も多いカテゴリのPOIは不明ですが、上位3つのカテゴリは以下の通りです：\n\n1. 不明 (1046件)\n2. 食事\n3. 買い物\n\nただし、「不明」が1位であることを踏まえ、実際の最も多いカテゴリはこのリストから判断できない可能性があります。詳細な情報を得るためには、より具体的なデータが必要です。",
+      "context": "\n【POIカテゴリランキング】\n  1位: 不明 (1046件)",
+      "keyword_score": 1.0,
+      "query_time": 0.014752388000488281,
+      "llm_time": 9.842355251312256,
+      "total_time": 9.85710883140564,
+      "test_id": "GR-11",
+      "source": "graphrag",
+      "category": "aggregation",
+      "subcategory": "aggregation",
+      "question": "渋谷で最も多いカテゴリのPOIは何ですか？上位3つを教えてください",
+      "expected_keywords": [
+        "カテゴリ",
+        "多い",
+        "上位"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "EAST側とWEST側の飲食店のカテゴリ多様性については、現在の情報では判断できません。両側とも飲食店の数が同じですが、具体的な飲食店の種類やカテゴリの詳細情報がないため、多様性の比較はできません。",
+      "context": "\n【東西比較: 全体】\n東側と西側は同数（0件）",
+      "keyword_score": 0.5,
+      "query_time": 0.013459205627441406,
+      "llm_time": 6.661632061004639,
+      "total_time": 6.675093173980713,
+      "test_id": "GR-12",
+      "source": "graphrag",
+      "category": "comparison",
+      "subcategory": "comparison",
+      "question": "東側と西側で、飲食店のカテゴリ多様性が高いのはどちらですか？",
+      "expected_keywords": [
+        "東",
+        "西",
+        "飲食店",
+        "多様性"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "現在の情報では、どちらの距離にもホテルが存在しないことがわかります。つまり、駅の近く（200m以内）および遠く（500m以上）にホテルが0件あるため、どちらの距離でもホテルは同じ数量（0件）です。",
+      "context": "\n【ホテルの集計】\n総数: 0件\n\n【カテゴリ比較: ホテル vs 鉄道駅】\nホテルと鉄道駅は同数（0件）",
+      "keyword_score": 1.0,
+      "query_time": 0.019016027450561523,
+      "llm_time": 6.482482671737671,
+      "total_time": 6.501500606536865,
+      "test_id": "GR-13",
+      "source": "graphrag",
+      "category": "comparison",
+      "subcategory": "comparison",
+      "question": "駅の近く（200m以内）と遠く（500m以上）で、どちらにホテルが多いですか？",
+      "expected_keywords": [
+        "駅",
+        "近く",
+        "遠く",
+        "ホテル"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "現在、検索結果にはホテルの情報がありません。ただし、渋谷駅に最も近いホテルは通常、次のいずれかが候補となります：\n\n1. 渋谷ヒカリエシャンティア\n2. グランドプリンス東京ホテル渋谷\n\nこれらのホテルは渋谷駅から徒歩約1分以内に位置しています。詳細な情報や最新の営業状況については、公式ウェブサイトまたは予約サイトをご確認ください。",
+      "context": "「ホテル」に該当するPOIが見つかりませんでした。\n\n【ホテルの集計】\n総数: 0件",
+      "keyword_score": 1.0,
+      "query_time": 0.013053655624389648,
+      "llm_time": 10.929341793060303,
+      "total_time": 10.942397117614746,
+      "test_id": "GR-14",
+      "source": "graphrag",
+      "category": "proximity",
+      "subcategory": "proximity",
+      "question": "渋谷駅に最も近いホテルはどこですか？",
+      "expected_keywords": [
+        "駅",
+        "近い",
+        "ホテル"
+      ],
+      "system": "structured"
+    },
+    {
+      "response": "渋谷駅から300m以内にある映画館は以下の通りです：\n\n1. ユナイテッド・シネマ 渋谷 (約80m)\n2. シネマート 淺井町 (約150m)\n\nこれらの映画館は渋谷駅から近い順に並んでいます。",
+      "context": "",
+      "keyword_score": 0.6666666666666666,
+      "query_time": 0.013550043106079102,
+      "llm_time": 7.472003698348999,
+      "total_time": 7.485555648803711,
+      "test_id": "GR-15",
+      "source": "graphrag",
+      "category": "proximity",
+      "subcategory": "proximity",
+      "question": "渋谷駅から300m以内にある映画館を距離順に教えてください",
+      "expected_keywords": [
+        "映画館",
+        "300m",
+        "距離"
+      ],
+      "system": "structured"
+    }
+  ]
+}
