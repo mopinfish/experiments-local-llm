@@ -19,9 +19,11 @@ import time
 try:
     from .structured_rag_system import StructuredRAGSystem, QuestionAnalysis, analyze_question
     from .graph_rag_system import GraphRAGSystem
+    from .graph_builder import POIGraphBuilder
 except ImportError:
     from structured_rag_system import StructuredRAGSystem, QuestionAnalysis, analyze_question
     from graph_rag_system import GraphRAGSystem
+    from graph_builder import POIGraphBuilder
 
 
 @dataclass
@@ -59,40 +61,36 @@ class AdaptiveRAGSystem:
         "cuisine": 8.3,          # 料理ジャンル検索
     }
 
-    # 同等性能のクエリタイプ（デフォルトは構造化RAGを使用）
-    EQUIVALENT_TYPES = {
-        "advanced_reasoning",
-        "competitor",
-        "complementary",
-        "constraint_satisfaction",
-        "decision_support",
-        "spatial_reasoning",
-    }
-
     def __init__(
         self,
-        poi_json_path: str = "poi_documents.json",
-        rebuild: bool = False,
+        model,
+        tokenizer,
+        vectorstore,
+        all_pois: List[Dict[str, Any]],
         include_extended_edges: bool = True,
         verbose: bool = False
     ):
         """
         Args:
-            poi_json_path: POIデータのJSONファイルパス
-            rebuild: ベクトルストア/グラフを再構築するか
-            include_extended_edges: 拡張エッジを含むか
+            model: Hugging Face Transformersモデル
+            tokenizer: トークナイザー
+            vectorstore: LangChain ChromaDBベクトルストア
+            all_pois: 全POIデータ
+            include_extended_edges: 拡張エッジを含むか（GraphRAG用）
             verbose: 詳細ログを出力するか
         """
+        self.model = model
+        self.tokenizer = tokenizer
+        self.vectorstore = vectorstore
+        self.all_pois = all_pois
+        self.include_extended_edges = include_extended_edges
         self.verbose = verbose
+
         self._log("Adaptive RAG System 初期化中...")
 
         # 両システムの初期化（遅延ロード用にNoneで初期化）
         self._structured_rag: Optional[StructuredRAGSystem] = None
         self._graph_rag: Optional[GraphRAGSystem] = None
-
-        self.poi_json_path = poi_json_path
-        self.rebuild = rebuild
-        self.include_extended_edges = include_extended_edges
 
         self._log("Adaptive RAG System 初期化完了")
 
@@ -107,8 +105,11 @@ class AdaptiveRAGSystem:
         if self._structured_rag is None:
             self._log("構造化RAGシステムを初期化中...")
             self._structured_rag = StructuredRAGSystem(
-                poi_json_path=self.poi_json_path,
-                rebuild=self.rebuild
+                model=self.model,
+                tokenizer=self.tokenizer,
+                vectorstore=self.vectorstore,
+                all_pois=self.all_pois,
+                debug=self.verbose
             )
         return self._structured_rag
 
@@ -117,11 +118,18 @@ class AdaptiveRAGSystem:
         """GraphRAGシステム（遅延ロード）"""
         if self._graph_rag is None:
             self._log("GraphRAGシステムを初期化中...")
-            self._graph_rag = GraphRAGSystem(
-                poi_json_path=self.poi_json_path,
-                rebuild=self.rebuild,
-                include_extended_edges=self.include_extended_edges
+            # POIGraphBuilderでグラフを構築
+            builder = POIGraphBuilder()
+            graph = builder.build_graph(
+                self.all_pois,
+                include_extended_edges=self.include_extended_edges,
+                verbose=self.verbose
             )
+            # 構築済みグラフをGraphRAGSystemに渡す
+            self._graph_rag = GraphRAGSystem(graph_or_pois=graph)
+            # GraphRAGにもモデル・トークナイザーを設定
+            self._graph_rag.model = self.model
+            self._graph_rag.tokenizer = self.tokenizer
         return self._graph_rag
 
     def select_system(self, question: str, analysis: Optional[QuestionAnalysis] = None) -> tuple[Literal["GraphRAG", "StructuredRAG"], str]:
@@ -358,7 +366,6 @@ def main():
         analysis = analyze_question(question)
 
         # 仮のシステムでselect_systemを呼び出し
-        # 実際のRAGシステムは初期化しない
         graphrag_reasons = []
 
         if analysis.requires_comparison:
