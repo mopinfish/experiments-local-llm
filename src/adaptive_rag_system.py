@@ -34,8 +34,6 @@ class AdaptiveRAGResult:
     selected_system: Literal["GraphRAG", "StructuredRAG"]
     selection_reason: str
     question_analysis: Dict[str, Any]
-    query_time: float
-    llm_time: float
     total_time: float
 
 
@@ -194,6 +192,66 @@ class AdaptiveRAGSystem:
         # デフォルト: 構造化RAG（全体的に安定した性能）
         return "StructuredRAG", "デフォルト選択（安定した性能）"
 
+    def _generate_response(self, context: str, question: str) -> str:
+        """
+        コンテキストと質問からLLM応答を生成
+
+        Args:
+            context: 検索結果のコンテキスト
+            question: 質問文
+
+        Returns:
+            生成された回答
+        """
+        import torch
+
+        system_prompt = """あなたは渋谷エリアの地理情報に詳しいアシスタントです。
+提供された情報に基づいて、正確かつ簡潔に回答してください。
+座標情報がある場合は必ず含めてください。
+数値データがある場合は具体的な数字を使って回答してください。
+情報がない場合は「情報がありません」と正直に回答してください。"""
+
+        prompt = f"""以下の情報を参考にして、質問に回答してください。
+
+{context}
+
+【質問】
+{question}
+
+【回答】
+上記の情報を基に、具体的な数値や場所名を含めて回答します。"""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
+
+        text = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+
+        inputs = self.tokenizer(text, return_tensors="pt").to("cuda")
+
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=512,
+                temperature=0.1,
+                do_sample=True,
+                pad_token_id=self.tokenizer.eos_token_id
+            )
+
+        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        if "assistant" in response.lower():
+            parts = response.split("assistant")
+            if len(parts) > 1:
+                response = parts[-1].strip()
+
+        return response
+
     def query(self, question: str) -> AdaptiveRAGResult:
         """
         質問に回答
@@ -222,20 +280,16 @@ class AdaptiveRAGSystem:
         self._log(f"選択システム: {selected_system} ({selection_reason})")
 
         # 選択されたシステムで回答
-        query_start = time.time()
-
         if selected_system == "GraphRAG":
-            result = self.graph_rag.query(question)
-            response = result.response
-            context = result.context
-            query_time = result.query_time
-            llm_time = result.llm_time
+            # GraphRAGはコンテキストのみ返すので、LLM応答を生成
+            graph_result = self.graph_rag.query(question)
+            context = graph_result.context
+            response = self._generate_response(context, question)
         else:
-            result = self.structured_rag.query(question)
-            response = result.response
-            context = result.context
-            query_time = result.query_time
-            llm_time = result.llm_time
+            # StructuredRAGはquery_with_structured_ragを使用
+            result = self.structured_rag.query_with_structured_rag(question)
+            response = result["answer"]
+            context = result["context"]
 
         total_time = time.time() - start_time
 
@@ -245,8 +299,6 @@ class AdaptiveRAGSystem:
             selected_system=selected_system,
             selection_reason=selection_reason,
             question_analysis=analysis_dict,
-            query_time=query_time,
-            llm_time=llm_time,
             total_time=total_time
         )
 
@@ -287,20 +339,22 @@ class AdaptiveRAGSystem:
 
         # 選択されたシステムで回答
         if selected_system == "GraphRAG":
-            result = self.graph_rag.query(question)
+            graph_result = self.graph_rag.query(question)
+            context = graph_result.context
+            response = self._generate_response(context, question)
         else:
-            result = self.structured_rag.query(question)
+            result = self.structured_rag.query_with_structured_rag(question)
+            response = result["answer"]
+            context = result["context"]
 
         total_time = time.time() - start_time
 
         return AdaptiveRAGResult(
-            response=result.response,
-            context=result.context,
+            response=response,
+            context=context,
             selected_system=selected_system,
             selection_reason=selection_reason,
             question_analysis=analysis_dict,
-            query_time=result.query_time,
-            llm_time=result.llm_time,
             total_time=total_time
         )
 
