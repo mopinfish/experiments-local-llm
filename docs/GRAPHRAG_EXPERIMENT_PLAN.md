@@ -752,8 +752,80 @@ flat_meta = flatten_metadata(poi["metadata"])
 
 ---
 
+---
+
+## 12. Adaptive RAG実装
+
+### 12.1 概要
+
+拡張GraphRAG評価の結果、質問タイプによってGraphRAGと構造化RAGの得手不得手が明確になったため、質問を動的にルーティングする**Adaptive RAG**を実装した。
+
+### 12.2 システム選択ロジック
+
+```python
+def select_system(question, analysis):
+    # GraphRAGを使用すべきケース
+    if analysis.requires_comparison:
+        return "GraphRAG"  # +25%の優位性
+    if analysis.requires_proximity:
+        return "GraphRAG"  # +16.6%の優位性
+    if "24時間" in question or "深夜" in question:
+        return "GraphRAG"  # +11.1%の優位性（hours）
+    if analysis.requires_aggregation:
+        return "GraphRAG"  # +8.3%の優位性
+
+    # それ以外は構造化RAG（デフォルト）
+    return "StructuredRAG"
+```
+
+### 12.3 適性マップ（評価結果より）
+
+| クエリタイプ | GraphRAG | 構造化RAG | 差分 | 選択 |
+|------------|----------|----------|------|------|
+| comparison | 100.0% | 75.0% | **+25.0** | GraphRAG |
+| proximity | 83.3% | 66.7% | **+16.6** | GraphRAG |
+| hours | 100.0% | 88.9% | **+11.1** | GraphRAG |
+| aggregation | 100.0% | 91.7% | **+8.3** | GraphRAG |
+| relation | 63.3% | 86.7% | -23.4 | 構造化RAG |
+| multi_hop | 77.8% | 100.0% | -22.2 | 構造化RAG |
+| brand | 73.3% | 93.3% | -20.0 | 構造化RAG |
+
+### 12.4 ファイル構成
+
+| ファイル | 役割 |
+|---------|------|
+| `src/adaptive_rag_system.py` | Adaptive RAGシステム実装 |
+| `notebooks/graphrag_06_adaptive_evaluation.ipynb` | 評価ノートブック |
+
+### 12.5 使用方法
+
+```python
+from src.adaptive_rag_system import AdaptiveRAGSystem
+
+# 初期化
+adaptive_rag = AdaptiveRAGSystem(
+    poi_json_path="poi_documents.json",
+    rebuild=True,
+    include_extended_edges=True
+)
+
+# 自動システム選択でクエリ実行
+result = adaptive_rag.query("渋谷駅の東側と西側で、レストランが多いのはどちらですか？")
+print(f"選択システム: {result.selected_system}")  # GraphRAG
+print(f"選択理由: {result.selection_reason}")    # 東西/方向比較クエリ (+25%)
+print(f"回答: {result.response}")
+
+# 特定のシステムを指定してクエリ実行（比較評価用）
+result = adaptive_rag.query_with_system(question, "GraphRAG")
+result = adaptive_rag.query_with_system(question, "StructuredRAG")
+result = adaptive_rag.query_with_system(question, "Adaptive")
+```
+
+---
+
 **作成者**: Claude Opus 4.5
 **ステータス**: 承認済み（NetworkX先行、追加テストケース10-15件）
 **更新履歴**:
 - 2026-01-29: 初版作成
 - 2026-01-30: 拡張グラフRAG構築手順（セクション11）追加
+- 2026-01-30: Adaptive RAG実装（セクション12）追加

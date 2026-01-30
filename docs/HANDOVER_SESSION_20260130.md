@@ -15,6 +15,8 @@
 |--------|------|
 | `notebooks/graphrag_04_unified_comparison.ipynb` | 70テストケース統一比較 |
 | `notebooks/graphrag_05_enhanced_comparison.ipynb` | 拡張グラフRAG比較（90テストケース） |
+| `notebooks/graphrag_06_adaptive_evaluation.ipynb` | Adaptive RAG評価（3システム比較） |
+| `src/adaptive_rag_system.py` | Adaptive RAGシステム実装 |
 | `src/graph_builder.py` | 拡張エッジタイプ対応 |
 | `src/test_cases_graphrag.py` | 35件のGraphRAG向けテストケース |
 | `osm_poi_fetcher.py` | ブランド/営業時間/料理ジャンル抽出対応 |
@@ -129,11 +131,16 @@ Issue #4: GraphRAG実験結果の追跡
 
 ### 4.1 即時（Phase 8 完了）
 
-**タスク**:
-1. [ ] `graphrag_05_enhanced_comparison.ipynb` をColabで実行
-2. [ ] 拡張グラフRAGの評価結果を取得
-3. [ ] Issue #4 に結果を報告
-4. [ ] 最終分析レポートの作成
+**完了済みタスク**:
+- [x] `graphrag_05_enhanced_comparison.ipynb` をColabで実行
+- [x] 拡張グラフRAGの評価結果を取得（82.5% vs 85.9%）
+- [x] Issue #4 に結果を報告
+- [x] Adaptive RAGの実装（`src/adaptive_rag_system.py`）
+
+**残タスク**:
+1. [ ] `graphrag_06_adaptive_evaluation.ipynb` をColabで実行
+2. [ ] Adaptive RAGの評価結果を取得
+3. [ ] 最終分析レポートの作成
 
 **期待される結果**:
 - 拡張エッジタイプにより、GraphRAGのbrand/complementary/cuisine/hoursカテゴリでの性能向上
