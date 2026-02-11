@@ -1,0 +1,46 @@
+Phase 9: Agentic RAG Evaluation Summary
+============================================================
+
+Evaluation Date: 2026-02-11 09:06:56
+Test Cases: 105
+Quick Test Mode: False
+
+Overall Results:
+------------------------------------------------------------
+Structured RAG Success Rate: 96.2%
+Agentic RAG Success Rate: 87.6%
+Improvement: -8.6%
+
+Structured RAG Avg Execution Time: 11.08s
+Agentic RAG Avg Execution Time: 56.36s
+
+
+Category-wise Results:
+----------------------------------------------------------------------
+Category                  Structured   Agentic      Delta
+----------------------------------------------------------------------
+competitor                66.7        % 100.0       % +33.3%
+complementary             80.0        % 100.0       % +20.0%
+basic_location            80.0        % 100.0       % +20.0%
+basic_category            80.0        % 80.0        % 0.0%
+spatial_proximity         100.0       % 100.0       % 0.0%
+decision_business         100.0       % 100.0       % 0.0%
+decision_location         100.0       % 100.0       % 0.0%
+spatial_density           100.0       % 100.0       % 0.0%
+constraint_single         100.0       % 100.0       % 0.0%
+conditional_reasoning     100.0       % 100.0       % 0.0%
+multi_step_spatial        100.0       % 100.0       % 0.0%
+advanced_sensitivity      100.0       % 100.0       % 0.0%
+relation                  100.0       % 100.0       % 0.0%
+proximity                 100.0       % 100.0       % 0.0%
+cuisine                   100.0       % 100.0       % 0.0%
+comparison                100.0       % 100.0       % 0.0%
+aggregation               100.0       % 100.0       % 0.0%
+iterative_refinement      100.0       % 100.0       % 0.0%
+hours                     100.0       % 100.0       % 0.0%
+spatial_comparison        100.0       % 80.0        % -20.0%
+multi_hop                 100.0       % 66.7        % -33.3%
+brand                     100.0       % 60.0        % -40.0%
+advanced_comparison       100.0       % 50.0        % -50.0%
+constraint_multi          100.0       % 40.0        % -60.0%
+advanced_uncertainty      100.0       % 0.0         % -100.0%

@@ -377,6 +377,7 @@ dependencies = [
     { name = "langchain-core" },
     { name = "langchain-ollama" },
     { name = "langchain-text-splitters" },
+    { name = "langgraph" },
     { name = "networkx" },
     { name = "requests" },
 ]
@@ -390,6 +391,7 @@ requires-dist = [
     { name = "langchain-core", specifier = ">=1.2.7" },
     { name = "langchain-ollama", specifier = ">=1.0.1" },
     { name = "langchain-text-splitters", specifier = ">=1.1.0" },
+    { name = "langgraph", specifier = ">=0.2.0" },
     { name = "networkx", specifier = ">=3.6.1" },
     { name = "requests", specifier = ">=2.32.5" },
 ]

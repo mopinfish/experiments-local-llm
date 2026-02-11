@@ -1,0 +1,243 @@
+{
+  "timestamp": "20260204_004149",
+  "test_count": 10,
+  "quick_test": true,
+  "structured_rag": {
+    "metrics": {
+      "success_rate": 0.0,
+      "avg_hit_rate": 0.0,
+      "avg_execution_time": 0.0,
+      "std_execution_time": 0.0,
+      "error_count": 10
+    },
+    "results": [
+      {
+        "test_id": "L1-01",
+        "category": "basic_location",
+        "question": "渋谷駅の場所を教えてください",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-02",
+        "category": "basic_location",
+        "question": "東宝シネマの座標は？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-03",
+        "category": "basic_location",
+        "question": "渋谷東武ホテルはどこにありますか？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-04",
+        "category": "basic_location",
+        "question": "渋谷神南郵便局の場所を教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-05",
+        "category": "basic_location",
+        "question": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-06",
+        "category": "basic_category",
+        "question": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-07",
+        "category": "basic_category",
+        "question": "渋谷にあるカフェを3つ教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-08",
+        "category": "basic_category",
+        "question": "渋谷の映画館を教えてください",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-09",
+        "category": "basic_category",
+        "question": "渋谷周辺の薬局はどこですか？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      },
+      {
+        "test_id": "L1-10",
+        "category": "basic_category",
+        "question": "渋谷にあるホテルを教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'StructuredRAGSystem' object has no attribute 'query'"
+      }
+    ]
+  },
+  "agentic_rag": {
+    "metrics": {
+      "success_rate": 10.0,
+      "avg_hit_rate": 10.0,
+      "avg_execution_time": 0.6663005113601684,
+      "std_execution_time": 2.1070272220330284,
+      "error_count": 9
+    },
+    "results": [
+      {
+        "test_id": "L1-01",
+        "category": "basic_location",
+        "question": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅的坐标是东经139.701636，北纬35.658034。",
+        "execution_time": 6.663005113601685,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-02",
+        "category": "basic_location",
+        "question": "東宝シネマの座標は？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-03",
+        "category": "basic_location",
+        "question": "渋谷東武ホテルはどこにありますか？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-04",
+        "category": "basic_location",
+        "question": "渋谷神南郵便局の場所を教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-05",
+        "category": "basic_location",
+        "question": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-06",
+        "category": "basic_category",
+        "question": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-07",
+        "category": "basic_category",
+        "question": "渋谷にあるカフェを3つ教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-08",
+        "category": "basic_category",
+        "question": "渋谷の映画館を教えてください",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-09",
+        "category": "basic_category",
+        "question": "渋谷周辺の薬局はどこですか？",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      },
+      {
+        "test_id": "L1-10",
+        "category": "basic_category",
+        "question": "渋谷にあるホテルを教えて",
+        "answer": "",
+        "execution_time": 0,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": "'NoneType' object has no attribute 'lower'"
+      }
+    ]
+  },
+  "category_results": [
+    {
+      "category": "basic_location",
+      "count": 5,
+      "structured_rate": 0.0,
+      "agentic_rate": 20.0,
+      "improvement": 20.0
+    },
+    {
+      "category": "basic_category",
+      "count": 5,
+      "structured_rate": 0.0,
+      "agentic_rate": 0.0,
+      "improvement": 0.0
+    }
+  ]
+}

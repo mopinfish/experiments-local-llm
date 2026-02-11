@@ -1,0 +1,23 @@
+Phase 9: Agentic RAG Evaluation Summary
+============================================================
+
+Evaluation Date: 2026-02-04 00:41:49
+Test Cases: 10
+Quick Test Mode: True
+
+Overall Results:
+------------------------------------------------------------
+Structured RAG Success Rate: 0.0%
+Agentic RAG Success Rate: 10.0%
+Improvement: +10.0%
+
+Structured RAG Avg Execution Time: 0.00s
+Agentic RAG Avg Execution Time: 0.67s
+
+
+Category-wise Results:
+----------------------------------------------------------------------
+Category                  Structured   Agentic      Delta
+----------------------------------------------------------------------
+basic_location            0.0         % 20.0        % +20.0%
+basic_category            0.0         % 0.0         % 0.0%
