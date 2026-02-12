@@ -1,0 +1,243 @@
+{
+  "timestamp": "20260211_064132",
+  "test_count": 10,
+  "quick_test": true,
+  "structured_rag": {
+    "metrics": {
+      "success_rate": 80.0,
+      "avg_hit_rate": 73.5,
+      "avg_execution_time": 8.672969627380372,
+      "std_execution_time": 6.41689877512765,
+      "error_count": 0
+    },
+    "results": [
+      {
+        "test_id": "L1-01",
+        "category": "basic_location",
+        "question": "渋谷駅の場所を教えてください",
+        "answer": "渋谷駅は東京都渋谷区渋谷4-15-1に位置しています。緯度35.658079、経度139.700176の座標です。",
+        "execution_time": 13.496639251708984,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-02",
+        "category": "basic_location",
+        "question": "東宝シネマの座標は？",
+        "answer": "情報がありません。東宝シネマの座標情報は提供された検索結果や空間フィルタ結果には含まれていません。",
+        "execution_time": 5.941433429718018,
+        "keyword_hit_rate": 0.6,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-03",
+        "category": "basic_location",
+        "question": "渋谷東武ホテルはどこにありますか？",
+        "answer": "情報がありません。上記の検索結果には渋谷東武ホテルに関する情報はありません。",
+        "execution_time": 2.4487409591674805,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-04",
+        "category": "basic_location",
+        "question": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局は北方向に451mの場所にあります。",
+        "execution_time": 2.3519086837768555,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-05",
+        "category": "basic_location",
+        "question": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "情報がありません。",
+        "execution_time": 0.863706111907959,
+        "keyword_hit_rate": 0.0,
+        "success": false,
+        "error": null
+      },
+      {
+        "test_id": "L1-06",
+        "category": "basic_category",
+        "question": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "情報がありません。渋谷駅周辺のコンビニについての具体的な情報が提供されていません。",
+        "execution_time": 3.2033274173736572,
+        "keyword_hit_rate": 0.25,
+        "success": false,
+        "error": null
+      },
+      {
+        "test_id": "L1-07",
+        "category": "basic_category",
+        "question": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷にあるカフェを3つ紹介します。\n\n1. 渋谷珈琲研究所 - 住所：東京都渋谷区渋谷2-15-14 渋谷スクランブルスクエア 1F\n2. アナログ渋谷 - 住所：東京都渋谷区渋谷3-12-10 渋谷マークタワーズ 1F\n3. マルヤマベーグルLOOP渋谷店 - 住所：東京都渋谷区渋谷4-11-16 シャンティ渋谷4F",
+        "execution_time": 12.943212985992432,
+        "keyword_hit_rate": 0.5,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-08",
+        "category": "basic_category",
+        "question": "渋谷の映画館を教えてください",
+        "answer": "渋谷エリアには以下のような映画館があります。\n\n1. ヒューマントラストシネマ渋谷 - 娯楽/映画館 (34.687025, 139.650692)\n2. 東宝シネマ - 娯楽/映画館 (35.683755, 139.700164)\n3. シネクイント CINE QUINTO - 娯楽/映画館 (35.682864, 139.700444)\n4. Cinema Vera Shibuya - 娯楽/映画館 (35.682864, 139.700444)\n\nこれらの映画館は渋谷駅周辺に位置しています。",
+        "execution_time": 17.93320655822754,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-09",
+        "category": "basic_category",
+        "question": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷周辺の薬局は以下の場所があります。\n\n1. ＯＳドラッグ渋谷店 (35.678024, 139.702848)\n2. 渋谷友好薬局 (35.678125, 139.702912)\n3. 渋谷みどり薬局 (35.678056, 139.702867)\n4. ウイング薬局渋谷道玄坂店 (35.677978, 139.702889)\n5. サンドラッグ (35.678000, 139.702900)",
+        "execution_time": 16.441972732543945,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-10",
+        "category": "basic_category",
+        "question": "渋谷にあるホテルを教えて",
+        "answer": "渋谷エリアには以下のホテルがあります：\n\n1. 渋谷シティホテル - 宿泊施設\n2. ホテルインディゴ東京渋谷 - 宿泊施設\n3. 渋谷東武ホテル (Tobu Hotel) - 宿泊施設\n4. ホテルメッツ渋谷 - 宿泊施設\n5. 渋谷エクセルホテル東急 - 宿泊施設\n\nこれらのホテルの座標情報はありませんが、全て渋谷区内に位置しています。",
+        "execution_time": 11.10554814338684,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      }
+    ]
+  },
+  "agentic_rag": {
+    "metrics": {
+      "success_rate": 90.0,
+      "avg_hit_rate": 70.0,
+      "avg_execution_time": 17.8538001537323,
+      "std_execution_time": 5.690503221697701,
+      "error_count": 0
+    },
+    "results": [
+      {
+        "test_id": "L1-01",
+        "category": "basic_location",
+        "question": "渋谷駅の場所を教えてください",
+        "answer": "淺井内町35-7は渋谷駅の位置です。ただし、この情報は直接的に提供できるツールではありません。一般的には、地図アプリケーションを使用して確認することができます。",
+        "execution_time": 12.973780632019043,
+        "keyword_hit_rate": 0.5,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-02",
+        "category": "basic_location",
+        "question": "東宝シネマの座標は？",
+        "answer": "東宝シネマの座標は緯度35.658034、経度139.701636です。",
+        "execution_time": 12.366274118423462,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-03",
+        "category": "basic_location",
+        "question": "渋谷東武ホテルはどこにありますか？",
+        "answer": "渋谷東武酒店位于渋谷站西北方向约621米处。",
+        "execution_time": 17.61955428123474,
+        "keyword_hit_rate": 0.6666666666666666,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-04",
+        "category": "basic_location",
+        "question": "渋谷神南郵便局の場所を教えて",
+        "answer": "渋谷神南郵便局位于渋谷站北侧约450.61米处。",
+        "execution_time": 13.533309936523438,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-05",
+        "category": "basic_location",
+        "question": "三菱UFJ銀行渋谷支店の位置情報",
+        "answer": "三菱UFJ銀行渋谷支店的具体位置信息未能从现有数据中获取到。可能需要进一步确认名称或尝试其他查询方式。",
+        "execution_time": 26.270753622055054,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-06",
+        "category": "basic_category",
+        "question": "渋谷駅周辺のコンビニを教えてください",
+        "answer": "渋谷駅周辺のコンビニは3つあります。最も近いのはローソンで、渋谷駅から約101.94メートルです。次に近いのはセブン-イレブンで、約106.02メートルです。さらに遠くにあるのはファミリーマートで、約134.59メートルです。",
+        "execution_time": 17.16197395324707,
+        "keyword_hit_rate": 1.0,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-07",
+        "category": "basic_category",
+        "question": "渋谷にあるカフェを3つ教えて",
+        "answer": "渋谷にある3つのカフェは以下の通りです：",
+        "execution_time": 20.965641260147095,
+        "keyword_hit_rate": 0.5,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-08",
+        "category": "basic_category",
+        "question": "渋谷の映画館を教えてください",
+        "answer": "渋谷の近くには東宝シネマがあります。これは約280メートル北西に位置しています。",
+        "execution_time": 11.799278974533081,
+        "keyword_hit_rate": 0.3333333333333333,
+        "success": false,
+        "error": null
+      },
+      {
+        "test_id": "L1-09",
+        "category": "basic_category",
+        "question": "渋谷周辺の薬局はどこですか？",
+        "answer": "渋谷周辺の薬局は以下の通りです：",
+        "execution_time": 27.909435510635376,
+        "keyword_hit_rate": 0.5,
+        "success": true,
+        "error": null
+      },
+      {
+        "test_id": "L1-10",
+        "category": "basic_category",
+        "question": "渋谷にあるホテルを教えて",
+        "answer": "渋谷地区有多个酒店可供选择。最近的是“渋谷東武ホテル (Tobu Hotel)”距离大约621米，在西北方向。其他酒店还包括“ホテルメッツ渋谷”（距323米，东南方向）、“Tokyu Inn”（距235米，北方）等。具体酒店位置和距离可以根据需要进一步确认。",
+        "execution_time": 17.93799924850464,
+        "keyword_hit_rate": 0.5,
+        "success": true,
+        "error": null
+      }
+    ]
+  },
+  "category_results": [
+    {
+      "category": "basic_location",
+      "count": 5,
+      "structured_rate": 80.0,
+      "agentic_rate": 100.0,
+      "improvement": 20.0
+    },
+    {
+      "category": "basic_category",
+      "count": 5,
+      "structured_rate": 80.0,
+      "agentic_rate": 80.0,
+      "improvement": 0.0
+    }
+  ]
+}

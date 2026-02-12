@@ -850,7 +850,22 @@ class StructuredRAGSystem:
             "context": context,
             "time_ms": int(elapsed_time * 1000)
         }
-    
+
+    def query(self, question: str) -> Dict[str, Any]:
+        """
+        質問に回答（評価用エイリアスメソッド）
+
+        query_with_structured_rag()のエイリアス。
+        評価スクリプトとの互換性のために提供。
+
+        Args:
+            question: 質問文
+
+        Returns:
+            回答と付随情報の辞書
+        """
+        return self.query_with_structured_rag(question)
+
     def query_without_rag(self, question: str) -> Dict[str, Any]:
         """
         RAGを使用せずに質問に回答（比較用）
