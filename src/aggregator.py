@@ -2,13 +2,15 @@
 aggregator.py - POI集計・比較ユーティリティ
 
 Phase 6: RAG改善のためのカテゴリ別・方向別集計・比較機能
+Phase 9-B: エリア間比較・エリア別分割
 
 作成日: 2026-01-22
+更新日: 2026-02-18
 プロジェクト: experiments-local-llm
 """
 
 from typing import List, Dict, Any, Tuple, Optional
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
 
@@ -273,6 +275,11 @@ def get_top_subcategories(
 # フィルタリング関数
 # =============================================================================
 
+def _get_poi_category(poi: Dict[str, Any]) -> str:
+    """POIからカテゴリ文字列を取得（トップレベルまたはmetadata内）"""
+    return poi.get("category", "") or poi.get("metadata", {}).get("category", "")
+
+
 def filter_by_category(
     pois: List[Dict[str, Any]],
     category: str,
@@ -280,19 +287,19 @@ def filter_by_category(
 ) -> List[Dict[str, Any]]:
     """
     カテゴリでPOIをフィルタリング
-    
+
     Args:
         pois: POIデータのリスト
         category: フィルタするカテゴリ（部分一致可）
         partial_match: 部分一致を許可するか
-    
+
     Returns:
         フィルタリングされたPOIリスト
     """
     if partial_match:
-        return [poi for poi in pois if category.lower() in poi.get("category", "").lower()]
+        return [poi for poi in pois if category.lower() in _get_poi_category(poi).lower()]
     else:
-        return [poi for poi in pois if poi.get("category", "").lower() == category.lower()]
+        return [poi for poi in pois if _get_poi_category(poi).lower() == category.lower()]
 
 
 def filter_by_keyword(
@@ -643,6 +650,120 @@ def generate_comparison_context(
 
 
 # =============================================================================
+# Phase 9-B: エリア別分割・エリア間比較
+# =============================================================================
+
+def aggregate_by_area(pois: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    POIリストをエリアキーごとに分割する
+
+    Args:
+        pois: POIデータのリスト（area_key メタデータを持つこと）
+
+    Returns:
+        {area_key: [pois...]} の辞書。area_keyがないPOIは "unknown" に分類。
+    """
+    result = defaultdict(list)
+    for poi in pois:
+        area_key = (
+            poi.get("area_key")
+            or poi.get("metadata", {}).get("area_key")
+            or "unknown"
+        )
+        result[area_key].append(poi)
+    return dict(result)
+
+
+def compare_across_areas(
+    pois: List[Dict[str, Any]],
+    areas_config: Optional[Dict] = None,
+    category: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    エリア間でPOI分布を比較する
+
+    Args:
+        pois: POIデータのリスト（area_key メタデータ推奨）
+        areas_config: エリア設定辞書
+        category: 特定カテゴリでフィルタする場合
+
+    Returns:
+        エリア間比較結果の辞書
+    """
+    # カテゴリフィルタ
+    if category:
+        filtered = filter_by_category(pois, category)
+    else:
+        filtered = pois
+
+    # エリア別に分割
+    by_area = aggregate_by_area(filtered)
+
+    # 各エリアの件数
+    area_counts = {}
+    for area_key, area_pois in by_area.items():
+        area_counts[area_key] = len(area_pois)
+
+    # ランキング
+    ranked = sorted(area_counts.items(), key=lambda x: x[1], reverse=True)
+
+    # 結果構築
+    result = {
+        "category": category,
+        "total": len(filtered),
+        "by_area": area_counts,
+        "ranking": ranked,
+    }
+
+    # 最多・最少
+    if ranked:
+        result["most"] = {"area": ranked[0][0], "count": ranked[0][1]}
+        result["least"] = {"area": ranked[-1][0], "count": ranked[-1][1]}
+
+    return result
+
+
+def generate_cross_area_context(
+    pois: List[Dict[str, Any]],
+    areas_config: Optional[Dict] = None,
+    category: Optional[str] = None
+) -> str:
+    """
+    エリア間比較結果をLLMコンテキスト用テキストに変換
+
+    Args:
+        pois: POIデータのリスト
+        areas_config: エリア設定辞書
+        category: 特定カテゴリ（Noneで全カテゴリ）
+
+    Returns:
+        コンテキストテキスト
+    """
+    comparison = compare_across_areas(pois, areas_config, category)
+
+    cat_label = f"「{category}」" if category else "POI"
+    lines = [f"【エリア間{cat_label}比較】"]
+    lines.append(f"全体数: {comparison['total']}件")
+    lines.append("")
+
+    # エリア別件数（ランキング順）
+    for i, (area_key, count) in enumerate(comparison["ranking"], 1):
+        lines.append(f"  {i}位: {area_key} ({count}件)")
+
+    # 最多・最少の比較
+    if "most" in comparison and "least" in comparison:
+        most = comparison["most"]
+        least = comparison["least"]
+        diff = most["count"] - least["count"]
+        lines.append("")
+        lines.append(f"最多: {most['area']}（{most['count']}件）")
+        lines.append(f"最少: {least['area']}（{least['count']}件）")
+        lines.append(f"差: {diff}件")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
 # テスト・デバッグ用関数
 # =============================================================================
 
@@ -701,7 +822,37 @@ def test_aggregator():
     print("\n--- コンテキスト生成 ---")
     context = generate_aggregation_context(test_pois, "full")
     print(context)
-    
+
+    # Phase 9-B: エリア別分割テスト
+    print("\n--- Phase 9-B: エリア別分割テスト ---")
+    multi_area_pois = [
+        {"name": "スタバ渋谷", "category": "飲食店/カフェ", "area_key": "shibuya"},
+        {"name": "スタバ新宿", "category": "飲食店/カフェ", "area_key": "shinjuku"},
+        {"name": "ドトール渋谷", "category": "飲食店/カフェ", "area_key": "shibuya"},
+        {"name": "ローソン池袋", "category": "商店/コンビニ", "area_key": "ikebukuro"},
+        {"name": "セブン東京", "category": "商店/コンビニ", "area_key": "tokyo"},
+    ]
+    by_area = aggregate_by_area(multi_area_pois)
+    assert len(by_area["shibuya"]) == 2
+    assert len(by_area["shinjuku"]) == 1
+    print(f"  エリア別: {', '.join(f'{k}={len(v)}件' for k, v in by_area.items())}")
+    print("  ✅ aggregate_by_area() 正常動作")
+
+    # Phase 9-B: エリア間比較テスト
+    print("\n--- Phase 9-B: エリア間比較テスト ---")
+    comparison = compare_across_areas(multi_area_pois, category="カフェ")
+    assert comparison["total"] == 3
+    assert comparison["most"]["area"] == "shibuya"
+    print(f"  カフェ比較: {comparison['by_area']}")
+    print(f"  最多: {comparison['most']}")
+    print("  ✅ compare_across_areas() 正常動作")
+
+    # Phase 9-B: エリア間コンテキスト生成テスト
+    print("\n--- Phase 9-B: エリア間コンテキスト生成テスト ---")
+    context = generate_cross_area_context(multi_area_pois)
+    print(context)
+    print("  ✅ generate_cross_area_context() 正常動作")
+
     print("\n✅ aggregator.py 動作確認完了")
 
 
