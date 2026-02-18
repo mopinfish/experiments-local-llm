@@ -89,16 +89,22 @@ class MultiAreaEvaluator:
             return False
 
         # Chinese-specific patterns
+        # NOTE: 「的」は日本語でも頻出（具体的、一般的 etc.）のため除外。
+        #       「非常」も日本語で使われるため除外。
+        #       代わりに中国語固有の構文・語彙に絞る。
         chinese_patterns = [
-            r'[\u4e00-\u9fff]{2,}[的了吗呢吧]',  # Chinese sentence-ending particles
-            r'这[个是]',     # 这个, 这是
-            r'那[个是]',     # 那个, 那是
+            r'[\u4e00-\u9fff]{2,}[了吗呢吧]',  # Chinese sentence-ending particles (的 excluded)
+            r'这[个是里]',    # 这个, 这是, 这里
+            r'那[个是里]',    # 那个, 那是, 那里
             r'我们|他们|她们',  # Chinese pronouns
-            r'没有',         # 没有 (not commonly used in Japanese context this way)
+            r'没有',         # 没有
             r'什么',         # 什么
             r'怎么',         # 怎么
-            r'可以',         # 可以 (Chinese usage)
-            r'非常',         # 非常 (could be Japanese but check context)
+            r'因此',         # 因此 (Chinese conjunction)
+            r'无法',         # 无法
+            r'关于',         # 关于
+            r'工具',         # 工具 (Chinese for "tool", Agentic RAG residual)
+            r'根据',         # 根据
         ]
 
         for pattern in chinese_patterns:
@@ -449,6 +455,16 @@ if __name__ == "__main__":
         "Chinese pronouns should be detected"
     assert evaluator.detect_language_issue("") is False, \
         "Empty string should return False"
+    # 偽陽性テスト: 日本語の「具体的」「非常に」はフラグしない
+    assert evaluator.detect_language_issue("具体的な座標は北緯35度です") is False, \
+        "Japanese 具体的 should not be flagged"
+    assert evaluator.detect_language_issue("非常に近くに位置しています") is False, \
+        "Japanese 非常に should not be flagged"
+    # 真の中国語混入テスト
+    assert evaluator.detect_language_issue("因此，无法根据提供的信息回答") is True, \
+        "Chinese 因此/无法/根据 should be detected"
+    assert evaluator.detect_language_issue("工具を使用して確認しました") is True, \
+        "Chinese 工具 (tool) should be detected"
     print("  OK")
 
     # ------------------------------------------------------------------
