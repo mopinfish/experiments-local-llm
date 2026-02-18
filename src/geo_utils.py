@@ -2,12 +2,15 @@
 geo_utils.py - 地理座標計算ユーティリティ
 
 Phase 6: RAG改善のための座標計算・方向判定・エリアクラスタリング機能
+Phase 9-B: 複数エリア・ランドマーク対応
 
 作成日: 2026-01-22
+更新日: 2026-02-18
 プロジェクト: experiments-local-llm
 """
 
 import math
+import re
 from typing import Tuple, List, Dict, Any, Optional
 from dataclasses import dataclass
 
@@ -16,11 +19,47 @@ from dataclasses import dataclass
 # 定数定義
 # =============================================================================
 
-# 渋谷駅の座標（基準点）
-SHIBUYA_STATION = {
-    "name": "渋谷駅",
-    "lat": 35.658034,
-    "lon": 139.701636
+# 複数駅の座標（Phase 9-B）
+STATIONS = {
+    "渋谷駅": {"name": "渋谷駅", "lat": 35.658034, "lon": 139.701636},
+    "新宿駅": {"name": "新宿駅", "lat": 35.689607, "lon": 139.700571},
+    "池袋駅": {"name": "池袋駅", "lat": 35.729503, "lon": 139.710999},
+    "東京駅": {"name": "東京駅", "lat": 35.681236, "lon": 139.767125},
+}
+
+# 後方互換: SHIBUYA_STATION は STATIONS["渋谷駅"] と同一オブジェクト
+SHIBUYA_STATION = STATIONS["渋谷駅"]
+
+# エリアキーと駅名のマッピング
+AREA_STATION_MAP = {
+    "shibuya": "渋谷駅",
+    "shinjuku": "新宿駅",
+    "ikebukuro": "池袋駅",
+    "tokyo": "東京駅",
+}
+
+# ランドマーク座標テーブル（Phase 9-B）
+# 将来的にはGeocodingツール（Nominatim等）に置き換え予定
+LANDMARKS = {
+    # 渋谷エリア
+    "渋谷109": {"lat": 35.659517, "lon": 139.698471, "area_key": "shibuya"},
+    "ハチ公像": {"lat": 35.659020, "lon": 139.700464, "area_key": "shibuya"},
+    "渋谷ヒカリエ": {"lat": 35.659098, "lon": 139.703628, "area_key": "shibuya"},
+    "渋谷スクランブルスクエア": {"lat": 35.658580, "lon": 139.702095, "area_key": "shibuya"},
+    # 新宿エリア
+    "東京都庁": {"lat": 35.689634, "lon": 139.691577, "area_key": "shinjuku"},
+    "新宿御苑": {"lat": 35.685175, "lon": 139.710052, "area_key": "shinjuku"},
+    "歌舞伎町": {"lat": 35.694003, "lon": 139.703506, "area_key": "shinjuku"},
+    "新宿アルタ": {"lat": 35.692854, "lon": 139.701238, "area_key": "shinjuku"},
+    # 池袋エリア
+    "サンシャインシティ": {"lat": 35.729185, "lon": 139.718611, "area_key": "ikebukuro"},
+    "池袋西口公園": {"lat": 35.730070, "lon": 139.709747, "area_key": "ikebukuro"},
+    "東武百貨店池袋店": {"lat": 35.729641, "lon": 139.710815, "area_key": "ikebukuro"},
+    # 東京エリア
+    "東京国際フォーラム": {"lat": 35.676987, "lon": 139.763489, "area_key": "tokyo"},
+    "KITTE": {"lat": 35.679032, "lon": 139.765650, "area_key": "tokyo"},
+    "丸ビル": {"lat": 35.681461, "lon": 139.763641, "area_key": "tokyo"},
+    "皇居前広場": {"lat": 35.680959, "lon": 139.757280, "area_key": "tokyo"},
 }
 
 # 地球の半径（メートル）
@@ -366,26 +405,30 @@ def enrich_poi_with_spatial_info(
 ) -> Dict[str, Any]:
     """
     POIデータに空間情報を追加
-    
+
     Args:
-        poi: POIデータ辞書（lat, lonを含む）
+        poi: POIデータ辞書（lat, lonを含む。metadata内にある場合も対応）
         station: 基準駅の座標辞書
-    
+
     Returns:
         空間情報を追加したPOIデータ
     """
-    if poi.get("lat") is None or poi.get("lon") is None:
+    # lat/lonをトップレベルまたはmetadataから取得
+    lat = poi.get("lat") or poi.get("metadata", {}).get("lat")
+    lon = poi.get("lon") or poi.get("metadata", {}).get("lon")
+
+    if lat is None or lon is None:
         return poi
-    
-    spatial_info = compute_spatial_info(poi["lat"], poi["lon"], station)
-    
+
+    spatial_info = compute_spatial_info(lat, lon, station)
+
     enriched = poi.copy()
     enriched["distance_from_station"] = spatial_info.distance_m
     enriched["direction_from_station"] = spatial_info.direction
     enriched["direction_from_station_jp"] = spatial_info.direction_jp
     enriched["area_cluster"] = spatial_info.area_cluster
     enriched["distance_zone"] = spatial_info.distance_zone
-    
+
     return enriched
 
 
@@ -952,6 +995,235 @@ def generate_sensitivity_context(
 
 
 # =============================================================================
+# Phase 9-B: 駅・ランドマーク解決関数
+# =============================================================================
+
+def resolve_station(name_or_key: str) -> Optional[Dict[str, Any]]:
+    """
+    駅名またはエリアキーから駅座標情報を解決する
+
+    Args:
+        name_or_key: 駅名（例: "渋谷駅"）またはエリアキー（例: "shibuya"）
+
+    Returns:
+        {"name": str, "lat": float, "lon": float} or None
+    """
+    # 駅名での完全一致
+    if name_or_key in STATIONS:
+        return STATIONS[name_or_key]
+
+    # エリアキーでの解決
+    station_name = AREA_STATION_MAP.get(name_or_key)
+    if station_name:
+        return STATIONS[station_name]
+
+    # 部分一致（"渋谷" → "渋谷駅"）
+    for sname, sinfo in STATIONS.items():
+        if name_or_key in sname or sname.replace("駅", "") in name_or_key:
+            return sinfo
+
+    return None
+
+
+def resolve_landmark(name: str) -> Optional[Dict[str, Any]]:
+    """
+    ランドマーク名から座標情報を解決する
+
+    Args:
+        name: ランドマーク名
+
+    Returns:
+        {"lat": float, "lon": float, "area_key": str} or None
+    """
+    # 完全一致
+    if name in LANDMARKS:
+        return LANDMARKS[name]
+
+    # 部分一致（曖昧さを減らすため、一致候補が1件の場合のみ返す）
+    candidates = []
+    for lm_name, lm_info in LANDMARKS.items():
+        if lm_name in name or name in lm_name:
+            candidates.append(lm_info)
+
+    if len(candidates) == 1:
+        return candidates[0]
+
+    return None
+
+
+# =============================================================================
+# Phase 9-B: エリア特定関数
+# =============================================================================
+
+# エリア特定用キーワード（駅名・地名）
+_AREA_KEYWORDS = {
+    "shibuya": ["渋谷駅", "渋谷"],
+    "shinjuku": ["新宿駅", "新宿"],
+    "ikebukuro": ["池袋駅", "池袋"],
+    "tokyo": ["東京駅"],  # "東京" 単体は広すぎるので除外
+}
+
+# 「東京駅」を先に確認し、残った「東京」が他エリアの一部でないことを保証する
+# ための優先順序付きパターン
+_AREA_KEYWORD_PATTERNS = None  # 遅延初期化
+
+
+def _build_area_keyword_patterns():
+    """エリアキーワードの正規表現パターンを構築（遅延初期化）"""
+    global _AREA_KEYWORD_PATTERNS
+    if _AREA_KEYWORD_PATTERNS is not None:
+        return _AREA_KEYWORD_PATTERNS
+
+    patterns = []
+    for area_key, keywords in _AREA_KEYWORDS.items():
+        # 長いキーワードを先にマッチさせる（「東京駅」>「東京」）
+        for kw in sorted(keywords, key=len, reverse=True):
+            patterns.append((area_key, kw))
+    _AREA_KEYWORD_PATTERNS = patterns
+    return patterns
+
+
+def detect_target_area(question: str, areas_config: Optional[Dict] = None) -> Optional[str]:
+    """
+    質問文からターゲットエリアを特定する
+
+    Args:
+        question: 質問文
+        areas_config: エリア設定辞書（osm_poi_fetcher.AREASと同形式）。
+                      Noneの場合はデフォルトの4エリアを使用。
+
+    Returns:
+        エリアキー（例: "shibuya"）。複数エリアまたは特定不可の場合はNone。
+    """
+    # ランドマークからのエリア特定を優先
+    for lm_name, lm_info in LANDMARKS.items():
+        if lm_name in question:
+            return lm_info["area_key"]
+
+    # キーワードマッチング
+    patterns = _build_area_keyword_patterns()
+    matched_areas = set()
+
+    for area_key, keyword in patterns:
+        if keyword in question:
+            matched_areas.add(area_key)
+
+    # 単一エリアの場合のみ返す
+    if len(matched_areas) == 1:
+        return matched_areas.pop()
+
+    return None
+
+
+def detect_cross_area_query(question: str, areas_config: Optional[Dict] = None) -> List[str]:
+    """
+    質問文からクロスエリアクエリかどうかを判定し、関連エリアを返す
+
+    Args:
+        question: 質問文
+        areas_config: エリア設定辞書
+
+    Returns:
+        関連エリアキーのリスト。クロスエリアでない場合は空リスト。
+    """
+    patterns = _build_area_keyword_patterns()
+    matched_areas = set()
+
+    # ランドマークからのエリア特定
+    for lm_name, lm_info in LANDMARKS.items():
+        if lm_name in question:
+            matched_areas.add(lm_info["area_key"])
+
+    # キーワードマッチング
+    for area_key, keyword in patterns:
+        if keyword in question:
+            matched_areas.add(area_key)
+
+    # 2つ以上のエリアがマッチした場合のみクロスエリア
+    if len(matched_areas) >= 2:
+        return sorted(matched_areas)
+
+    # 「全エリア」「4エリア」などの表現を検出
+    if re.search(r"(全エリア|全ての?エリア|4エリア|各エリア|すべての?エリア)", question):
+        return sorted(AREA_STATION_MAP.keys())
+
+    return []
+
+
+# =============================================================================
+# Phase 9-B: 広域POIエンリッチメント
+# =============================================================================
+
+def enrich_pois_for_area(
+    pois: List[Dict[str, Any]],
+    area_key: str,
+    areas_config: Optional[Dict] = None
+) -> List[Dict[str, Any]]:
+    """
+    特定エリアのPOIにそのエリアの基準駅からの空間情報を付与する
+
+    Args:
+        pois: POIデータのリスト
+        area_key: エリアキー（例: "shibuya"）
+        areas_config: エリア設定辞書。Noneの場合はデフォルトの駅座標を使用。
+
+    Returns:
+        空間情報を追加したPOIデータのリスト
+    """
+    # 基準駅を特定
+    if areas_config and area_key in areas_config:
+        station = areas_config[area_key]["station"]
+    else:
+        station_name = AREA_STATION_MAP.get(area_key)
+        station = STATIONS.get(station_name) if station_name else None
+
+    if station is None:
+        station = SHIBUYA_STATION
+
+    return enrich_all_pois(pois, station)
+
+
+def enrich_all_areas(
+    pois: List[Dict[str, Any]],
+    areas_config: Optional[Dict] = None
+) -> List[Dict[str, Any]]:
+    """
+    全POIデータにエリアごとの基準駅からの空間情報を付与する
+
+    各POIの area_key メタデータに基づいて、そのエリアの基準駅からの
+    距離・方角を計算する。area_key がないPOIは渋谷駅を基準に計算。
+
+    Args:
+        pois: POIデータのリスト（area_key メタデータ推奨）
+        areas_config: エリア設定辞書
+
+    Returns:
+        空間情報を追加したPOIデータのリスト
+    """
+    result = []
+    for poi in pois:
+        # POIのエリアキーを取得（メタデータまたはトップレベル）
+        area_key = (
+            poi.get("area_key")
+            or poi.get("metadata", {}).get("area_key")
+        )
+
+        # 基準駅を特定
+        station = None
+        if area_key:
+            if areas_config and area_key in areas_config:
+                station = areas_config[area_key]["station"]
+            else:
+                station_name = AREA_STATION_MAP.get(area_key)
+                if station_name:
+                    station = STATIONS[station_name]
+
+        result.append(enrich_poi_with_spatial_info(poi, station))
+
+    return result
+
+
+# =============================================================================
 # テスト・デバッグ用関数
 # =============================================================================
 
@@ -962,7 +1234,7 @@ def test_geo_utils():
     print("=" * 60)
     print("geo_utils.py 動作確認")
     print("=" * 60)
-    
+
     # テスト用の座標（渋谷駅周辺）
     test_points = [
         {"name": "東口方面", "lat": 35.659, "lon": 139.705},
@@ -971,10 +1243,10 @@ def test_geo_utils():
         {"name": "南方面", "lat": 35.654, "lon": 139.701},
         {"name": "駅近く", "lat": 35.6582, "lon": 139.7018},
     ]
-    
+
     print(f"\n基準点: {SHIBUYA_STATION['name']}")
     print(f"座標: ({SHIBUYA_STATION['lat']}, {SHIBUYA_STATION['lon']})")
-    
+
     print("\n--- 各地点の空間情報 ---")
     for point in test_points:
         info = compute_spatial_info(point["lat"], point["lon"])
@@ -983,7 +1255,7 @@ def test_geo_utils():
         print(f"  方向: {info.direction} ({info.direction_jp})")
         print(f"  エリア: {info.area_cluster}")
         print(f"  ゾーン: {info.distance_zone}")
-    
+
     # 東西判定テスト
     print("\n--- 東西判定テスト ---")
     for point in test_points:
@@ -991,7 +1263,46 @@ def test_geo_utils():
         east = "東側" if is_east_side(direction) else ""
         west = "西側" if is_west_side(direction) else ""
         print(f"{point['name']}: {direction} → {east}{west}")
-    
+
+    # Phase 9-B: 後方互換テスト
+    print("\n--- Phase 9-B: 後方互換テスト ---")
+    assert SHIBUYA_STATION is STATIONS["渋谷駅"], "SHIBUYA_STATION は STATIONS['渋谷駅'] と同一オブジェクトでない"
+    print("  ✅ SHIBUYA_STATION is STATIONS['渋谷駅']")
+
+    # Phase 9-B: 駅解決テスト
+    print("\n--- Phase 9-B: 駅解決テスト ---")
+    assert resolve_station("渋谷駅") == STATIONS["渋谷駅"]
+    assert resolve_station("shibuya") == STATIONS["渋谷駅"]
+    assert resolve_station("shinjuku") == STATIONS["新宿駅"]
+    assert resolve_station("存在しない") is None
+    print("  ✅ resolve_station() 正常動作")
+
+    # Phase 9-B: ランドマーク解決テスト
+    print("\n--- Phase 9-B: ランドマーク解決テスト ---")
+    assert resolve_landmark("渋谷109") is not None
+    assert resolve_landmark("渋谷109")["area_key"] == "shibuya"
+    assert resolve_landmark("サンシャインシティ")["area_key"] == "ikebukuro"
+    assert resolve_landmark("存在しないランドマーク") is None
+    print("  ✅ resolve_landmark() 正常動作")
+
+    # Phase 9-B: エリア特定テスト
+    print("\n--- Phase 9-B: エリア特定テスト ---")
+    assert detect_target_area("渋谷駅周辺のカフェ") == "shibuya"
+    assert detect_target_area("新宿駅に最も近いコンビニ") == "shinjuku"
+    assert detect_target_area("サンシャインシティの近くのレストラン") == "ikebukuro"
+    assert detect_target_area("渋谷と新宿でカフェが多いのは？") is None  # 複数エリア
+    assert detect_target_area("おすすめのカフェは？") is None  # エリア不明
+    print("  ✅ detect_target_area() 正常動作")
+
+    # Phase 9-B: クロスエリア検出テスト
+    print("\n--- Phase 9-B: クロスエリア検出テスト ---")
+    cross = detect_cross_area_query("渋谷と新宿でカフェが多いのは？")
+    assert "shibuya" in cross and "shinjuku" in cross
+    assert detect_cross_area_query("おすすめのカフェは？") == []
+    all_areas = detect_cross_area_query("全エリアのカフェ数は？")
+    assert len(all_areas) == 4
+    print("  ✅ detect_cross_area_query() 正常動作")
+
     print("\n✅ geo_utils.py 動作確認完了")
 
 

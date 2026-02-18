@@ -2,8 +2,10 @@
 graph_builder.py - POIナレッジグラフ構築モジュール
 
 Phase 8: グラフRAG実験のためのグラフ構築機能
+Phase 9-B: 基準駅の動的化（geo_utils.STATIONSを使用）
 
 作成日: 2026-01-29
+更新日: 2026-02-18
 プロジェクト: experiments-local-llm
 """
 
@@ -20,17 +22,15 @@ except ImportError:
     HAS_NETWORKX = False
     nx = None
 
+try:
+    from .geo_utils import STATIONS, SHIBUYA_STATION
+except ImportError:
+    from geo_utils import STATIONS, SHIBUYA_STATION
+
 
 # =============================================================================
 # 定数定義
 # =============================================================================
-
-# 渋谷駅の座標（基準点）
-SHIBUYA_STATION = {
-    "name": "渋谷駅",
-    "lat": 35.658034,
-    "lon": 139.701636
-}
 
 # 地球の半径（メートル）
 EARTH_RADIUS_M = 6371000
@@ -330,11 +330,13 @@ class POIGraphBuilder:
     """POIナレッジグラフを構築するクラス"""
 
     def __init__(self, near_distance_threshold: float = NEAR_DISTANCE_THRESHOLD,
-                 max_near_neighbors: int = 20):
+                 max_near_neighbors: int = 20,
+                 station: Optional[Dict[str, Any]] = None):
         """
         Args:
             near_distance_threshold: NEAR_TOエッジの距離閾値（メートル）
             max_near_neighbors: 各POIあたりの最大NEAR_TOエッジ数
+            station: 基準駅の座標辞書（デフォルトは渋谷駅）
         """
         if not HAS_NETWORKX:
             raise ImportError("networkx is required. Install with: pip install networkx")
@@ -342,6 +344,7 @@ class POIGraphBuilder:
         self.graph = nx.DiGraph()
         self.near_distance_threshold = near_distance_threshold
         self.max_near_neighbors = max_near_neighbors
+        self.station = station if station is not None else SHIBUYA_STATION
 
         # ノードコレクション
         self.poi_nodes: Dict[str, POINode] = {}
@@ -398,13 +401,13 @@ class POIGraphBuilder:
         category_str = metadata.get("category", "その他/その他")
         category, subcategory = self._parse_category(category_str)
 
-        # 渋谷駅からの距離・方向を計算
+        # 基準駅からの距離・方向を計算
         distance = haversine_distance(
-            SHIBUYA_STATION["lat"], SHIBUYA_STATION["lon"],
+            self.station["lat"], self.station["lon"],
             lat, lon
         )
         direction = calculate_direction(
-            SHIBUYA_STATION["lat"], SHIBUYA_STATION["lon"],
+            self.station["lat"], self.station["lon"],
             lat, lon
         )
         distance_zone = get_distance_zone(distance)
@@ -545,14 +548,18 @@ class POIGraphBuilder:
         return self.graph
 
     def _add_landmark_node(self):
-        """ランドマークノード（渋谷駅）を追加"""
+        """ランドマークノード（基準駅）を追加"""
+        # 駅名からノードIDを生成
+        station_name = self.station.get("name", "station")
+        node_id = f"landmark:{station_name}"
         self.graph.add_node(
-            "landmark:shibuya_station",
+            node_id,
             node_type="landmark",
-            name=SHIBUYA_STATION["name"],
-            lat=SHIBUYA_STATION["lat"],
-            lon=SHIBUYA_STATION["lon"]
+            name=self.station["name"],
+            lat=self.station["lat"],
+            lon=self.station["lon"]
         )
+        self._landmark_node_id = node_id
         self.stats.num_landmark_nodes = 1
 
     def _add_poi_node(self, poi_node: POINode, poi_data: Dict[str, Any] = None):
@@ -702,7 +709,7 @@ class POIGraphBuilder:
 
     def _add_distance_from_edges(self):
         """DISTANCE_FROMエッジを追加（POI → Landmark）"""
-        landmark_id = "landmark:shibuya_station"
+        landmark_id = self._landmark_node_id
 
         for poi_id, poi in self.poi_nodes.items():
             poi_node_id = f"poi:{poi_id}"
