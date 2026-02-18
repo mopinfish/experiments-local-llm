@@ -18,12 +18,19 @@ system_fn仕様:
 - 出力: {"answer": str, "detected_area": Optional[str]}
 """
 
+import gc
 import json
 import re
 import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
+
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 
 # =============================================================================
@@ -215,9 +222,17 @@ class MultiAreaEvaluator:
             result = self.evaluate_single_case(system_name, system_fn, tc)
             results.append(result)
 
+            # クエリごとのVRAM/RAM解放（CUDA OOM防止）
+            gc.collect()
+            if HAS_TORCH and torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
             # Checkpoint every 10 cases
             if checkpoint_file and len(results) % 10 == 0:
                 self._save_checkpoint(checkpoint_file, results)
+                if HAS_TORCH and torch.cuda.is_available():
+                    vram_gb = torch.cuda.memory_allocated() / 1024**3
+                    print(f"    [checkpoint] {len(results)} done, VRAM: {vram_gb:.2f} GB")
 
         # Final save
         if checkpoint_file:
