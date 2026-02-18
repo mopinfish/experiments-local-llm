@@ -3,22 +3,47 @@
 osm_poi_fetcher.py - OpenStreetMapからPOIデータを取得
 
 拡張版: ブランド、営業時間、料理ジャンル等の追加タグを取得
+Phase 9-B: 複数エリア対応（渋谷・新宿・池袋・東京）
 """
 import requests
 import json
 import re
+import time
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URLS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+]
 
-# 対象エリア: 渋谷駅周辺 (south,west,north,east)
+# 対象エリア定義 (south,west,north,east)
+# Phase 9-B: 4エリア対応
 AREAS = {
     "shibuya": {
         "name": "渋谷駅周辺",
+        "station": {"name": "渋谷駅", "lat": 35.658034, "lon": 139.701636},
         "bbox": "35.655,139.695,35.665,139.710"
-    }
+    },
+    "shinjuku": {
+        "name": "新宿駅周辺",
+        "station": {"name": "新宿駅", "lat": 35.689607, "lon": 139.700571},
+        "bbox": "35.685,139.693,35.697,139.710"
+    },
+    "ikebukuro": {
+        "name": "池袋駅周辺",
+        "station": {"name": "池袋駅", "lat": 35.729503, "lon": 139.710999},
+        "bbox": "35.725,139.704,35.736,139.718"
+    },
+    "tokyo": {
+        "name": "東京駅周辺",
+        "station": {"name": "東京駅", "lat": 35.681236, "lon": 139.767125},
+        "bbox": "35.676,139.760,35.687,139.775"
+    },
 }
+
+# Overpass APIレートリミット対策: エリア間の待機秒数
+API_REQUEST_INTERVAL = 10
 
 # 既知のブランド/チェーン店（名前からの抽出用）
 KNOWN_BRANDS = {
@@ -74,7 +99,7 @@ KNOWN_BRANDS = {
 def build_query(bbox: str) -> str:
     """Overpass APIクエリを構築"""
     return f"""
-[out:json][timeout:60];
+[out:json][timeout:180];
 (
   // 飲食店
   node["amenity"~"restaurant|cafe|fast_food|bar|pub"]({bbox});
@@ -101,14 +126,21 @@ out center tags;
 """
 
 def fetch_osm_pois(area_key: str) -> dict:
-    """Overpass APIからPOIを取得"""
+    """Overpass APIからPOIを取得（フェイルオーバー付き）"""
     area = AREAS[area_key]
     query = build_query(area["bbox"])
-    
-    print(f"  クエリ実行中: {area['name']}...")
-    response = requests.post(OVERPASS_URL, data={"data": query}, timeout=120)
-    response.raise_for_status()
-    return response.json()
+
+    for url in OVERPASS_URLS:
+        try:
+            print(f"  クエリ実行中: {area['name']} ({url.split('//')[1].split('/')[0]})...")
+            response = requests.post(url, data={"data": query}, timeout=240)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"  失敗 ({url.split('//')[1].split('/')[0]}): {e}")
+            continue
+
+    raise RuntimeError(f"全てのOverpass APIエンドポイントで {area['name']} の取得に失敗しました")
 
 def get_category(tags: dict) -> str:
     """タグからカテゴリを判定"""
@@ -209,8 +241,16 @@ def extract_cuisine(tags: dict) -> Optional[str]:
     return None
 
 
-def convert_to_documents(osm_data: dict, area_name: str) -> list:
-    """OSMデータをRAG用ドキュメントに変換（拡張版）"""
+def convert_to_documents(osm_data: dict, area_key: str, area_info: dict) -> list:
+    """OSMデータをRAG用ドキュメントに変換（拡張版）
+
+    Args:
+        osm_data: Overpass APIのレスポンスJSON
+        area_key: エリアキー（"shibuya", "shinjuku" 等）
+        area_info: エリア情報辞書（name, station, bbox）
+    """
+    area_name = area_info["name"]
+    station = area_info["station"]
     documents = []
 
     for element in osm_data.get("elements", []):
@@ -282,6 +322,10 @@ def convert_to_documents(osm_data: dict, area_name: str) -> list:
                 "name_en": name_en,
                 "category": category,
                 "area": area_name,
+                "area_key": area_key,
+                "station_name": station["name"],
+                "station_lat": station["lat"],
+                "station_lon": station["lon"],
                 "lat": lat,
                 "lon": lon,
                 "source": "openstreetmap",
@@ -303,41 +347,30 @@ def convert_to_documents(osm_data: dict, area_name: str) -> list:
 
     return documents
 
-def main():
-    print("=" * 50)
-    print("OSM POIデータ取得ツール（拡張版）")
-    print("=" * 50)
+def save_json(documents: list, path: Path) -> None:
+    """ドキュメントリストをJSONファイルに保存"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(documents, f, ensure_ascii=False, indent=2)
+    print(f"  保存完了: {path} ({len(documents)}件)")
 
-    all_documents = []
 
-    for area_key, area_info in AREAS.items():
-        print(f"\n[{area_info['name']}] データ取得中...")
+def print_stats(documents: list, label: str = "") -> None:
+    """ドキュメントの統計情報を表示"""
+    if label:
+        print(f"\n{'=' * 50}")
+        print(f"統計情報: {label}")
+        print(f"{'=' * 50}")
 
-        try:
-            osm_data = fetch_osm_pois(area_key)
-            elements_count = len(osm_data.get("elements", []))
-            print(f"  取得した要素数: {elements_count}")
-
-            documents = convert_to_documents(osm_data, area_info["name"])
-            print(f"  有効なPOI数: {len(documents)}")
-
-            all_documents.extend(documents)
-        except Exception as e:
-            print(f"  エラー: {e}")
-
-    print(f"\n合計ドキュメント数: {len(all_documents)}")
-
-    # 保存
-    output_path = Path("./poi_documents.json")
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(all_documents, f, ensure_ascii=False, indent=2)
-
-    print(f"保存完了: {output_path}")
+    total = len(documents)
+    if total == 0:
+        print("  ドキュメントなし")
+        return
 
     # カテゴリ別集計
-    print("\n【カテゴリ別集計】")
+    print(f"\n【カテゴリ別集計】(合計 {total}件)")
     categories = {}
-    for doc in all_documents:
+    for doc in documents:
         cat = doc["metadata"]["category"]
         categories[cat] = categories.get(cat, 0) + 1
 
@@ -347,7 +380,7 @@ def main():
     # ブランド別集計
     print("\n【ブランド別集計】")
     brands = {}
-    for doc in all_documents:
+    for doc in documents:
         brand = doc["metadata"].get("brand")
         if brand:
             brands[brand] = brands.get(brand, 0) + 1
@@ -361,36 +394,87 @@ def main():
 
     # 拡張メタデータ統計
     print("\n【拡張メタデータ統計】")
-    stats = {
-        "brand": 0,
-        "opening_hours": 0,
-        "is_24h": 0,
-        "late_night": 0,
-        "cuisine": 0,
-        "wheelchair": 0,
-        "internet_access": 0,
-    }
-    for doc in all_documents:
-        meta = doc["metadata"]
-        if meta.get("brand"):
-            stats["brand"] += 1
-        if meta.get("opening_hours"):
-            stats["opening_hours"] += 1
-        if meta.get("is_24h"):
-            stats["is_24h"] += 1
-        if meta.get("late_night"):
-            stats["late_night"] += 1
-        if meta.get("cuisine"):
-            stats["cuisine"] += 1
-        if meta.get("wheelchair"):
-            stats["wheelchair"] += 1
-        if meta.get("internet_access"):
-            stats["internet_access"] += 1
-
-    total = len(all_documents)
-    for key, count in stats.items():
-        pct = count / total * 100 if total > 0 else 0
+    meta_keys = ["brand", "opening_hours", "is_24h", "late_night",
+                 "cuisine", "wheelchair", "internet_access"]
+    for key in meta_keys:
+        count = sum(1 for doc in documents if doc["metadata"].get(key))
+        pct = count / total * 100
         print(f"  {key}: {count}件 ({pct:.1f}%)")
+
+
+def main():
+    print("=" * 50)
+    print("OSM POIデータ取得ツール（複数エリア対応版）")
+    print("=" * 50)
+
+    data_dir = Path("./data")
+    all_documents = []
+    documents_by_area = {}
+
+    area_keys = list(AREAS.keys())
+    for i, area_key in enumerate(area_keys):
+        area_info = AREAS[area_key]
+        print(f"\n[{i+1}/{len(area_keys)}] [{area_info['name']}] データ取得中...")
+
+        # レートリミット対策: 2番目以降のエリアは待機
+        if i > 0:
+            print(f"  Overpass API待機中 ({API_REQUEST_INTERVAL}秒)...")
+            time.sleep(API_REQUEST_INTERVAL)
+
+        try:
+            osm_data = fetch_osm_pois(area_key)
+            elements_count = len(osm_data.get("elements", []))
+            print(f"  取得した要素数: {elements_count}")
+
+            documents = convert_to_documents(osm_data, area_key, area_info)
+            print(f"  有効なPOI数: {len(documents)}")
+
+            documents_by_area[area_key] = documents
+            all_documents.extend(documents)
+        except Exception as e:
+            print(f"  エラー: {e}")
+            documents_by_area[area_key] = []
+
+    # --- 保存 ---
+    print(f"\n{'=' * 50}")
+    print(f"保存処理")
+    print(f"{'=' * 50}")
+    print(f"合計ドキュメント数: {len(all_documents)}")
+
+    # エリア別ファイル
+    for area_key, docs in documents_by_area.items():
+        save_json(docs, data_dir / f"poi_{area_key}.json")
+
+    # 全エリア統合ファイル
+    save_json(all_documents, data_dir / "poi_all_areas.json")
+
+    # 後方互換: 渋谷のみのpoi_documents.json
+    shibuya_docs = documents_by_area.get("shibuya", [])
+    save_json(shibuya_docs, Path("./poi_documents.json"))
+
+    # --- ID重複チェック ---
+    print(f"\n【ID重複チェック】")
+    ids = [doc["id"] for doc in all_documents]
+    unique_ids = set(ids)
+    if len(ids) == len(unique_ids):
+        print(f"  重複なし (ユニークID数: {len(unique_ids)})")
+    else:
+        duplicates = len(ids) - len(unique_ids)
+        print(f"  ⚠️ 重複あり: {duplicates}件")
+
+    # --- エリア別サマリー ---
+    print(f"\n{'=' * 50}")
+    print(f"エリア別サマリー")
+    print(f"{'=' * 50}")
+    for area_key, docs in documents_by_area.items():
+        area_name = AREAS[area_key]["name"]
+        print(f"  {area_name}: {len(docs)}件")
+
+    # --- 統計情報 ---
+    for area_key, docs in documents_by_area.items():
+        print_stats(docs, label=AREAS[area_key]["name"])
+
+    print_stats(all_documents, label="全エリア統合")
 
 
 if __name__ == "__main__":
