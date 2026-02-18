@@ -2,11 +2,14 @@
 experiments-local-llm/src パッケージ
 
 Phase 6: RAG改善モジュール群
+Phase 9-B: 複数エリア対応テスト・評価基盤
 
 モジュール一覧:
 - geo_utils: 座標計算ユーティリティ
 - aggregator: 集計・比較ユーティリティ
 - structured_rag_system: 構造化RAGシステム
+- test_cases_multi_area: 複数エリア対応テストケース（130件）
+- evaluators_multi_area: 複数エリア対応評価モジュール
 """
 
 # Phase 6 新規モジュール
@@ -146,6 +149,33 @@ from .agent_tools import (
     get_all_tools,
 )
 
+# Phase 9-B: テストケース・評価モジュール
+from .test_cases_multi_area import (
+    # データクラス
+    MultiAreaTestCase,
+
+    # テストケースリスト
+    ALL_MULTI_AREA_TEST_CASES,
+
+    # ユーティリティ関数
+    get_area_tests,
+    get_cross_area_tests,
+    get_landmark_tests,
+    get_detection_tests,
+    get_tests_by_level,
+    get_tests_by_subcategory,
+    get_quick_test_cases,
+    get_test_case_stats,
+)
+
+from .evaluators_multi_area import (
+    # データクラス
+    MultiAreaEvalResult,
+
+    # 評価クラス
+    MultiAreaEvaluator,
+)
+
 # バージョン情報
-__version__ = "0.9.3"
-__phase__ = "Phase 9-B: Multi-Area RAG Systems"
+__version__ = "0.9.4"
+__phase__ = "Phase 9-B: Multi-Area RAG Systems + Test Framework"
