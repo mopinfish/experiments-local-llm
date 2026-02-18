@@ -137,6 +137,15 @@ from .structured_rag_system import (
     create_structured_rag_system,
 )
 
+# Phase 9-B: agent_tools エクスポート
+from .agent_tools import (
+    set_global_pois,
+    set_global_pois_multi_area,
+    get_global_pois,
+    format_tool_output_japanese,
+    get_all_tools,
+)
+
 # バージョン情報
-__version__ = "0.9.2"
-__phase__ = "Phase 9-B: Multi-Area Core Modules"
+__version__ = "0.9.3"
+__phase__ = "Phase 9-B: Multi-Area RAG Systems"

@@ -36,7 +36,8 @@ try:
     )
     from .agent_tools import (
         get_all_tools,
-        set_global_pois
+        set_global_pois,
+        set_global_pois_multi_area
     )
     from .agent_prompts import (
         AGENT_SYSTEM_PROMPT,
@@ -44,7 +45,7 @@ try:
         format_answer_generation_prompt,
         generate_tools_description
     )
-    from .geo_utils import enrich_all_pois
+    from .geo_utils import enrich_all_pois, enrich_all_areas
 except ImportError:
     from agent_state import (
         AgentState,
@@ -59,7 +60,8 @@ except ImportError:
     )
     from agent_tools import (
         get_all_tools,
-        set_global_pois
+        set_global_pois,
+        set_global_pois_multi_area
     )
     from agent_prompts import (
         AGENT_SYSTEM_PROMPT,
@@ -67,7 +69,7 @@ except ImportError:
         format_answer_generation_prompt,
         generate_tools_description
     )
-    from geo_utils import enrich_all_pois
+    from geo_utils import enrich_all_pois, enrich_all_areas
 
 
 # =============================================================================
@@ -231,6 +233,8 @@ class AgenticRAGSystem:
         """
         モデルの出力からツール呼び出しをパース
 
+        日本語メタ言語（行動/行動入力）と英語メタ言語（Action/Action Input）の両方に対応。
+
         Args:
             response: モデルの出力テキスト
 
@@ -239,23 +243,31 @@ class AgenticRAGSystem:
         """
         tool_calls = []
 
-        # パターン: Action: tool_name
-        # Action Input: {"arg1": "value1", ...}
-        pattern = r'Action:\s*(\w+)\s*\n\s*Action Input:\s*(\{[^}]+\})'
-        matches = re.finditer(pattern, response, re.MULTILINE)
+        # 日本語メタ言語パターン（Phase 9-B）
+        # 行動: tool_name
+        # 行動入力: {"arg1": "value1", ...}
+        patterns = [
+            r'行動:\s*(\w+)\s*\n\s*行動入力:\s*(\{[^}]+\})',
+            r'Action:\s*(\w+)\s*\n\s*Action Input:\s*(\{[^}]+\})',
+        ]
 
-        for match in matches:
-            tool_name = match.group(1)
-            try:
-                args_str = match.group(2)
-                args = json.loads(args_str)
-                tool_calls.append({
-                    "tool": tool_name,
-                    "args": args
-                })
-            except json.JSONDecodeError:
-                if self.verbose:
-                    print(f"Failed to parse tool arguments: {match.group(2)}")
+        for pattern in patterns:
+            matches = re.finditer(pattern, response, re.MULTILINE)
+            for match in matches:
+                tool_name = match.group(1)
+                try:
+                    args_str = match.group(2)
+                    args = json.loads(args_str)
+                    tool_calls.append({
+                        "tool": tool_name,
+                        "args": args
+                    })
+                except json.JSONDecodeError:
+                    if self.verbose:
+                        print(f"Failed to parse tool arguments: {match.group(2)}")
+
+            if tool_calls:
+                break  # 最初にマッチしたパターンの結果を使用
 
         return tool_calls
 
@@ -275,30 +287,30 @@ class AgenticRAGSystem:
         # イテレーションをインクリメント
         state = increment_iteration(state)
 
-        # プロンプト構築
+        # プロンプト構築（日本語ReActフォーマット）
         prompt_parts = [
-            f"Question: {state['question']}\n"
+            f"質問: {state['question']}\n"
         ]
 
         # ツール説明
         tools_desc = generate_tools_description()
-        prompt_parts.append(f"\nAvailable Tools:\n{tools_desc}\n")
+        prompt_parts.append(f"\n利用可能なツール:\n{tools_desc}\n")
 
         # これまでのツール実行結果を追加
         if state["tool_results"]:
-            prompt_parts.append("\nPrevious Tool Executions:")
+            prompt_parts.append("\nこれまでのツール実行結果:")
             for r in state["tool_results"]:
-                prompt_parts.append(f"\nTool: {r['tool']}")
-                prompt_parts.append(f"Output: {r['output']}")
+                prompt_parts.append(f"\nツール: {r['tool']}")
+                prompt_parts.append(f"結果: {r['output']}")
 
-        # ReAct指示
-        prompt_parts.append("\n\nUse the ReAct format:")
-        prompt_parts.append("Thought: [your reasoning]")
-        prompt_parts.append("Action: [tool_name]")
-        prompt_parts.append("Action Input: {\"arg1\": \"value1\", ...}")
-        prompt_parts.append("\nOr, if you have enough information:")
-        prompt_parts.append("Thought: I now have enough information to answer")
-        prompt_parts.append("Final Answer: [your answer]")
+        # ReAct指示（日本語メタ言語）
+        prompt_parts.append("\n\n以下のフォーマットで回答してください:")
+        prompt_parts.append("思考: [考えの内容]")
+        prompt_parts.append("行動: [ツール名]")
+        prompt_parts.append("行動入力: {\"arg1\": \"value1\", ...}")
+        prompt_parts.append("\nまたは、十分な情報がある場合:")
+        prompt_parts.append("思考: 十分な情報が集まったので最終回答を生成できる")
+        prompt_parts.append("最終回答: [回答内容（必ず日本語で）]")
 
         prompt = "\n".join(prompt_parts)
 
@@ -322,8 +334,11 @@ class AgenticRAGSystem:
                 if self.verbose:
                     print(f"Parsed tool calls: {[tc['tool'] for tc in tool_calls]}")
             else:
-                # ツール呼び出しがない場合は最終回答を抽出
-                final_answer_match = re.search(r'Final Answer:\s*(.+?)(?:\n|$)', response, re.DOTALL)
+                # ツール呼び出しがない場合は最終回答を抽出（日本語/英語両対応）
+                final_answer_match = (
+                    re.search(r'最終回答:\s*(.+?)(?:\n|$)', response, re.DOTALL)
+                    or re.search(r'Final Answer:\s*(.+?)(?:\n|$)', response, re.DOTALL)
+                )
                 if final_answer_match:
                     answer = final_answer_match.group(1).strip()
                     state = set_final_answer(state, answer)
@@ -551,12 +566,16 @@ class AgenticRAGSystem:
 # ヘルパー関数
 # =============================================================================
 
-def load_poi_data(poi_file: str = "poi_documents.json") -> List[Dict[str, Any]]:
+def load_poi_data(
+    poi_file: str = "poi_documents.json",
+    areas_config: Optional[Dict[str, Any]] = None
+) -> List[Dict[str, Any]]:
     """
     POIデータを読み込み、空間情報を付加
 
     Args:
         poi_file: POIデータファイルのパス
+        areas_config: エリア設定辞書（None時は渋谷単一エリア）
 
     Returns:
         空間情報付きPOIリスト
@@ -570,20 +589,20 @@ def load_poi_data(poi_file: str = "poi_documents.json") -> List[Dict[str, Any]]:
     flat_pois = []
     for poi in raw_pois:
         if "metadata" in poi:
-            # metadata形式の場合はフラット化
             flat_poi = poi["metadata"].copy()
             flat_pois.append(flat_poi)
         else:
-            # 既にフラット化されている場合はそのまま
             flat_pois.append(poi)
 
-    # 空間情報付加
-    pois = enrich_all_pois(flat_pois)
-
-    # グローバルPOI設定
-    set_global_pois(pois)
-
-    print(f"✓ Loaded {len(pois)} POIs with spatial info")
+    # 空間情報付加（広域対応）
+    if areas_config and len(areas_config) > 1:
+        pois = enrich_all_areas(flat_pois, areas_config)
+        set_global_pois_multi_area(pois, areas_config)
+        print(f"✓ Loaded {len(pois)} POIs with spatial info ({len(areas_config)} areas)")
+    else:
+        pois = enrich_all_pois(flat_pois)
+        set_global_pois(pois)
+        print(f"✓ Loaded {len(pois)} POIs with spatial info")
 
     return pois
 
@@ -593,6 +612,7 @@ def initialize_system(
     model = None,
     tokenizer = None,
     model_name: str = "Qwen/Qwen2.5-7B-Instruct",
+    areas_config: Optional[Dict[str, Any]] = None,
     verbose: bool = True,
     load_in_4bit: bool = True
 ) -> AgenticRAGSystem:
@@ -604,14 +624,15 @@ def initialize_system(
         model: 事前ロード済みのHuggingFaceモデル（Noneの場合は自動ロード）
         tokenizer: 事前ロード済みのトークナイザー（Noneの場合は自動ロード）
         model_name: LLMモデル名
+        areas_config: エリア設定辞書（None時は渋谷単一エリア）
         verbose: デバッグ出力
         load_in_4bit: 4bit量子化を使用するか
 
     Returns:
         初期化されたAgenticRAGSystem
     """
-    # POIデータ読み込み
-    load_poi_data(poi_file)
+    # POIデータ読み込み（広域対応）
+    load_poi_data(poi_file, areas_config=areas_config)
 
     # システム初期化
     system = AgenticRAGSystem(
