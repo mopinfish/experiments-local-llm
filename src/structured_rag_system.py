@@ -16,12 +16,14 @@ import torch
 try:
     from .geo_utils import (
         enrich_all_pois,
+        enrich_all_areas,
         filter_by_distance,
         filter_east_side,
         filter_west_side,
         distance_from_station,
         direction_from_station,
         SHIBUYA_STATION,
+        detect_target_area,
         # Phase 6.2追加
         get_nearest_pois,
         get_farthest_pois,
@@ -48,12 +50,14 @@ try:
 except ImportError:
     from geo_utils import (
         enrich_all_pois,
+        enrich_all_areas,
         filter_by_distance,
         filter_east_side,
         filter_west_side,
         distance_from_station,
         direction_from_station,
         SHIBUYA_STATION,
+        detect_target_area,
         get_nearest_pois,
         get_farthest_pois,
         filter_by_radius,
@@ -284,33 +288,61 @@ class StructuredRAGSystem:
         tokenizer,
         vectorstore,
         all_pois: List[Dict[str, Any]],
+        areas_config: Optional[Dict[str, Any]] = None,
         debug: bool = False
     ):
         """
         RAGシステムを初期化
-        
+
         Args:
             model: Hugging Face Transformersモデル
             tokenizer: トークナイザー
             vectorstore: LangChain ChromaDBベクトルストア
             all_pois: 全POIデータ（集計用）
+            areas_config: エリア設定辞書。None時は渋谷単一エリア（後方互換）
             debug: デバッグ出力を有効にする
         """
         self.model = model
         self.tokenizer = tokenizer
         self.vectorstore = vectorstore
         self.debug = debug
-        
-        # 全POIデータに空間情報を追加
-        self.all_pois = enrich_all_pois(all_pois)
-        
+        self.areas_config = areas_config or {
+            "shibuya": {"name": "渋谷駅周辺", "station": SHIBUYA_STATION}
+        }
+
+        # エリア別にPOIを空間情報付与
+        if areas_config and len(areas_config) > 1:
+            self.all_pois = enrich_all_areas(all_pois, areas_config)
+        else:
+            self.all_pois = enrich_all_pois(all_pois)
+
+        # エリア別POIインデックス
+        self.pois_by_area: Dict[str, List[Dict[str, Any]]] = {}
+        for poi in self.all_pois:
+            area_key = (poi.get("area_key")
+                        or poi.get("metadata", {}).get("area_key", "shibuya"))
+            self.pois_by_area.setdefault(area_key, []).append(poi)
+
         if self.debug:
             print(f"✅ StructuredRAGSystem初期化完了")
             print(f"   POI数: {len(self.all_pois)}件")
+            print(f"   エリア数: {len(self.pois_by_area)}")
+            for area_key, area_pois in self.pois_by_area.items():
+                print(f"     {area_key}: {len(area_pois)}件")
             print(f"   空間情報付与: 完了")
-        
-        # システムプロンプト
-        self.system_prompt = """あなたは渋谷エリアの地理情報に詳しいアシスタントです。
+
+        # システムプロンプト（広域対応）
+        if areas_config and len(areas_config) > 1:
+            area_names = "、".join(
+                info.get("name", key) for key, info in self.areas_config.items()
+            )
+            self.system_prompt = f"""あなたは東京都内の主要駅周辺エリア（{area_names}）の地理情報に詳しいアシスタントです。
+提供された情報に基づいて、正確かつ簡潔に回答してください。
+座標情報がある場合は必ず含めてください。
+数値データがある場合は具体的な数字を使って回答してください。
+情報がない場合は「情報がありません」と正直に回答してください。"""
+        else:
+            self.system_prompt = """あなたは渋谷エリアの地理情報に詳しいアシスタントです。
 提供された情報に基づいて、正確かつ簡潔に回答してください。
 座標情報がある場合は必ず含めてください。
 数値データがある場合は具体的な数字を使って回答してください。
@@ -374,19 +406,23 @@ class StructuredRAGSystem:
         self,
         question: str,
         analysis: QuestionAnalysis,
-        k: int = 5
+        k: int = 5,
+        station: Optional[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
         """
         ベクトル検索を実行
-        
+
         Args:
             question: 質問文
             analysis: 質問分析結果
             k: 取得件数
-        
+            station: 基準駅情報（None時はSHIBUYA_STATION）
+
         Returns:
             検索結果リスト
         """
+        station = station or SHIBUYA_STATION
+
         # カテゴリフィルタリングが可能な場合は多めに取得してフィルタ
         if analysis.categories:
             results = self.vectorstore.similarity_search(question, k=k * 2)
@@ -394,14 +430,14 @@ class StructuredRAGSystem:
                 r for r in results
                 if r.metadata.get("category") in analysis.categories
             ][:k]
-            
+
             if filtered:
                 results = filtered
             else:
                 results = results[:k]
         else:
             results = self.vectorstore.similarity_search(question, k=k)
-        
+
         # 結果を辞書形式に変換し、空間情報を追加
         search_results = []
         for r in results:
@@ -413,14 +449,18 @@ class StructuredRAGSystem:
                 "content": r.page_content,
                 "metadata": r.metadata
             }
-            
-            # 空間情報を追加
+
+            # 空間情報を追加（エリア別stationを使用）
             if poi.get("lat") and poi.get("lon"):
-                poi["distance_from_station"] = distance_from_station(poi["lat"], poi["lon"])
-                poi["direction_from_station"] = direction_from_station(poi["lat"], poi["lon"])
-            
+                poi["distance_from_station"] = distance_from_station(
+                    poi["lat"], poi["lon"], station=station
+                )
+                poi["direction_from_station"] = direction_from_station(
+                    poi["lat"], poi["lon"], station=station
+                )
+
             search_results.append(poi)
-        
+
         return search_results
     
     def _execute_aggregation(
@@ -767,6 +807,33 @@ class StructuredRAGSystem:
         
         return "\n".join(context_parts)
     
+    def _get_target_pois_and_station(
+        self,
+        question: str
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any], Optional[str]]:
+        """
+        質問文からエリアを特定し、対象POIと基準駅を返す
+
+        Args:
+            question: 質問文
+
+        Returns:
+            (target_pois, target_station, target_area_key)
+        """
+        target_area = detect_target_area(question, self.areas_config)
+
+        if target_area and target_area in self.pois_by_area:
+            target_pois = self.pois_by_area[target_area]
+            target_station = self.areas_config[target_area].get("station", SHIBUYA_STATION)
+        else:
+            target_pois = self.all_pois
+            target_station = SHIBUYA_STATION
+
+        if self.debug:
+            print(f"エリア特定: {target_area or '全エリア'} → POI数: {len(target_pois)}")
+
+        return target_pois, target_station, target_area
+
     def query_with_structured_rag(
         self,
         question: str,
@@ -774,56 +841,66 @@ class StructuredRAGSystem:
     ) -> Dict[str, Any]:
         """
         構造化RAGを使用して質問に回答
-        
+
         Args:
             question: 質問文
             k: ベクトル検索の取得件数
-        
+
         Returns:
             回答と付随情報の辞書
         """
         start_time = time.time()
-        
+
+        # Phase 9-B: エリア特定
+        target_pois, target_station, target_area = self._get_target_pois_and_station(question)
+
         # 質問分析
         analysis = analyze_question(question)
-        
+
         if self.debug:
             print(f"質問分析結果: {analysis.to_dict()}")
-        
-        # ベクトル検索
-        search_results = self._execute_vector_search(question, analysis, k)
-        
+
+        # ベクトル検索（エリア別stationを使用）
+        search_results = self._execute_vector_search(question, analysis, k, station=target_station)
+
+        # 以下の処理はtarget_poisを使用するために一時的にself.all_poisを差し替え
+        original_pois = self.all_pois
+        self.all_pois = target_pois
+
         # 集計処理
         aggregation = None
         if analysis.requires_aggregation:
             aggregation = self._execute_aggregation(question, analysis)
-        
+
         # 比較処理
         comparison = None
         if analysis.requires_comparison:
             comparison = self._execute_comparison(question, analysis)
-        
+
         # 空間フィルタリング
         spatial = None
         if analysis.requires_spatial and (analysis.distance_constraint or analysis.directions):
             spatial = self._execute_spatial_filter(question, analysis)
-        
+
         # Phase 6.2: 近接性検索
         proximity = None
         if analysis.requires_proximity:
             proximity = self._execute_proximity_search(question, analysis)
-        
+
         # Phase 6.2: 感度分析
         sensitivity = None
         if analysis.requires_sensitivity:
             sensitivity = self._execute_sensitivity_analysis(question, analysis)
-        
+
+        # self.all_poisを復元
+        self.all_pois = original_pois
+
         # コンテキスト構築
         context = self._build_context(
             search_results, aggregation, comparison, spatial,
             proximity, sensitivity
         )
-        
+
         # プロンプト構築
         prompt = f"""以下の情報を参考にして、質問に回答してください。
 
@@ -834,12 +911,12 @@ class StructuredRAGSystem:
 
 【回答】
 上記の情報を基に、具体的な数値や場所名を含めて回答します。"""
-        
+
         # 回答生成
         answer = self._generate_response(prompt)
-        
+
         elapsed_time = time.time() - start_time
-        
+
         return {
             "answer": answer,
             "analysis": analysis.to_dict(),
@@ -848,6 +925,7 @@ class StructuredRAGSystem:
             "comparison": comparison,
             "spatial": spatial,
             "context": context,
+            "target_area": target_area,
             "time_ms": int(elapsed_time * 1000)
         }
 
@@ -908,11 +986,18 @@ class StructuredRAGSystem:
         Returns:
             コンテキストテキスト
         """
+        # Phase 9-B: エリア特定
+        target_pois, target_station, target_area = self._get_target_pois_and_station(question)
+
         # 質問分析
         analysis = analyze_question(question)
 
         # ベクトル検索
-        search_results = self._execute_vector_search(question, analysis, k)
+        search_results = self._execute_vector_search(question, analysis, k, station=target_station)
+
+        # target_poisを使用するために一時的にself.all_poisを差し替え
+        original_pois = self.all_pois
+        self.all_pois = target_pois
 
         # 集計処理
         aggregation = None
@@ -938,6 +1023,9 @@ class StructuredRAGSystem:
         sensitivity = None
         if analysis.requires_sensitivity:
             sensitivity = self._execute_sensitivity_analysis(question, analysis)
+
+        # self.all_poisを復元
+        self.all_pois = original_pois
 
         # コンテキスト構築
         context = self._build_context(
@@ -990,18 +1078,20 @@ def create_structured_rag_system(
     tokenizer,
     vectorstore,
     poi_documents: List[Dict[str, Any]],
+    areas_config: Optional[Dict[str, Any]] = None,
     debug: bool = False
 ) -> StructuredRAGSystem:
     """
     StructuredRAGSystemのファクトリ関数
-    
+
     Args:
         model: Hugging Face Transformersモデル
         tokenizer: トークナイザー
         vectorstore: LangChain ChromaDBベクトルストア
         poi_documents: POIドキュメントのリスト
+        areas_config: エリア設定辞書（None時は渋谷単一エリア）
         debug: デバッグモード
-    
+
     Returns:
         StructuredRAGSystemインスタンス
     """
@@ -1016,11 +1106,12 @@ def create_structured_rag_system(
             if hasattr(doc, 'page_content'):
                 poi['content'] = doc.page_content
         all_pois.append(poi)
-    
+
     return StructuredRAGSystem(
         model=model,
         tokenizer=tokenizer,
         vectorstore=vectorstore,
         all_pois=all_pois,
+        areas_config=areas_config,
         debug=debug
     )

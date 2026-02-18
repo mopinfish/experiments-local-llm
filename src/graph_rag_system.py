@@ -33,6 +33,7 @@ try:
         SHIBUYA_STATION,
         DIRECTION_JP
     )
+    from .geo_utils import detect_target_area
 except ImportError:
     from graph_builder import (
         POIGraphBuilder,
@@ -44,6 +45,7 @@ except ImportError:
         SHIBUYA_STATION,
         DIRECTION_JP
     )
+    from geo_utils import detect_target_area
 
 
 # =============================================================================
@@ -270,31 +272,59 @@ def analyze_graph_query(question: str) -> GraphQueryAnalysis:
 class GraphRAGSystem:
     """ナレッジグラフを活用したRAGシステム"""
 
-    def __init__(self, graph_or_pois=None, poi_json_path: str = None):
+    def __init__(self, graph_or_pois=None, poi_json_path: str = None,
+                 areas_config: Optional[Dict[str, Any]] = None,
+                 all_pois: Optional[List[Dict[str, Any]]] = None):
         """
         Args:
             graph_or_pois: 構築済みのNetworkXグラフ、またはPOIリスト（List[Dict]）
             poi_json_path: POI JSONファイルのパス（グラフ未構築時）
+            areas_config: エリア設定辞書。指定時はエリア別グラフを構築。
+            all_pois: 全POIリスト（areas_config使用時に必要）
         """
         if not HAS_NETWORKX:
             raise ImportError("networkx is required")
 
-        if graph_or_pois is not None:
+        self.areas_config = areas_config or {
+            "shibuya": {"name": "渋谷駅周辺", "station": SHIBUYA_STATION}
+        }
+        self.graphs: Dict[str, nx.DiGraph] = {}
+        self.indices_by_area: Dict[str, Dict] = {}
+
+        # エリア別グラフ構築
+        if areas_config and len(areas_config) > 1 and all_pois is not None:
+            for area_key, area_info in areas_config.items():
+                area_pois = [
+                    p for p in all_pois
+                    if (p.get("area_key") or p.get("metadata", {}).get("area_key")) == area_key
+                ]
+                station = area_info.get("station", SHIBUYA_STATION)
+                builder = POIGraphBuilder(station=station)
+                self.graphs[area_key] = builder.build_graph(area_pois, verbose=False)
+            # デフォルトグラフは最初のエリア
+            first_key = next(iter(self.graphs))
+            self.graph = self.graphs[first_key]
+        elif graph_or_pois is not None:
             if isinstance(graph_or_pois, nx.DiGraph):
-                # NetworkXグラフが渡された場合
                 self.graph = graph_or_pois
             elif isinstance(graph_or_pois, list):
-                # POIリストが渡された場合
                 self.graph = self._build_graph_from_pois(graph_or_pois)
             else:
                 raise ValueError(f"Expected nx.DiGraph or list, got {type(graph_or_pois)}")
+            self.graphs["shibuya"] = self.graph
         elif poi_json_path is not None:
             self.graph = self._build_graph(poi_json_path)
+            self.graphs["shibuya"] = self.graph
         else:
-            raise ValueError("Either graph_or_pois or poi_json_path must be provided")
+            raise ValueError("Either graph_or_pois, poi_json_path, or (areas_config + all_pois) must be provided")
 
         # ノードインデックスの構築
         self._build_indices()
+
+        # エリア別インデックスも構築
+        if len(self.graphs) > 1:
+            for area_key, graph in self.graphs.items():
+                self.indices_by_area[area_key] = self._build_indices_for_graph(graph)
 
     def _build_graph(self, poi_json_path: str) -> nx.DiGraph:
         """POI JSONファイルパスからグラフを構築"""
@@ -307,8 +337,40 @@ class GraphRAGSystem:
         builder = POIGraphBuilder()
         return builder.build_graph(pois, verbose=False)
 
+    def _build_indices_for_graph(self, graph: nx.DiGraph) -> Dict:
+        """特定グラフ用のインデックスを構築"""
+        indices = {
+            "poi_nodes": {},
+            "category_nodes": {},
+            "area_nodes": {},
+            "subcategory_to_pois": defaultdict(list),
+            "category_to_pois": defaultdict(list),
+            "area_to_pois": defaultdict(list),
+        }
+
+        for node, data in graph.nodes(data=True):
+            node_type = data.get("node_type", "")
+
+            if node_type == "poi":
+                indices["poi_nodes"][node] = data
+                subcategory = data.get("subcategory", "")
+                if subcategory:
+                    indices["subcategory_to_pois"][subcategory].append(node)
+                category = data.get("category", "")
+                if category:
+                    indices["category_to_pois"][category].append(node)
+                area = data.get("area_cluster", "")
+                if area:
+                    indices["area_to_pois"][area].append(node)
+            elif node_type == "category":
+                indices["category_nodes"][node] = data
+            elif node_type == "area":
+                indices["area_nodes"][node] = data
+
+        return indices
+
     def _build_indices(self):
-        """高速検索用のインデックスを構築"""
+        """高速検索用のインデックスを構築（デフォルトグラフ用）"""
         self.poi_nodes = {}
         self.category_nodes = {}
         self.area_nodes = {}
@@ -322,17 +384,14 @@ class GraphRAGSystem:
             if node_type == "poi":
                 self.poi_nodes[node] = data
 
-                # サブカテゴリインデックス
                 subcategory = data.get("subcategory", "")
                 if subcategory:
                     self.subcategory_to_pois[subcategory].append(node)
 
-                # カテゴリインデックス
                 category = data.get("category", "")
                 if category:
                     self.category_to_pois[category].append(node)
 
-                # エリアインデックス
                 area = data.get("area_cluster", "")
                 if area:
                     self.area_to_pois[area].append(node)
@@ -342,6 +401,27 @@ class GraphRAGSystem:
 
             elif node_type == "area":
                 self.area_nodes[node] = data
+
+    def _select_graph_and_indices(self, question: str) -> Tuple:
+        """質問文からエリアを特定し、適切なグラフとインデックスを選択"""
+        if len(self.graphs) <= 1:
+            return (self.graph, self.poi_nodes, self.category_nodes,
+                    self.area_nodes, self.subcategory_to_pois,
+                    self.category_to_pois, self.area_to_pois)
+
+        target_area = detect_target_area(question, self.areas_config)
+
+        if target_area and target_area in self.indices_by_area:
+            idx = self.indices_by_area[target_area]
+            return (self.graphs[target_area],
+                    idx["poi_nodes"], idx["category_nodes"],
+                    idx["area_nodes"], idx["subcategory_to_pois"],
+                    idx["category_to_pois"], idx["area_to_pois"])
+
+        # エリア不明の場合はデフォルトグラフ（全インデックスを統合）
+        return (self.graph, self.poi_nodes, self.category_nodes,
+                self.area_nodes, self.subcategory_to_pois,
+                self.category_to_pois, self.area_to_pois)
 
     def query(self, question: str, top_k: int = 10) -> GraphQueryResult:
         """
@@ -354,6 +434,22 @@ class GraphRAGSystem:
         Returns:
             GraphQueryResult
         """
+        # Phase 9-B: エリア別グラフ選択
+        if len(self.graphs) > 1:
+            (selected_graph, poi_nodes, category_nodes, area_nodes,
+             subcategory_to_pois, category_to_pois, area_to_pois) = \
+                self._select_graph_and_indices(question)
+
+            # 一時的にインスタンス変数を差し替え
+            orig = (self.graph, self.poi_nodes, self.category_nodes,
+                    self.area_nodes, self.subcategory_to_pois,
+                    self.category_to_pois, self.area_to_pois)
+            (self.graph, self.poi_nodes, self.category_nodes,
+             self.area_nodes, self.subcategory_to_pois,
+             self.category_to_pois, self.area_to_pois) = \
+                (selected_graph, poi_nodes, category_nodes, area_nodes,
+                 subcategory_to_pois, category_to_pois, area_to_pois)
+
         # 質問分析
         analysis = analyze_graph_query(question)
 
@@ -378,6 +474,12 @@ class GraphRAGSystem:
         # コンテキスト生成
         result.context = self._generate_context(result, analysis)
         result.metadata["analysis"] = analysis.to_dict()
+
+        # インスタンス変数を復元
+        if len(self.graphs) > 1:
+            (self.graph, self.poi_nodes, self.category_nodes,
+             self.area_nodes, self.subcategory_to_pois,
+             self.category_to_pois, self.area_to_pois) = orig
 
         return result
 
@@ -672,7 +774,7 @@ class GraphRAGSystem:
                 direction = DIRECTION_JP.get(node.get("direction", ""), "不明")
                 subcategory = node.get("subcategory", "")
                 context_parts.append(
-                    f"{i}. {name} ({subcategory}) - 渋谷駅から{direction}へ{distance:.0f}m"
+                    f"{i}. {name} ({subcategory}) - 駅から{direction}へ{distance:.0f}m"
                 )
 
         elif analysis.question_type == "relation":
@@ -766,14 +868,23 @@ class GraphRAGSystem:
 
     def get_graph_stats(self) -> Dict[str, Any]:
         """グラフ統計情報を取得"""
-        return {
+        stats = {
             "num_poi_nodes": len(self.poi_nodes),
             "num_category_nodes": len(self.category_nodes),
             "num_area_nodes": len(self.area_nodes),
             "num_edges": self.graph.number_of_edges(),
             "categories": list(self.category_to_pois.keys()),
-            "subcategories": list(self.subcategory_to_pois.keys())
+            "subcategories": list(self.subcategory_to_pois.keys()),
+            "num_area_graphs": len(self.graphs),
         }
+        if len(self.graphs) > 1:
+            stats["area_graph_stats"] = {}
+            for area_key, graph in self.graphs.items():
+                stats["area_graph_stats"][area_key] = {
+                    "nodes": graph.number_of_nodes(),
+                    "edges": graph.number_of_edges(),
+                }
+        return stats
 
 
 # =============================================================================

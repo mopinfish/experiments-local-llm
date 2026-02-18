@@ -14,23 +14,31 @@ from typing import List, Dict, Any
 # システムプロンプト
 # =============================================================================
 
-AGENT_SYSTEM_PROMPT = """あなたは渋谷駅周辺の地理空間POI（Point of Interest）情報に精通したエージェントです。
+AGENT_SYSTEM_PROMPT = """あなたは東京都内の主要駅周辺（渋谷、新宿、池袋、東京）の地理空間POI（Point of Interest）情報に精通したエージェントです。
 ユーザーの質問に答えるため、利用可能なツールを駆使して正確な情報を収集し、回答を生成してください。
 
 **重要: すべての回答は必ず日本語で行ってください。中国語や英語で回答してはいけません。**
 
+# 利用可能なエリア
+
+- shibuya: 渋谷駅周辺
+- shinjuku: 新宿駅周辺
+- ikebukuro: 池袋駅周辺
+- tokyo: 東京駅周辺
+
 # あなたの役割
 
-1. **質問理解**: ユーザーの質問を分析し、何を求めているか正確に理解する
-2. **計画立案**: 質問に答えるために必要なツールと実行順序を決定する
-3. **ツール実行**: 適切なツールを選択し、正しいパラメータで実行する
-4. **結果統合**: 複数のツール実行結果を統合し、包括的な回答を生成する
-5. **検証**: 回答が質問に適切に答えているか確認し、必要に応じて追加検索する
+1. **エリア特定**: 質問文から対象エリアを特定する（渋谷、新宿、池袋、東京）
+2. **質問理解**: ユーザーの質問を分析し、何を求めているか正確に理解する
+3. **計画立案**: 質問に答えるために必要なツールと実行順序を決定する
+4. **ツール実行**: 適切なツールを選択し、正しいパラメータで実行する
+5. **結果統合**: 複数のツール実行結果を統合し、包括的な回答を生成する
+6. **検証**: 回答が質問に適切に答えているか確認し、必要に応じて追加検索する
 
 # 利用可能なツール群
 
 ## 空間計算ツール
-- `tool_get_nearest_pois`: 渋谷駅から最も近いPOIを検索
+- `tool_get_nearest_pois`: 指定エリアの駅から最も近いPOIを検索
 - `tool_count_pois_in_radius`: 指定半径内のPOI件数を集計
 - `tool_compare_radius`: 異なる半径での件数比較（感度分析）
 - `tool_analyze_sensitivity`: 複数半径での詳細な感度分析
@@ -50,15 +58,16 @@ AGENT_SYSTEM_PROMPT = """あなたは渋谷駅周辺の地理空間POI（Point o
 
 # 実行ガイドライン
 
-1. **段階的思考**: 一度に全てを実行せず、段階的にツールを実行して情報を収集する
-2. **適切なツール選択**: 質問のタイプに応じて最も適したツールを選択する
+1. **エリア特定が最優先**: 質問文に「新宿」「池袋」「東京駅」などのキーワードがあれば該当エリアを対象にする。エリアが不明な場合は全エリアを対象にする
+2. **段階的思考**: 一度に全てを実行せず、段階的にツールを実行して情報を収集する
+3. **適切なツール選択**: 質問のタイプに応じて最も適したツールを選択する
    - 「最も近い」「最寄り」→ `tool_get_nearest_pois`
    - 「何件」「いくつ」→ `tool_count_pois_in_radius` または `tool_count_by_category`
    - 「東西比較」→ `tool_compare_east_west`
    - 「半径を変えると」「範囲を広げると」→ `tool_compare_radius` または `tool_analyze_sensitivity`
-3. **パラメータ検証**: ツールを呼び出す前にパラメータが適切か確認する
-4. **結果検証**: ツール実行結果が期待通りか確認し、必要に応じて再実行する
-5. **エラーハンドリング**: エラーが発生した場合は代替手段を試みる
+4. **パラメータ検証**: ツールを呼び出す前にパラメータが適切か確認する
+5. **結果検証**: ツール実行結果が期待通りか確認し、必要に応じて再実行する
+6. **エラーハンドリング**: エラーが発生した場合は代替手段を試みる
 
 # 回答形式
 
@@ -71,7 +80,7 @@ AGENT_SYSTEM_PROMPT = """あなたは渋谷駅周辺の地理空間POI（Point o
 
 # 注意事項
 
-- 渋谷駅の座標は固定 (35.658034, 139.701636)
+- 各エリアの駅座標は各ツールが自動的に管理する
 - 距離はメートル単位で表示
 - カテゴリは部分一致で検索可能（例: "カフェ"で"飲食店/カフェ"が該当）
 - 最大10回のツール実行まで（無限ループ防止）
@@ -81,24 +90,24 @@ AGENT_SYSTEM_PROMPT = """あなたは渋谷駅周辺の地理空間POI（Point o
 """
 
 
-REACT_PROMPT_TEMPLATE = """Question: {question}
+REACT_PROMPT_TEMPLATE = """質問: {question}
 
 あなたは以下のフォーマットで思考と行動を繰り返してください：
 
-Thought: 質問に答えるために何をすべきか考える
-Action: 実行するツール名
-Action Input: ツールへの入力（JSON形式）
-Observation: ツールからの出力
+思考: 質問に答えるために何をすべきか考える
+行動: 実行するツール名
+行動入力: ツールへの入力（JSON形式）
+観察結果: ツールからの出力（日本語テキスト）
 
-... (このThought/Action/Action Input/Observationを必要なだけ繰り返す)
+... (この思考/行動/行動入力/観察結果を必要なだけ繰り返す)
 
-Thought: 十分な情報が集まったので最終回答を生成できる
-Final Answer: ユーザーへの最終回答
+思考: 十分な情報が集まったので最終回答を生成できる
+最終回答: ユーザーへの最終回答（必ず日本語で）
 
 それでは始めてください。
 
-Question: {question}
-Thought:"""
+質問: {question}
+思考:"""
 
 
 PLANNING_PROMPT_TEMPLATE = """以下の質問に答えるための実行計画を立ててください。
@@ -326,23 +335,25 @@ def generate_tools_description() -> str:
 利用可能なツール：
 
 【空間計算ツール】
-- tool_get_nearest_pois(category, top_n): 最寄りPOI検索
-- tool_count_pois_in_radius(radius_m, category): 半径内POI件数
-- tool_compare_radius(radius1_m, radius2_m, category): 半径比較
-- tool_analyze_sensitivity(category, radii): 詳細感度分析
-- tool_filter_by_area(radius_m, category): エリア内POIリスト
+- tool_get_nearest_pois(area, category, top_n): 指定エリアの最寄りPOI検索
+- tool_count_pois_in_radius(area, radius_m, category): 半径内POI件数
+- tool_compare_radius(area, radius1_m, radius2_m, category): 半径比較
+- tool_analyze_sensitivity(area, category, radii): 詳細感度分析
+- tool_filter_by_area(area, radius_m, category): エリア内POIリスト
 - tool_calculate_distance(poi_name1, poi_name2): 2点間距離
 
 【比較・集計ツール】
-- tool_compare_east_west(category): 東西比較
-- tool_compare_north_south(category): 南北比較
-- tool_count_by_category(categories): カテゴリ別集計
-- tool_get_top_categories(top_n): カテゴリランキング
-- tool_analyze_category_by_direction(category): 方向別分析
+- tool_compare_east_west(area, category): 東西比較
+- tool_compare_north_south(area, category): 南北比較
+- tool_count_by_category(area, categories): カテゴリ別集計
+- tool_get_top_categories(area, top_n): カテゴリランキング
+- tool_analyze_category_by_direction(area, category): 方向別分析
 
 【検索ツール】
 - tool_vector_search(query, k): セマンティック検索
 - tool_find_pois_by_keyword(keyword): キーワード検索
+
+areaの指定: "shibuya", "shinjuku", "ikebukuro", "tokyo" のいずれか。省略時は全エリア対象。
 """
 
 
@@ -356,21 +367,41 @@ def test_prompts():
     print("agent_prompts.py 動作確認")
     print("=" * 60)
 
-    question = "渋谷駅から最も近いカフェは？"
+    # Phase 9-B: 広域対応テスト
+    test_cases = [
+        "渋谷駅から最も近いカフェは？",
+        "新宿駅周辺のレストランを教えてください",
+        "池袋と渋谷でカフェが多いのはどちら？",
+    ]
 
-    print("\n--- ReActプロンプト ---")
-    print(format_react_prompt(question))
+    for question in test_cases:
+        print(f"\n--- ReActプロンプト: {question} ---")
+        prompt = format_react_prompt(question)
+        # 日本語メタ言語が含まれることを確認
+        assert "思考:" in prompt, "ReActプロンプトに日本語メタ言語「思考:」がありません"
+        assert "行動:" in prompt, "ReActプロンプトに日本語メタ言語「行動:」がありません"
+        assert "最終回答:" in prompt, "ReActプロンプトに日本語メタ言語「最終回答:」がありません"
+        print(prompt[:200] + "...")
+
+    # システムプロンプトの汎用化確認
+    # 「渋谷駅周辺の地理空間POI」のような単一エリア固有記述が除去されていることを確認
+    # 「shibuya: 渋谷駅周辺」のようなエリア一覧内の記述はOK
+    assert "渋谷駅周辺の地理空間" not in AGENT_SYSTEM_PROMPT, "システムプロンプトに渋谷固有の記述が残っています"
+    assert "東京都内" in AGENT_SYSTEM_PROMPT, "システムプロンプトが汎用化されていません"
+    assert "新宿" in AGENT_SYSTEM_PROMPT, "システムプロンプトに新宿エリアの記述がありません"
+    assert "池袋" in AGENT_SYSTEM_PROMPT, "システムプロンプトに池袋エリアの記述がありません"
+
+    # ツール説明にarea引数があることを確認
+    tools_desc = generate_tools_description()
+    assert "area" in tools_desc, "ツール説明にarea引数がありません"
 
     print("\n--- プランニングプロンプト ---")
-    print(format_planning_prompt(question))
-
-    print("\n--- 質問タイプ別プロンプト（proximity） ---")
-    print(get_question_type_prompt("proximity", question))
+    print(format_planning_prompt(test_cases[0])[:200] + "...")
 
     print("\n--- ツール説明 ---")
     print(generate_tools_description())
 
-    print("\n✅ agent_prompts.py 動作確認完了")
+    print("\n✅ agent_prompts.py 動作確認完了（広域対応 + ReAct日本語化）")
 
 
 if __name__ == "__main__":

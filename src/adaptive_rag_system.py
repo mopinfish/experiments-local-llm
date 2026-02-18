@@ -20,10 +20,12 @@ try:
     from .structured_rag_system import StructuredRAGSystem, QuestionAnalysis, analyze_question
     from .graph_rag_system import GraphRAGSystem
     from .graph_builder import POIGraphBuilder
+    from .geo_utils import SHIBUYA_STATION
 except ImportError:
     from structured_rag_system import StructuredRAGSystem, QuestionAnalysis, analyze_question
     from graph_rag_system import GraphRAGSystem
     from graph_builder import POIGraphBuilder
+    from geo_utils import SHIBUYA_STATION
 
 
 @dataclass
@@ -65,6 +67,7 @@ class AdaptiveRAGSystem:
         tokenizer,
         vectorstore,
         all_pois: List[Dict[str, Any]],
+        areas_config: Optional[Dict[str, Any]] = None,
         include_extended_edges: bool = True,
         verbose: bool = False
     ):
@@ -74,6 +77,7 @@ class AdaptiveRAGSystem:
             tokenizer: トークナイザー
             vectorstore: LangChain ChromaDBベクトルストア
             all_pois: 全POIデータ
+            areas_config: エリア設定辞書（None時は渋谷単一エリア）
             include_extended_edges: 拡張エッジを含むか（GraphRAG用）
             verbose: 詳細ログを出力するか
         """
@@ -81,6 +85,7 @@ class AdaptiveRAGSystem:
         self.tokenizer = tokenizer
         self.vectorstore = vectorstore
         self.all_pois = all_pois
+        self.areas_config = areas_config
         self.include_extended_edges = include_extended_edges
         self.verbose = verbose
 
@@ -107,6 +112,7 @@ class AdaptiveRAGSystem:
                 tokenizer=self.tokenizer,
                 vectorstore=self.vectorstore,
                 all_pois=self.all_pois,
+                areas_config=self.areas_config,
                 debug=self.verbose
             )
         return self._structured_rag
@@ -116,15 +122,21 @@ class AdaptiveRAGSystem:
         """GraphRAGシステム（遅延ロード）"""
         if self._graph_rag is None:
             self._log("GraphRAGシステムを初期化中...")
-            # POIGraphBuilderでグラフを構築
-            builder = POIGraphBuilder()
-            graph = builder.build_graph(
-                self.all_pois,
-                include_extended_edges=self.include_extended_edges,
-                verbose=self.verbose
-            )
-            # 構築済みグラフをGraphRAGSystemに渡す
-            self._graph_rag = GraphRAGSystem(graph_or_pois=graph)
+            if self.areas_config and len(self.areas_config) > 1:
+                # 広域対応: エリア別グラフ構築
+                self._graph_rag = GraphRAGSystem(
+                    areas_config=self.areas_config,
+                    all_pois=self.all_pois
+                )
+            else:
+                # 後方互換: 単一グラフ構築
+                builder = POIGraphBuilder()
+                graph = builder.build_graph(
+                    self.all_pois,
+                    include_extended_edges=self.include_extended_edges,
+                    verbose=self.verbose
+                )
+                self._graph_rag = GraphRAGSystem(graph_or_pois=graph)
             # GraphRAGにもモデル・トークナイザーを設定
             self._graph_rag.model = self.model
             self._graph_rag.tokenizer = self.tokenizer
@@ -205,7 +217,17 @@ class AdaptiveRAGSystem:
         """
         import torch
 
-        system_prompt = """あなたは渋谷エリアの地理情報に詳しいアシスタントです。
+        if self.areas_config and len(self.areas_config) > 1:
+            area_names = "、".join(
+                info.get("name", key) for key, info in self.areas_config.items()
+            )
+            system_prompt = f"""あなたは東京都内の主要駅周辺エリア（{area_names}）の地理情報に詳しいアシスタントです。
+提供された情報に基づいて、正確かつ簡潔に回答してください。
+座標情報がある場合は必ず含めてください。
+数値データがある場合は具体的な数字を使って回答してください。
+情報がない場合は「情報がありません」と正直に回答してください。"""
+        else:
+            system_prompt = """あなたは渋谷エリアの地理情報に詳しいアシスタントです。
 提供された情報に基づいて、正確かつ簡潔に回答してください。
 座標情報がある場合は必ず含めてください。
 数値データがある場合は具体的な数字を使って回答してください。
