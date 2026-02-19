@@ -1,0 +1,57 @@
+[
+  {
+    "test_id": "A-01",
+    "question": "渋谷駅から最も近いカフェを見つけて、そのカフェから300m以内にある他のカフェは何件ありますか？",
+    "answer": "",
+    "execution_time": 0.0,
+    "iterations": 0,
+    "tool_calls": [],
+    "keyword_hit_rate": 0.0,
+    "success": false,
+    "error": "'NoneType' object has no attribute 'lower'"
+  },
+  {
+    "test_id": "A-02",
+    "question": "渋谷駅の東側で最も近いコンビニと西側で最も近いコンビニ、どちらが駅に近いですか？",
+    "answer": "",
+    "execution_time": 0.0,
+    "iterations": 0,
+    "tool_calls": [],
+    "keyword_hit_rate": 0.0,
+    "success": false,
+    "error": "'NoneType' object has no attribute 'lower'"
+  },
+  {
+    "test_id": "A-03",
+    "question": "500m以内にカフェが何件あるか調べてから、その半径を700mに広げると何件増えますか？",
+    "answer": "",
+    "execution_time": 0.0,
+    "iterations": 0,
+    "tool_calls": [],
+    "keyword_hit_rate": 0.0,
+    "success": false,
+    "error": "'NoneType' object has no attribute 'lower'"
+  },
+  {
+    "test_id": "A-04",
+    "question": "カフェの件数上位3カテゴリを調べて、そのうち東側に多いカテゴリはどれですか？",
+    "answer": "",
+    "execution_time": 0.0,
+    "iterations": 0,
+    "tool_calls": [],
+    "keyword_hit_rate": 0.0,
+    "success": false,
+    "error": "'NoneType' object has no attribute 'lower'"
+  },
+  {
+    "test_id": "A-05",
+    "question": "渋谷駅から300m以内のレストランの中で、最も東にあるのはどこですか？",
+    "answer": "",
+    "execution_time": 0.0,
+    "iterations": 0,
+    "tool_calls": [],
+    "keyword_hit_rate": 0.0,
+    "success": false,
+    "error": "'NoneType' object has no attribute 'lower'"
+  }
+]
