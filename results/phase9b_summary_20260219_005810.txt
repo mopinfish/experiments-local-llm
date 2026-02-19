@@ -1,0 +1,58 @@
+Phase 9-B: Multi-Area RAG Evaluation Summary
+============================================================
+
+Date: 2026-02-19 00:58:10
+Test Cases: 130
+Quick Test: False
+
+Overall Results:
+------------------------------------------------------------
+hybrid_rag: success=96.2% hit_rate=0.899 time=8.8s
+graph_rag: success=92.3% hit_rate=0.845 time=8.2s
+adaptive_rag: success=92.3% hit_rate=0.843 time=8.2s
+agentic_rag: success=90.8% hit_rate=0.831 time=54.4s
+
+Area-wise Results:
+------------------------------------------------------------
+
+hybrid_rag:
+  cross_area: 100.0% (n=25)
+  ikebukuro: 100.0% (n=26)
+  shibuya: 92.3% (n=26)
+  shinjuku: 96.3% (n=27)
+  tokyo: 92.3% (n=26)
+
+graph_rag:
+  cross_area: 100.0% (n=25)
+  ikebukuro: 92.3% (n=26)
+  shibuya: 88.5% (n=26)
+  shinjuku: 92.6% (n=27)
+  tokyo: 88.5% (n=26)
+
+adaptive_rag:
+  cross_area: 100.0% (n=25)
+  ikebukuro: 96.2% (n=26)
+  shibuya: 84.6% (n=26)
+  shinjuku: 92.6% (n=27)
+  tokyo: 88.5% (n=26)
+
+agentic_rag:
+  cross_area: 96.0% (n=25)
+  ikebukuro: 84.6% (n=26)
+  shibuya: 92.3% (n=26)
+  shinjuku: 96.3% (n=27)
+  tokyo: 84.6% (n=26)
+
+Cross-Area Results:
+------------------------------------------------------------
+  hybrid_rag: 100.0% (n=20)
+  graph_rag: 100.0% (n=20)
+  adaptive_rag: 100.0% (n=20)
+  agentic_rag: 95.0% (n=20)
+
+Area Detection Accuracy:
+------------------------------------------------------------
+  hybrid_rag: 98.1% (103/105)
+  graph_rag: 98.1% (103/105)
+  adaptive_rag: 98.1% (103/105)
+  agentic_rag: 98.1% (103/105)

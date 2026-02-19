@@ -267,6 +267,10 @@ class AdaptiveRAGSystem:
 
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
+        # VRAM解放（CUDA OOM防止）
+        del inputs, outputs
+        torch.cuda.empty_cache()
+
         if "assistant" in response.lower():
             parts = response.split("assistant")
             if len(parts) > 1:

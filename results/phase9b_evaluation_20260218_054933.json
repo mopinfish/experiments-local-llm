@@ -1,0 +1,885 @@
+{
+  "timestamp": "20260218_054933",
+  "test_count": 13,
+  "is_quick_test": true,
+  "systems": {
+    "hybrid_rag": {
+      "summary": {
+        "overall": {
+          "success_rate": 1.0,
+          "avg_keyword_hit_rate": 0.9423,
+          "avg_time_sec": 8.17,
+          "total": 13,
+          "error_count": 0,
+          "language_issue_count": 7
+        },
+        "by_area": {
+          "shibuya": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.95,
+            "count": 5,
+            "avg_time_sec": 8.47
+          },
+          "shinjuku": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.95,
+            "count": 5,
+            "avg_time_sec": 7.57
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3,
+            "avg_time_sec": 8.66
+          }
+        },
+        "by_level": {
+          "1": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "2": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "3": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "4": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          },
+          "5": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          }
+        },
+        "by_query_type": {
+          "single_area": {
+            "success_rate": 1.0,
+            "count": 10
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "count": 3
+          }
+        },
+        "by_subcategory": {
+          "basic_location": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "proximity": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "constraint_single": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "decision_support": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "multi_hop": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          },
+          "cross_area_comparison": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          }
+        },
+        "area_detection": {
+          "total": 10,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "cross_area": {
+          "success_rate": 1.0,
+          "count": 3,
+          "avg_time_sec": 8.66
+        }
+      },
+      "results": [
+        {
+          "test_id": "MA-SBY-L1-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "basic_location",
+          "level": 1,
+          "answer": "渋谷駅は東京都渋谷区渋谷に位置しています。具体的な座標は北緯35.6820度、東経139.7542度です。",
+          "time_sec": 13.11,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-SBY-L2-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "proximity",
+          "level": 2,
+          "answer": "渋谷駅に最も近いコンビニはローソンです。距離は約101.94m南方向にあります。",
+          "time_sec": 3.55,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L3-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "constraint_single",
+          "level": 3,
+          "answer": "情報がありません。\n\n検索結果からは、新宿サブナードにはコンビニがありますが、渋谷駅周辺のコンビニについての情報はありません。24時間営業のコンビニがあるかどうかについては具体的な情報が見つかりませんでした。",
+          "time_sec": 6.56,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-SBY-L4-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "decision_support",
+          "level": 4,
+          "answer": "渋谷駅から近い順に3つのカフェは以下の通りです：\n\n1. Urth Caffé - 56.72m（北東方向）\n2. スターバックス - 67.41m（東方向）\n3. Real Drip Coffee No.12 by Ueshima Coffee House - 75.72m（東方向）",
+          "time_sec": 7.84,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L5-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "multi_hop",
+          "level": 5,
+          "answer": "渋谷駅から最も近いカフェはUrth Cafféで、距離は56.72mです。また、300m以内には2つのカフェがあります。具体的には：\n\n1. スターバックス (67.41m)\n2. Real Drip Coffee No.12 by Ueshima Coffee House (75.72m)\n\n合計で37件のカフェが条件に合致していますが、その内300m以内には2件のカフェがあります。",
+          "time_sec": 11.29,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-SJK-L1-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "basic_location",
+          "level": 1,
+          "answer": "新宿駅は東京都新宿区新宿3-15-1に位置しています。緯度35.682097、経度139.758427の座標です。",
+          "time_sec": 5.28,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L2-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "proximity",
+          "level": 2,
+          "answer": "新宿駅に最も近いコンビニは「ファミリーマート」で、距離は128.37m（南東方向）です。",
+          "time_sec": 4.5,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L3-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "constraint_single",
+          "level": 3,
+          "answer": "情報がありません。\n\n上記の検索結果からは、新宿駅周辺には複数の鉄道駅があり、新宿サブナードという商店やコンビニがありますが、24時間営業のコンビニに関する具体的な情報はありません。",
+          "time_sec": 5.76,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-SJK-L4-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "decision_support",
+          "level": 4,
+          "answer": "新宿駅から近い順に3つのカフェは以下の通りです：\n\n1. スターバックス (距離: 134.66m, 西方向)\n2. スターバックス (距離: 139.44m, 北東方向)\n3. スターバックス (距離: 142.2m, 南方向)\n\nこれらのカフェは新宿駅から非常に近くに位置しています。",
+          "time_sec": 10.12,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-SJK-L5-01",
+          "system_name": "hybrid_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "multi_hop",
+          "level": 5,
+          "answer": "新宿駅から最も近いカフェは「スターバックス」で、距離は134.66mです。また、その300m以内には合計2件のカフェがあります。具体的には：\n\n1. スターバックス (134.66m)\n2. スターバックス (139.44m)\n\nこれら以外にも、新宿駅から300m以内にはVerve coffee roasters（143.71m）がありますが、これは300mを超える位置にあります。",
+          "time_sec": 12.17,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-CROSS-01",
+          "system_name": "hybrid_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 3,
+          "answer": "渋谷駅周辺のカフェの数は459件で、新宿駅周辺の鉄道駅の数は38件です。したがって、カフェが多いのは渋谷駅周辺です。\n\n座標情報：\n- 渋谷駅: 35.679827, 139.698022\n- 新宿駅: 35.682896, 139.758429",
+          "time_sec": 11.71,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-CROSS-09",
+          "system_name": "hybrid_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 4,
+          "answer": "情報がありません。\n\n上記の検索結果にはスターバックスに関する情報が含まれていません。因此，无法根据提供的信息回答关于渋谷站和新宿站附近星巴克店铺数量差异的问题。",
+          "time_sec": 12.27,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": true
+        },
+        {
+          "test_id": "MA-CROSS-14",
+          "system_name": "hybrid_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 2,
+          "answer": "4エリア全体でコンビニは合計277件あります。",
+          "time_sec": 2.01,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": false
+        }
+      ]
+    },
+    "agentic_rag": {
+      "summary": {
+        "overall": {
+          "success_rate": 1.0,
+          "avg_keyword_hit_rate": 0.8013,
+          "avg_time_sec": 55.41,
+          "total": 13,
+          "error_count": 0,
+          "language_issue_count": 0
+        },
+        "by_area": {
+          "shibuya": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 5,
+            "avg_time_sec": 49.75
+          },
+          "shinjuku": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.7833,
+            "count": 5,
+            "avg_time_sec": 56.55
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3,
+            "avg_time_sec": 62.92
+          }
+        },
+        "by_level": {
+          "1": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5,
+            "count": 2
+          },
+          "2": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.7222,
+            "count": 3
+          },
+          "3": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "4": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          },
+          "5": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          }
+        },
+        "by_query_type": {
+          "single_area": {
+            "success_rate": 1.0,
+            "count": 10
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "count": 3
+          }
+        },
+        "by_subcategory": {
+          "basic_location": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5,
+            "count": 2
+          },
+          "proximity": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5834,
+            "count": 2
+          },
+          "constraint_single": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "decision_support": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "multi_hop": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          },
+          "cross_area_comparison": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          }
+        },
+        "area_detection": {
+          "total": 10,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "cross_area": {
+          "success_rate": 1.0,
+          "count": 3,
+          "avg_time_sec": 62.92
+        }
+      },
+      "results": [
+        {
+          "test_id": "MA-SBY-L1-01",
+          "system_name": "agentic_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "basic_location",
+          "level": 1,
+          "answer": "渋谷駅は駅から東方向に約12.7メートルの場所に位置しています。\n\nこの情報は`tool_get_nearest_pois`を使用して得られました。",
+          "time_sec": 50.82,
+          "keyword_hit_rate": 0.5,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L2-01",
+          "system_name": "agentic_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "proximity",
+          "level": 2,
+          "answer": "渋谷駅に最も近いコンビニはローソンで、駅から南方向に約101.9メートルの場所にあります。",
+          "time_sec": 33.8,
+          "keyword_hit_rate": 0.5,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L3-01",
+          "system_name": "agentic_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "constraint_single",
+          "level": 3,
+          "answer": "渋谷駅周辺には24時間営業のコンビニはありません。\n\nツールを使用して、渋谷駅周辺のコンビニ情報を調査しましたが、「コンビニ 渋谷」や「コンビニ 24時間 渋谷」といったキーワード検索でも24時間営業のコンビニは見つかりませんでした。調査した結果、24時間営業のコンビニは存在しない 것으로確認されました。\n\n補足情報として、渋谷駅周辺には多くのコンビニがあります。例えばローソン、ファミリーマート、セブン-イレブン、ミニストップなどがありますが、これらは全て通常営業時間内に閉まっています。",
+          "time_sec": 77.17,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L4-01",
+          "system_name": "agentic_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "decision_support",
+          "level": 4,
+          "answer": "渋谷駅から近い順に3つのカフェは以下の通りです。",
+          "time_sec": 27.32,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SBY-L5-01",
+          "system_name": "agentic_rag",
+          "target_area": "shibuya",
+          "query_type": "single_area",
+          "subcategory": "multi_hop",
+          "level": 5,
+          "answer": "渋谷駅から最も近いカフェは「Urth Caffé」で、駅から北東方向に56.7メートルです。その近くには300m以内に37件のカフェがあります。",
+          "time_sec": 59.63,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L1-01",
+          "system_name": "agentic_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "basic_location",
+          "level": 1,
+          "answer": "新宿駅の位置は、駅周辺のPOIの中で最も近いのは「新宿」で、駅から南方向に約61.6メートルの場所にあります。\n\n工具を使用して新宿駅の位置を確認しました。「新宿」というPOI名が直接新宿駅を指していることがわかりました。",
+          "time_sec": 62.31,
+          "keyword_hit_rate": 0.5,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L2-01",
+          "system_name": "agentic_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "proximity",
+          "level": 2,
+          "answer": "新宿駅に最も近いコンビニはNewDaysで、駅から北東方向に13.2メートルの場所にあります。",
+          "time_sec": 49.41,
+          "keyword_hit_rate": 0.6667,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L3-01",
+          "system_name": "agentic_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "constraint_single",
+          "level": 3,
+          "answer": "新宿駅周辺には24時間営業のコンビニは見つかりませんでした。\n\n新宿駅周辺のコンビニの位置は以下の通りです：\n- NewDays: 駅から北東方向に13.2メートル\n- NewDays: 駅から西方向に43.2メートル\n- ファミリーマート: 駅から南東方向に128.4メートル\n- ファミリーマート: 駅から南西方向に192.4メートル\n- デイリーヤマザキ: 駅から西方向に216.9メートル\n- セブン-イレブン: 駅から東方向に230.3メートル\n- ファミリーマート: 駅から南西方向に232.7メートル\n- ローソン: 駅から北東方向に235.4メートル\n- セブン-イレブン: 駅から南西方向に260.3メートル\n- ローソン: 駅から南西方向に263.2メートル\n\nこれらのコンビニの営業時間については、公式ウェブサイトや各店舗の掲示板をご確認ください。",
+          "time_sec": 83.4,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L4-01",
+          "system_name": "agentic_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "decision_support",
+          "level": 4,
+          "answer": "新宿駅から近い順に3つのカフェは以下の通りです。",
+          "time_sec": 29.02,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-SJK-L5-01",
+          "system_name": "agentic_rag",
+          "target_area": "shinjuku",
+          "query_type": "single_area",
+          "subcategory": "multi_hop",
+          "level": 5,
+          "answer": "新宿駅から最も近いカフェはスターバックスで、駅から西方向に134.7メートルの場所にあります。さらに、その周辺300m以内には24件のカフェがあります。",
+          "time_sec": 58.63,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": false,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-CROSS-01",
+          "system_name": "agentic_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 3,
+          "answer": "渋谷駅周辺には86件のカフェがあり、新宿駅周辺には68件のカフェがあります。したがって、カフェが多いのは渋谷駅周辺です。",
+          "time_sec": 28.59,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-CROSS-09",
+          "system_name": "agentic_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 4,
+          "answer": "渋谷駅周辺および新宿駅周辺にはいずれもスターバックスが存在しません。\n\nツール `tool_count_pois_in_radius` を使用し、半径500.0メートル以内のスターバックスの数を調査しましたが、両エリアともに0件でした。",
+          "time_sec": 92.18,
+          "keyword_hit_rate": 0.75,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": false
+        },
+        {
+          "test_id": "MA-CROSS-14",
+          "system_name": "agentic_rag",
+          "target_area": null,
+          "query_type": "cross_area",
+          "subcategory": "cross_area_comparison",
+          "level": 2,
+          "answer": "4エリア全体でコンビニは合計156件あります。\n\n工具 `tool_count_pois_in_radius` を使用し、各エリアで半径500.0メートル以内のコンビニ件数を調査しました。それぞれの結果は39件でした。したがって、4エリアを合わせて156件となります。",
+          "time_sec": 68.0,
+          "keyword_hit_rate": 1.0,
+          "success": true,
+          "area_detected": null,
+          "area_detection_correct": true,
+          "error": null,
+          "language_issue": false
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "summaries": {
+      "hybrid_rag": {
+        "overall": {
+          "success_rate": 1.0,
+          "avg_keyword_hit_rate": 0.9423,
+          "avg_time_sec": 8.17,
+          "total": 13,
+          "error_count": 0,
+          "language_issue_count": 7
+        },
+        "by_area": {
+          "shibuya": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.95,
+            "count": 5,
+            "avg_time_sec": 8.47
+          },
+          "shinjuku": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.95,
+            "count": 5,
+            "avg_time_sec": 7.57
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3,
+            "avg_time_sec": 8.66
+          }
+        },
+        "by_level": {
+          "1": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "2": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "3": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "4": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          },
+          "5": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          }
+        },
+        "by_query_type": {
+          "single_area": {
+            "success_rate": 1.0,
+            "count": 10
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "count": 3
+          }
+        },
+        "by_subcategory": {
+          "basic_location": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "proximity": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "constraint_single": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "decision_support": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "multi_hop": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          },
+          "cross_area_comparison": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          }
+        },
+        "area_detection": {
+          "total": 10,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "cross_area": {
+          "success_rate": 1.0,
+          "count": 3,
+          "avg_time_sec": 8.66
+        }
+      },
+      "agentic_rag": {
+        "overall": {
+          "success_rate": 1.0,
+          "avg_keyword_hit_rate": 0.8013,
+          "avg_time_sec": 55.41,
+          "total": 13,
+          "error_count": 0,
+          "language_issue_count": 0
+        },
+        "by_area": {
+          "shibuya": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 5,
+            "avg_time_sec": 49.75
+          },
+          "shinjuku": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.7833,
+            "count": 5,
+            "avg_time_sec": 56.55
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3,
+            "avg_time_sec": 62.92
+          }
+        },
+        "by_level": {
+          "1": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5,
+            "count": 2
+          },
+          "2": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.7222,
+            "count": 3
+          },
+          "3": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 3
+          },
+          "4": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          },
+          "5": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          }
+        },
+        "by_query_type": {
+          "single_area": {
+            "success_rate": 1.0,
+            "count": 10
+          },
+          "cross_area": {
+            "success_rate": 1.0,
+            "count": 3
+          }
+        },
+        "by_subcategory": {
+          "basic_location": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5,
+            "count": 2
+          },
+          "proximity": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.5834,
+            "count": 2
+          },
+          "constraint_single": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "decision_support": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 1.0,
+            "count": 2
+          },
+          "multi_hop": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.75,
+            "count": 2
+          },
+          "cross_area_comparison": {
+            "success_rate": 1.0,
+            "avg_keyword_hit_rate": 0.9167,
+            "count": 3
+          }
+        },
+        "area_detection": {
+          "total": 10,
+          "correct": 0,
+          "accuracy": 0.0
+        },
+        "cross_area": {
+          "success_rate": 1.0,
+          "count": 3,
+          "avg_time_sec": 62.92
+        }
+      }
+    },
+    "rankings": [
+      [
+        "hybrid_rag",
+        1.0
+      ],
+      [
+        "agentic_rag",
+        1.0
+      ]
+    ],
+    "area_consistency": {
+      "hybrid_rag": 0.0,
+      "agentic_rag": 0.0
+    }
+  }
+}
