@@ -99,14 +99,49 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 
 ### 2.4 評価指標
 
+#### キーワード評価（一次指標）
+
 | 指標 | 説明 | 計算方法 |
 |------|------|---------|
-| **success_rate** | キーワードヒットによる成功率 | hit_rate ≥ 閾値 のケース割合 |
+| **success_rate** | キーワードヒットによる成功率 | hit_rate ≥ 0.5 のケース割合 |
 | **avg_keyword_hit_rate** | 平均キーワードヒット率 | 全ケースのhit_rateの平均 |
 | **area_detection_accuracy** | エリア特定精度 | detected_area == expected_area の割合 |
 | **area_consistency** | エリア間スコア分散 | エリア別success_rateの分散（低いほど良い） |
 | **avg_time_sec** | 平均実行時間 | 全ケースの実行時間平均 |
 | **language_issue_count** | 中国語混入件数 | 回答に中国語文字が含まれるケース数 |
+
+#### 多次元評価（二次指標、Phase 9相当）
+
+| 指標 | 説明 | スケール |
+|------|------|---------|
+| **reasoning_score** | 推論の正確性（推論指標語・数値根拠・比較表現の有無） | 0-5 |
+| **evidence_score** | 根拠の明示度（POI名引用数・座標情報・引用表現） | 0-5 |
+| **constraint_score** | 制約充足度（距離・営業時間・属性制約の充足割合） | 0-5 |
+| **uncertainty_score** | 不確実性への言及（留保表現・区別表現の有無） | 0-5 |
+| **has_coordinate** | 座標情報の有無 | bool |
+| **has_poi_name** | POI名の含有 | bool |
+| **composite_score** | レベル別重み付き複合スコア | 0-100 |
+| **composite_success_rate** | composite_score ≥ 60 の割合 | 0-1 |
+
+> **注記: Phase 9との評価方法の違い**
+>
+> Phase 9（渋谷単一105件）では上記7軸の多次元スコアリングで評価を行ったが、Phase 9-B初期実装では `keyword_hit_rate >= 0.5` のみで成功判定を行っていた。この方式では以下の限界がある：
+>
+> 1. **ハルシネーション非検出**: キーワードを含むが事実と異なる回答を成功と判定してしまう
+> 2. **推論品質の未評価**: 単純なキーワード一致では推論の正確性や根拠の明示度を測定できない
+> 3. **レベル別適正評価の欠如**: L4（意思決定）やL5（高度推論）では推論・不確実性評価がより重要
+>
+> そのため、既存の520クエリ結果（チェックポイント保存済み）の `answer` テキストに対して多次元スコアを事後計算し、キーワード評価と並行して報告する。クエリの再実行は不要。
+
+**composite_score のレベル別重み:**
+
+| レベル | 計算式 |
+|--------|--------|
+| L1 | keyword×0.4 + coordinate×0.3 + poi_name×0.3 |
+| L2 | keyword×0.3 + coordinate×0.2 + reasoning×0.5 |
+| L3 | keyword×0.2 + poi_name×0.2 + constraint×0.4 + evidence×0.2 |
+| L4 | reasoning×0.3 + evidence×0.3 + constraint×0.2 + uncertainty×0.2 |
+| L5 | reasoning×0.4 + evidence×0.3 + uncertainty×0.3 |
 
 ### 2.5 実行環境
 
@@ -135,6 +170,29 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 2. {PLACEHOLDER}
 3. {PLACEHOLDER}
 4. {PLACEHOLDER}
+
+### 3.1a 多次元スコア全体比較
+
+> 以下は既存の520クエリ回答に対して事後計算した多次元スコアです。
+
+| システム | Avg Composite | CompSuccess% | Avg Reasoning | Avg Evidence |
+|---------|--------------|-------------|--------------|-------------|
+| hybrid_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| graph_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| adaptive_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| agentic_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+
+#### レベル別 composite_score
+
+| レベル | Hybrid RAG | Graph RAG | Adaptive RAG | Agentic RAG |
+|--------|-----------|-----------|-------------|-------------|
+| L1 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| L2 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| L3 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| L4 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| L5 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+
+> **解釈の注意**: composite_score は keyword 評価より厳密であり、特にL4/L5では推論品質・不確実性対応を重視するため、keyword success_rate と大きく乖離する場合がある。両指標の差異が大きいシステムはハルシネーションリスクが高い可能性がある。
 
 ### 3.2 エリア別結果
 

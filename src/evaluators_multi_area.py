@@ -54,6 +54,14 @@ class MultiAreaEvalResult:
     area_detection_correct: bool
     error: Optional[str] = None
     language_issue: bool = False
+    # 多次元評価スコア（Phase 9相当）
+    reasoning_score: float = 0.0       # 0-5 推論の正確性
+    evidence_score: float = 0.0        # 0-5 根拠の明示度
+    constraint_score: float = 0.0      # 0-5 制約充足度
+    uncertainty_score: float = 0.0     # 0-5 不確実性への言及
+    has_coordinate: bool = False       # 座標情報の有無
+    has_poi_name: bool = False         # POI名の含有
+    composite_score: float = 0.0       # 0-100 レベル別複合スコア
 
     def to_dict(self) -> dict:
         """辞書に変換"""
@@ -67,12 +75,14 @@ class MultiAreaEvalResult:
 class MultiAreaEvaluator:
     """複数エリア対応評価クラス"""
 
-    def __init__(self, areas_config: Optional[Dict] = None):
+    def __init__(self, areas_config: Optional[Dict] = None, all_pois: Optional[List] = None):
         """
         Args:
             areas_config: エリア設定辞書（osm_poi_fetcher.AREASパターン）
+            all_pois: 全POIリスト（多次元評価のPOI名チェックに使用）
         """
         self.areas_config = areas_config or {}
+        self.all_pois = all_pois or []
 
     def evaluate_keyword_hit_rate(self, answer: str, keywords: List[str]) -> float:
         """キーワードヒット率を計算 (0.0-1.0)
@@ -120,6 +130,250 @@ class MultiAreaEvaluator:
 
         return False
 
+    # =================================================================
+    # 多次元評価メソッド（evaluators_v2.py からポーティング）
+    # =================================================================
+
+    def _has_coordinate(self, answer: str) -> bool:
+        """座標情報が含まれるかチェック"""
+        if not answer:
+            return False
+        patterns = [
+            r'35\.\d{3,}',
+            r'139\.\d{3,}',
+            r'緯度\s*[:：]?\s*\d+\.\d+',
+            r'経度\s*[:：]?\s*\d+\.\d+',
+        ]
+        for pattern in patterns:
+            if re.search(pattern, answer, re.IGNORECASE):
+                return True
+        return False
+
+    def _has_poi_name(self, answer: str) -> bool:
+        """POI名が含まれるかチェック（self.all_pois を使用）"""
+        if not answer or not self.all_pois:
+            return False
+        for poi in self.all_pois:
+            if isinstance(poi, dict):
+                name = poi.get("metadata", {}).get("name", "") or poi.get("name", "")
+            else:
+                name = getattr(poi, "name", "")
+            if name and len(name) > 2 and name in answer:
+                return True
+        return False
+
+    def _evaluate_reasoning(self, answer: str) -> float:
+        """推論の正確性を評価（0-5スコア）"""
+        if not answer:
+            return 0.0
+        score = 0.0
+        reasoning_indicators = [
+            "なぜなら", "理由は", "考えられる", "推測", "判断",
+            "したがって", "よって", "ため", "から", "ので",
+            "比較すると", "分析すると", "評価すると",
+            "多い", "少ない", "近い", "遠い", "集中", "分散",
+        ]
+        indicator_count = sum(1 for ind in reasoning_indicators if ind in answer)
+        if indicator_count >= 5:
+            score = 3.0
+        elif indicator_count >= 3:
+            score = 2.0
+        elif indicator_count >= 1:
+            score = 1.0
+        if re.search(r'\d+\s*(件|軒|店|か所|箇所|m|メートル|分)', answer):
+            score += 1.0
+        comparison_patterns = [
+            r'より(多|少|近|遠)',
+            r'(最も|一番)(多|少|近|遠)',
+            r'(高|低|大|小)い',
+        ]
+        for pattern in comparison_patterns:
+            if re.search(pattern, answer):
+                score += 0.5
+                break
+        return min(score, 5.0)
+
+    def _evaluate_evidence(self, answer: str) -> float:
+        """根拠の明示度を評価（0-5スコア、self.all_pois を使用）"""
+        if not answer:
+            return 0.0
+        score = 0.0
+        poi_name_count = 0
+        if self.all_pois:
+            for poi in self.all_pois:
+                if isinstance(poi, dict):
+                    name = poi.get("metadata", {}).get("name", "") or poi.get("name", "")
+                else:
+                    name = getattr(poi, "name", "")
+                if name and len(name) > 2 and name in answer:
+                    poi_name_count += 1
+        if poi_name_count >= 5:
+            score = 4.0
+        elif poi_name_count >= 3:
+            score = 3.0
+        elif poi_name_count >= 1:
+            score = 2.0
+        if self._has_coordinate(answer):
+            score += 0.5
+        if re.search(r'(約|およそ)?\d+\s*(件|軒|店|か所)', answer):
+            score += 0.5
+        citation_patterns = [
+            r'データ(から|によると|に基づ)',
+            r'情報(から|によると|に基づ)',
+            r'検索結果',
+            r'POI',
+        ]
+        for pattern in citation_patterns:
+            if re.search(pattern, answer):
+                score += 0.5
+                break
+        return min(score, 5.0)
+
+    def _evaluate_constraint(self, answer: str, constraints: Optional[List[str]] = None) -> float:
+        """制約充足度を評価（0-5スコア）"""
+        if not answer:
+            return 0.0
+        if not constraints:
+            return 3.0  # 制約なしの場合は中立スコア
+        satisfied_count = 0
+        for constraint in constraints:
+            if "m以内" in constraint or "メートル以内" in constraint:
+                distance_match = re.search(r'(\d+)\s*m', constraint)
+                if distance_match:
+                    distance = distance_match.group(1)
+                    if distance in answer or "近い" in answer or "近く" in answer:
+                        satisfied_count += 1
+            elif "電話番号あり" in constraint:
+                if re.search(r'電話|TEL|\d{2,4}-\d{2,4}-\d{4}', answer, re.IGNORECASE):
+                    satisfied_count += 1
+            elif "ウェブサイトあり" in constraint:
+                if re.search(r'(ウェブサイト|サイト|URL|http|www)', answer, re.IGNORECASE):
+                    satisfied_count += 1
+            elif "24時間営業" in constraint:
+                if "24時間" in answer or "終日" in answer:
+                    satisfied_count += 1
+            elif "Wi-Fiあり" in constraint:
+                if re.search(r'(Wi-?Fi|wifi|ワイファイ)', answer, re.IGNORECASE):
+                    satisfied_count += 1
+            elif "深夜営業" in constraint:
+                if "深夜" in answer or "夜間" in answer or re.search(r'(2[2-4]|[0-4])時', answer):
+                    satisfied_count += 1
+            elif "を含む" in constraint or "を除外" in constraint:
+                keyword = constraint.replace("を含む", "").replace("を除外", "").strip()
+                if keyword in answer:
+                    satisfied_count += 0.5
+            else:
+                # 汎用: 制約キーワードが回答に含まれるか
+                if any(word in answer for word in constraint.split() if len(word) > 1):
+                    satisfied_count += 0.5
+        if len(constraints) > 0:
+            ratio = satisfied_count / len(constraints)
+            score = ratio * 5.0
+        else:
+            score = 3.0
+        return min(score, 5.0)
+
+    def _evaluate_uncertainty(self, answer: str) -> float:
+        """不確実性への言及を評価（0-5スコア）"""
+        if not answer:
+            return 0.0
+        score = 0.0
+        uncertainty_indicators = [
+            "可能性があ", "かもしれ", "推測", "推定",
+            "不明", "わかりません", "確認できません",
+            "データの限界", "情報がない", "情報が不足",
+            "確実ではない", "断定できない",
+            "おそらく", "恐らく", "思われ",
+            "注意", "留意", "ご注意",
+        ]
+        distinction_indicators = [
+            "データからは", "情報からは",
+            "推測できる", "推測できない",
+            "判断できる", "判断できない",
+            "一方で", "ただし", "しかし",
+        ]
+        uncertainty_count = sum(1 for ind in uncertainty_indicators if ind in answer)
+        distinction_count = sum(1 for ind in distinction_indicators if ind in answer)
+        if uncertainty_count >= 3 and distinction_count >= 2:
+            score = 5.0
+        elif uncertainty_count >= 2 and distinction_count >= 1:
+            score = 4.0
+        elif uncertainty_count >= 2:
+            score = 3.0
+        elif uncertainty_count >= 1:
+            score = 2.0
+        elif distinction_count >= 1:
+            score = 1.5
+        return min(score, 5.0)
+
+    def _calculate_composite(
+        self,
+        level: int,
+        keyword_hits: int,
+        keyword_total: int,
+        has_coord: bool,
+        has_name: bool,
+        reasoning: float,
+        evidence: float,
+        constraint: float,
+        uncertainty: float,
+    ) -> float:
+        """レベル別の複合スコアを計算（0-100）"""
+        keyword_score = (keyword_hits / keyword_total * 100) if keyword_total > 0 else 0
+        coord_score = 100 if has_coord else 0
+        name_score = 100 if has_name else 0
+        reasoning_norm = reasoning * 20  # 0-5 → 0-100
+        evidence_norm = evidence * 20
+        constraint_norm = constraint * 20
+        uncertainty_norm = uncertainty * 20
+
+        if level == 1:
+            score = keyword_score * 0.4 + coord_score * 0.3 + name_score * 0.3
+        elif level == 2:
+            score = keyword_score * 0.3 + coord_score * 0.2 + reasoning_norm * 0.5
+        elif level == 3:
+            score = keyword_score * 0.2 + name_score * 0.2 + constraint_norm * 0.4 + evidence_norm * 0.2
+        elif level == 4:
+            score = reasoning_norm * 0.3 + evidence_norm * 0.3 + constraint_norm * 0.2 + uncertainty_norm * 0.2
+        elif level == 5:
+            score = reasoning_norm * 0.4 + evidence_norm * 0.3 + uncertainty_norm * 0.3
+        else:
+            score = keyword_score * 0.4 + coord_score * 0.3 + name_score * 0.3
+        return round(score, 1)
+
+    def _compute_multi_scores(self, answer: str, level: int,
+                              keyword_hit_rate: float, constraints: Optional[List[str]] = None) -> dict:
+        """回答テキストから多次元スコアを一括計算して辞書で返す"""
+        has_coord = self._has_coordinate(answer)
+        has_name = self._has_poi_name(answer)
+        reasoning = self._evaluate_reasoning(answer)
+        evidence = self._evaluate_evidence(answer)
+        constraint = self._evaluate_constraint(answer, constraints)
+        uncertainty = self._evaluate_uncertainty(answer)
+
+        # keyword_hits / keyword_total を hit_rate から復元（composite計算用）
+        # 正確なhit/total情報がないため、hit_rate×100で代用
+        composite = self._calculate_composite(
+            level=level,
+            keyword_hits=round(keyword_hit_rate * 100),
+            keyword_total=100,
+            has_coord=has_coord,
+            has_name=has_name,
+            reasoning=reasoning,
+            evidence=evidence,
+            constraint=constraint,
+            uncertainty=uncertainty,
+        )
+        return {
+            "has_coordinate": has_coord,
+            "has_poi_name": has_name,
+            "reasoning_score": round(reasoning, 2),
+            "evidence_score": round(evidence, 2),
+            "constraint_score": round(constraint, 2),
+            "uncertainty_score": round(uncertainty, 2),
+            "composite_score": composite,
+        }
+
     def evaluate_single_case(
         self,
         system_name: str,
@@ -153,6 +407,12 @@ class MultiAreaEvaluator:
             if test_case.target_area is not None:
                 area_detection_correct = (detected_area == test_case.target_area)
 
+            # 多次元スコア計算
+            constraints = getattr(test_case, 'constraints', None)
+            multi = self._compute_multi_scores(
+                answer, test_case.level, keyword_hit_rate, constraints
+            )
+
             return MultiAreaEvalResult(
                 test_id=test_case.id,
                 system_name=system_name,
@@ -167,6 +427,7 @@ class MultiAreaEvaluator:
                 area_detected=detected_area,
                 area_detection_correct=area_detection_correct,
                 language_issue=language_issue,
+                **multi,
             )
         except Exception as e:
             elapsed = time.time() - start
@@ -273,6 +534,12 @@ class MultiAreaEvaluator:
         avg_khr = sum(r.keyword_hit_rate for r in results) / total
         avg_time = sum(r.time_sec for r in results) / total
 
+        # 多次元スコア集計
+        avg_composite = sum(r.composite_score for r in results) / total
+        avg_reasoning = sum(r.reasoning_score for r in results) / total
+        avg_evidence = sum(r.evidence_score for r in results) / total
+        composite_success_count = sum(1 for r in results if r.composite_score >= 60)
+
         overall = {
             "success_rate": round(success_count / total, 4),
             "avg_keyword_hit_rate": round(avg_khr, 4),
@@ -280,6 +547,10 @@ class MultiAreaEvaluator:
             "total": total,
             "error_count": error_count,
             "language_issue_count": language_issue_count,
+            "avg_composite_score": round(avg_composite, 1),
+            "avg_reasoning_score": round(avg_reasoning, 2),
+            "avg_evidence_score": round(avg_evidence, 2),
+            "composite_success_rate": round(composite_success_count / total, 4),
         }
 
         # --- by_area ---
@@ -294,11 +565,13 @@ class MultiAreaEvaluator:
             s_rate = sum(1 for r in group if r.success) / count
             a_khr = sum(r.keyword_hit_rate for r in group) / count
             a_time = sum(r.time_sec for r in group) / count
+            a_comp = sum(r.composite_score for r in group) / count
             by_area[area_key] = {
                 "success_rate": round(s_rate, 4),
                 "avg_keyword_hit_rate": round(a_khr, 4),
                 "count": count,
                 "avg_time_sec": round(a_time, 2),
+                "avg_composite_score": round(a_comp, 1),
             }
 
         # --- by_level ---
@@ -311,10 +584,12 @@ class MultiAreaEvaluator:
             count = len(group)
             s_rate = sum(1 for r in group if r.success) / count
             a_khr = sum(r.keyword_hit_rate for r in group) / count
+            l_comp = sum(r.composite_score for r in group) / count
             by_level[level] = {
                 "success_rate": round(s_rate, 4),
                 "avg_keyword_hit_rate": round(a_khr, 4),
                 "count": count,
+                "avg_composite_score": round(l_comp, 1),
             }
 
         # --- by_query_type ---
@@ -428,6 +703,40 @@ class MultiAreaEvaluator:
             "rankings": rankings,
             "area_consistency": area_consistency,
         }
+
+    def recalculate_scores(
+        self,
+        results: List[MultiAreaEvalResult],
+        test_cases: List,
+    ) -> List[MultiAreaEvalResult]:
+        """既存の結果に多次元スコアを事後計算して付与
+
+        チェックポイントから復元した結果の answer テキストから
+        多次元スコアを再計算する。test_cases は test_id でルックアップ。
+
+        Args:
+            results: 既存のMultiAreaEvalResultリスト
+            test_cases: MultiAreaTestCaseリスト（constraints/level取得用）
+
+        Returns:
+            多次元スコアが付与された新しいMultiAreaEvalResultリスト
+        """
+        tc_map = {}
+        for tc in test_cases:
+            tc_map[tc.id] = tc
+
+        updated = []
+        for r in results:
+            tc = tc_map.get(r.test_id)
+            constraints = getattr(tc, 'constraints', None) if tc else None
+            multi = self._compute_multi_scores(
+                r.answer, r.level, r.keyword_hit_rate, constraints
+            )
+            # dataclassの新しいインスタンスを作成（元のフィールドを維持）
+            d = r.to_dict()
+            d.update(multi)
+            updated.append(MultiAreaEvalResult(**d))
+        return updated
 
 
 # =============================================================================
@@ -618,6 +927,10 @@ if __name__ == "__main__":
     assert summary["overall"]["error_count"] == 1
     assert summary["overall"]["language_issue_count"] == 1
     assert summary["overall"]["success_rate"] == round(5 / 8, 4)
+    assert "avg_composite_score" in summary["overall"]
+    assert "composite_success_rate" in summary["overall"]
+    assert "avg_reasoning_score" in summary["overall"]
+    assert "avg_evidence_score" in summary["overall"]
     assert "shibuya" in summary["by_area"]
     assert "shinjuku" in summary["by_area"]
     assert "ikebukuro" in summary["by_area"]
@@ -625,6 +938,8 @@ if __name__ == "__main__":
     assert 1 in summary["by_level"]
     assert 2 in summary["by_level"]
     assert 3 in summary["by_level"]
+    assert "avg_composite_score" in summary["by_level"][1]
+    assert "avg_composite_score" in summary["by_area"]["shibuya"]
     assert summary["area_detection"]["total"] == 6  # results with target_area != None
     assert summary["cross_area"]["count"] == 2
     print("  OK")
@@ -728,9 +1043,13 @@ if __name__ == "__main__":
     print(f"  success: {eval_result.success}")
     print(f"  area_detection_correct: {eval_result.area_detection_correct}")
     print(f"  language_issue: {eval_result.language_issue}")
+    print(f"  composite_score: {eval_result.composite_score}")
+    print(f"  reasoning_score: {eval_result.reasoning_score}")
     assert eval_result.success is True
     assert eval_result.area_detection_correct is True
     assert eval_result.language_issue is False
+    assert eval_result.composite_score >= 0
+    assert eval_result.reasoning_score >= 0
     print("  OK")
 
     # ------------------------------------------------------------------
@@ -741,6 +1060,11 @@ if __name__ == "__main__":
     assert isinstance(d, dict)
     assert d["test_id"] == "MA-TEST-01"
     assert d["system_name"] == "dummy_system"
+    assert "composite_score" in d
+    assert "reasoning_score" in d
+    assert "evidence_score" in d
+    assert "has_coordinate" in d
+    assert "has_poi_name" in d
     print(f"  keys: {list(d.keys())}")
     print("  OK")
 
@@ -758,6 +1082,106 @@ if __name__ == "__main__":
     assert err_result.error == "テスト用エラー"
     assert err_result.keyword_hit_rate == 0.0
     print(f"  error captured: {err_result.error}")
+    print("  OK")
+
+    # ------------------------------------------------------------------
+    # 8. 多次元評価メソッド テスト
+    # ------------------------------------------------------------------
+    print("\n[8] 多次元評価メソッド テスト")
+
+    test_answer_rich = (
+        "渋谷駅周辺で最も近いコンビニはローソン渋谷神南店です。"
+        "渋谷駅から約150mの距離にあり、徒歩で約2分です。"
+        "座標は緯度35.6620、経度139.7005です。"
+        "なぜなら、データを分析すると、渋谷駅から最も距離が短いコンビニだからです。"
+        "ただし、営業時間の情報は確認できませんでした。"
+    )
+
+    assert evaluator._has_coordinate(test_answer_rich) is True, "_has_coordinate should detect coordinates"
+    assert evaluator._has_coordinate("渋谷駅にカフェがあります") is False, "_has_coordinate should return False"
+
+    reasoning = evaluator._evaluate_reasoning(test_answer_rich)
+    assert 0 < reasoning <= 5.0, f"reasoning should be 0-5, got {reasoning}"
+    print(f"  reasoning_score: {reasoning}")
+
+    evidence = evaluator._evaluate_evidence(test_answer_rich)
+    assert 0 <= evidence <= 5.0, f"evidence should be 0-5, got {evidence}"
+    print(f"  evidence_score: {evidence}")
+
+    constraint = evaluator._evaluate_constraint(test_answer_rich, ["距離200m以内"])
+    assert 0 <= constraint <= 5.0, f"constraint should be 0-5, got {constraint}"
+    print(f"  constraint_score: {constraint}")
+
+    constraint_none = evaluator._evaluate_constraint(test_answer_rich, None)
+    assert constraint_none == 3.0, "No constraints should return neutral 3.0"
+
+    uncertainty = evaluator._evaluate_uncertainty(test_answer_rich)
+    assert 0 <= uncertainty <= 5.0, f"uncertainty should be 0-5, got {uncertainty}"
+    print(f"  uncertainty_score: {uncertainty}")
+
+    composite = evaluator._calculate_composite(
+        level=2, keyword_hits=80, keyword_total=100,
+        has_coord=True, has_name=True,
+        reasoning=3.0, evidence=2.5, constraint=3.0, uncertainty=2.0
+    )
+    assert 0 <= composite <= 100, f"composite should be 0-100, got {composite}"
+    print(f"  composite_score (L2): {composite}")
+
+    # _compute_multi_scores 一括テスト
+    multi = evaluator._compute_multi_scores(test_answer_rich, level=2, keyword_hit_rate=0.8)
+    assert "composite_score" in multi
+    assert "reasoning_score" in multi
+    print(f"  _compute_multi_scores: composite={multi['composite_score']}")
+    print("  OK")
+
+    # ------------------------------------------------------------------
+    # 9. recalculate_scores テスト
+    # ------------------------------------------------------------------
+    print("\n[9] recalculate_scores テスト")
+
+    # ダミーテストケース（constraintsあり）
+    @dataclass
+    class _DummyTestCaseWithConstraints:
+        id: str = "MA-TEST-RC-01"
+        prompt: str = "渋谷駅周辺の24時間営業のコンビニ"
+        expected_keywords: List[str] = None
+        target_area: Optional[str] = "shibuya"
+        query_type: str = "single_area"
+        subcategory: str = "constraint_single"
+        level: int = 3
+        constraints: Optional[List[str]] = None
+
+        def __post_init__(self):
+            if self.expected_keywords is None:
+                self.expected_keywords = ["コンビニ", "24時間"]
+            if self.constraints is None:
+                self.constraints = ["24時間営業"]
+
+    tc_rc = _DummyTestCaseWithConstraints()
+    old_result = MultiAreaEvalResult(
+        test_id="MA-TEST-RC-01",
+        system_name="test_sys",
+        target_area="shibuya",
+        query_type="single_area",
+        subcategory="constraint_single",
+        level=3,
+        answer="渋谷駅の近くにセブンイレブンがあり、24時間営業です。約100mの距離です。",
+        time_sec=2.0,
+        keyword_hit_rate=1.0,
+        success=True,
+        area_detected="shibuya",
+        area_detection_correct=True,
+    )
+
+    recalculated = evaluator.recalculate_scores([old_result], [tc_rc])
+    assert len(recalculated) == 1
+    r = recalculated[0]
+    assert r.composite_score > 0, f"recalculated composite should be >0, got {r.composite_score}"
+    assert r.constraint_score > 0, f"recalculated constraint should be >0, got {r.constraint_score}"
+    assert r.test_id == "MA-TEST-RC-01"
+    assert r.keyword_hit_rate == 1.0  # 元の値が保持されていること
+    print(f"  recalculated composite_score: {r.composite_score}")
+    print(f"  recalculated constraint_score: {r.constraint_score}")
     print("  OK")
 
     print("\n" + "=" * 60)
