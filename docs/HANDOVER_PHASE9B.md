@@ -150,6 +150,21 @@ torch.cuda.empty_cache()
 
 Agentic RAGで6件検出。原因はReActパターンのJSON形式ツール出力がQwen2.5の中国語技術文書モードを誘発すること。対策として `agent_prompts.py` に日本語強制指示を追加済みだが完全には解消されていない。
 
+### 4.5 POI問合せにおけるベクトル検索の限定的寄与
+
+Phase 9-Bの比較実験から、**ベクトル検索はPOI問合せの精度向上にほとんど寄与していない**ことが判明した。
+
+**実験的根拠**:
+- Graph RAG（ベクトル検索を一切使用しない）が92.3%を達成し、ベクトル検索を使用するHybrid RAG（96.2%）との差はわずか3.9%
+- Hybrid RAG自身も、精度が求められる近接性クエリでベクトル検索結果をコンテキストから意図的に除外している
+- 構造化処理（距離計算・集計・比較）はベクトル検索結果を参照せず、全POIリストの直接走査で動作している
+
+**本質的理由**: POI問合せの核心は「意味的類似性」ではなく「空間的・属性的な条件合致」（最寄り検索、件数集計、方角比較、距離フィルタ）であり、これらは構造化クエリ（PostGIS空間SQL等）の領域である。座標をベクトル埋め込みに変換しても空間的近接性は保存されず、k=5の類似度検索で最寄りPOIが含まれる保証もない。
+
+**Phase 10への設計指針**: MCPツール＋PostGIS構造化処理の組み合わせでベクトル検索層を省略し、アーキテクチャのシンプル化・結果の確定性・説明可能性・スケーラビリティを同時に達成する。LLMは意図理解とツール選択に専念し、空間計算はGISエンジンに委譲する。
+
+> 詳細分析は `docs/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` を参照。
+
 ---
 
 ## 5. 主要な実験結果サマリー
@@ -267,11 +282,14 @@ Phase 9-Bの130テストケースおよびPOIデータを活用し、地理的�
 
 ## 7. Phase 10以降の課題
 
-### 7.1 MCPサーバー化
+### 7.1 MCPサーバー化（ベクトル検索レスアーキテクチャ）
+
+Phase 9-Bの知見（セクション4.5）を踏まえ、Phase 10ではベクトル検索層を省略したMCPツール＋PostGIS構造化処理のアーキテクチャを採用する：
 
 - `geo_utils.py`/`aggregator.py` の空間計算ロジックをMCPツールとして移植
-- PostGIS/Supabase MCP経由での空間クエリ実行
+- PostGIS/Supabase MCP経由での空間クエリ実行（ChromaDBベクトル検索は不要）
 - エリア特定の `detect_area()` をMCPツールとして独立化 + ジオコーディングAPI連携
+- LLMは意図理解・ツール選択・自然文回答生成に専念し、空間計算はMCPツール経由でGISエンジンに委譲
 
 ### 7.2 全国展開（PostGIS移行）
 
@@ -315,5 +333,6 @@ Phase 10 (全国展開 / MCP / PostGIS)
 | `docs/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | **実験レポート（最終成果物）** |
 | `docs/HANDOVER_PHASE6.md` | Phase 6の引き継ぎ（構造化RAGの基盤設計） |
 | `docs/HANDOVER_PHASE9_AGENTIC_RAG.md` | Phase 9の引き継ぎ（Agentic RAG実装） |
+| `docs/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` | **POI問合せにおけるベクトル検索の役割分析** |
 | `docs/RAG_APPROACH_SELECTION_GUIDE.md` | RAGアプローチ選定ガイド（未追跡） |
 | `CLAUDE.md` | プロジェクト全体のガイダンス |
