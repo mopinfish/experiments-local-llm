@@ -1,6 +1,6 @@
 # Phase 9-B: 4エリアRAG比較評価 実験レポート
 
-**研究期間**: 2026-02-18 〜 2026-02-XX
+**研究期間**: 2026-02-18 〜 2026-02-19
 **プロジェクト**: experiments-local-llm
 **LLMモデル**: Qwen2.5-7B-Instruct (4-bit NF4量子化)
 **埋め込みモデル**: intfloat/multilingual-e5-base
@@ -11,7 +11,7 @@
 
 ## 概要 (Abstract)
 
-{PLACEHOLDER: 実験結果に基づく概要を記述。主要な発見（最も成績の良いシステム、エリア汎化性の程度、クロスエリア対応力の差異）を3-4文で要約する。}
+本実験は、渋谷・新宿・池袋・東京の4エリア（約3,600 POI）を対象に、Hybrid RAG・Graph RAG・Adaptive RAG・Agentic RAGの4システムを130テストケース（520クエリ）で比較評価した。キーワード成功率ではHybrid RAGが96.2%で最高を記録し、全エリアで92〜100%と安定した汎化性能を示した。一方、推論品質・根拠明示度を含む多次元複合スコア（composite_score）では全システムが30〜52/100に留まり、キーワード成功率との大きな乖離が明らかになった。この乖離はQwen2.5-7B 4bit量子化モデルの推論能力の限界と、汎用プロンプトにおける推論・根拠明示指示の不足に起因する。Agentic RAGはクロスエリアでの優位性を示せず（95% vs 他3システム100%）、実行時間は6〜7倍（54.4s vs 8s前後）と実用上の課題が残った。Phase 10の全国展開にはHybrid RAGベースのアーキテクチャを推奨する。
 
 ---
 
@@ -78,15 +78,54 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 | **C: ランドマーク起点クエリ** | 15 | ランドマーク名からのエリア暗黙推定 |
 | **D: エリア特定テスト** | 15 | エリア特定の精度を直接評価 |
 
-レベル別分布:
+#### テストケースデータモデル
 
-| レベル | 説明 | 件数 |
-|--------|------|------|
-| L1 | 基本検索 | ~30 |
-| L2 | 空間推論 | ~30 |
-| L3 | 制約付き | ~25 |
-| L4 | 意思決定 | ~25 |
-| L5 | 高度推論 | ~20 |
+各テストケースは `MultiAreaTestCase` データクラスで定義される：
+
+| フィールド | 型 | 説明 | 例 |
+|-----------|------|------|-----|
+| `id` | str | `MA-{エリア}-L{レベル}-{番号}` | `MA-SBY-L1-01` |
+| `level` | int | 難易度レベル 1-5 | 3 |
+| `category` | str | テスト大分類 | `spatial_reasoning` |
+| `subcategory` | str | 16種のサブカテゴリ | `proximity` |
+| `prompt` | str | 質問文 | 「渋谷駅に最も近いコンビニは？」 |
+| `expected_keywords` | List[str] | 期待キーワード | `["コンビニ", "近い", "m"]` |
+| `target_area` | Optional[str] | 対象エリア（cross_areaはNone） | `shibuya` |
+| `query_type` | str | `single_area` or `cross_area` | `single_area` |
+| `constraints` | Optional[List[str]] | 制約条件 | `["500m以内", "24時間営業"]` |
+
+ID命名規則: `MA-{SBY|SJK|IKB|TKY}-L{1-5}-{01-04}`（エリア内）、`MA-CROSS-L{1-5}-{01-04}`（クロスエリア）
+
+#### サブカテゴリ体系（16種）
+
+| # | サブカテゴリ | 件数 | 評価観点 |
+|---|------------|------|---------|
+| 1 | basic_location | 8 | 基本的なPOI位置検索 |
+| 2 | brand | 8 | ブランド名認識・検索 |
+| 3 | area_detection | 19 | エリア特定の正確性 |
+| 4 | proximity | 4 | 最近傍検索・距離推定 |
+| 5 | aggregation | 4 | カウント・集計 |
+| 6 | comparison | 4 | 方角・エリア内比較 |
+| 7 | landmark_origin | 27 | ランドマーク起点の検索 |
+| 8 | constraint_single | 4 | 単一制約充足 |
+| 9 | constraint_multi | 4 | 複合制約充足 |
+| 10 | decision_support | 4 | 意思決定支援 |
+| 11 | relation | 4 | POI間関係推論 |
+| 12 | sensitivity | 8 | 感度分析（半径変動） |
+| 13 | multi_hop | 4 | 多段推論 |
+| 14 | competitor | 4 | 競合分析 |
+| 15 | complementary | 4 | 補完関係推論 |
+| 16 | cross_area_comparison | 20 | エリア間比較・横断 |
+
+#### レベル別分布
+
+| レベル | 説明 | 件数 | 主な評価観点 |
+|--------|------|------|------------|
+| L1 | 基礎検索 | 26 | POI名・座標の提示能力 |
+| L2 | 空間推論 | 30 | 距離計算・集計・比較の正確性 |
+| L3 | 制約充足 | 29 | 制約条件の理解と充足 |
+| L4 | 意思決定支援 | 29 | 推論・根拠に基づく判断 |
+| L5 | 高度推論 | 16 | 多段推論・不確実性への対応 |
 
 ### 2.3 評価対象システム
 
@@ -160,16 +199,16 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 
 | システム | Success Rate | Avg Hit Rate | Avg Time (s) | Errors | Language Issues |
 |---------|-------------|-------------|--------------|--------|----------------|
-| hybrid_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| graph_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| adaptive_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| agentic_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| hybrid_rag | **96.2%** | **0.899** | 8.8 | 0 | 1 |
+| graph_rag | 92.3% | 0.845 | 8.2 | 0 | 0 |
+| adaptive_rag | 92.3% | 0.843 | **8.1** | 0 | 0 |
+| agentic_rag | 90.8% | 0.831 | 54.4 | 0 | 6 |
 
 **ランキング (by success rate)**:
-1. {PLACEHOLDER}
-2. {PLACEHOLDER}
-3. {PLACEHOLDER}
-4. {PLACEHOLDER}
+1. **Hybrid RAG** — 96.2%（全エリア安定、最高ヒット率）
+2. **Graph RAG** — 92.3%（エリア間分散が最小）
+3. **Adaptive RAG** — 92.3%（最速実行、Graph RAGと同率）
+4. **Agentic RAG** — 90.8%（推論スコア最高だが中国語混入6件）
 
 ### 3.1a 多次元スコア全体比較
 
@@ -177,131 +216,181 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 
 | システム | Avg Composite | CompSuccess% | Avg Reasoning | Avg Evidence |
 |---------|--------------|-------------|--------------|-------------|
-| hybrid_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| graph_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| adaptive_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| agentic_rag | {PLACEHOLDER} | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| hybrid_rag | **52.2** | **33.9%** | 1.43 | **2.34** |
+| graph_rag | 46.1 | 30.0% | 1.42 | 1.64 |
+| adaptive_rag | 48.1 | 31.5% | 1.24 | 1.70 |
+| agentic_rag | 47.8 | 29.2% | **1.68** | 2.33 |
 
 #### レベル別 composite_score
 
 | レベル | Hybrid RAG | Graph RAG | Adaptive RAG | Agentic RAG |
 |--------|-----------|-----------|-------------|-------------|
-| L1 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| L2 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| L3 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| L4 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| L5 | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+| L1 | 74.4 | 61.9 | **76.0** | 56.7 |
+| L2 | **46.3** | 40.8 | 41.7 | 33.9 |
+| L3 | 67.9 | 64.0 | 64.2 | **74.5** |
+| L4 | **34.8** | 29.9 | 30.0 | 34.5 |
+| L5 | 30.7 | 26.8 | 18.1 | **34.8** |
 
 > **解釈の注意**: composite_score は keyword 評価より厳密であり、特にL4/L5では推論品質・不確実性対応を重視するため、keyword success_rate と大きく乖離する場合がある。両指標の差異が大きいシステムはハルシネーションリスクが高い可能性がある。
+
+**注目すべきパターン**:
+- **Agentic RAG** はL3（制約充足, 74.5）とL5（高度推論, 34.8）でトップだが、L2（空間推論, 33.9）で最下位
+- **Adaptive RAG** はL1（基礎検索, 76.0）でトップだが、L5（高度推論, 18.1）で著しく低い
+- **Hybrid RAG** はL2/L4で安定してトップを維持し、全レベルでの分散が最小
+- 全システム共通でL4/L5のスコアが30前後に低下し、推論能力の限界が顕著
 
 ### 3.2 エリア別結果
 
 #### Hybrid RAG
 
-| エリア | Success Rate | Hit Rate | n |
-|--------|-------------|----------|---|
-| shibuya | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| shinjuku | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| ikebukuro | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| tokyo | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| エリア | Success Rate | Hit Rate | Composite | n |
+|--------|-------------|----------|-----------|---|
+| shibuya | 92.3% | 0.903 | 49.0 | 26 |
+| shinjuku | 96.3% | 0.840 | 48.9 | 27 |
+| ikebukuro | **100.0%** | 0.917 | 51.8 | 26 |
+| tokyo | 92.3% | 0.891 | **55.6** | 26 |
+| cross_area | **100.0%** | **0.947** | **56.3** | 25 |
 
 #### Graph RAG
 
-| エリア | Success Rate | Hit Rate | n |
-|--------|-------------|----------|---|
-| shibuya | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| shinjuku | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| ikebukuro | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| tokyo | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| エリア | Success Rate | Hit Rate | Composite | n |
+|--------|-------------|----------|-----------|---|
+| shibuya | 88.5% | 0.840 | 48.1 | 26 |
+| shinjuku | 92.6% | 0.843 | 46.5 | 27 |
+| ikebukuro | 92.3% | 0.872 | 47.3 | 26 |
+| tokyo | 88.5% | 0.814 | 43.1 | 26 |
+| cross_area | **100.0%** | 0.876 | 45.2 | 25 |
 
 #### Adaptive RAG
 
-| エリア | Success Rate | Hit Rate | n |
-|--------|-------------|----------|---|
-| shibuya | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| shinjuku | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| ikebukuro | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| tokyo | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| エリア | Success Rate | Hit Rate | Composite | n |
+|--------|-------------|----------|-----------|---|
+| shibuya | 84.6% | 0.801 | 43.5 | 26 |
+| shinjuku | 92.6% | 0.841 | 47.3 | 27 |
+| ikebukuro | 96.2% | 0.879 | 48.7 | 26 |
+| tokyo | 88.5% | 0.844 | **50.4** | 26 |
+| cross_area | **100.0%** | **0.903** | **50.7** | 25 |
 
 #### Agentic RAG
 
-| エリア | Success Rate | Hit Rate | n |
-|--------|-------------|----------|---|
-| shibuya | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| shinjuku | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| ikebukuro | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| tokyo | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| エリア | Success Rate | Hit Rate | Composite | n |
+|--------|-------------|----------|-----------|---|
+| shibuya | 92.3% | 0.853 | 47.6 | 26 |
+| shinjuku | **96.3%** | **0.880** | **49.5** | 27 |
+| ikebukuro | 84.6% | 0.791 | 45.8 | 26 |
+| tokyo | 84.6% | 0.787 | 48.2 | 26 |
+| cross_area | 96.0% | 0.834 | 47.7 | 25 |
 
 #### 渋谷ベースライン比較
 
 | システム | Phase 9 渋谷単一 | Phase 9-B 渋谷 | 差分 |
 |---------|-----------------|---------------|------|
-| Hybrid RAG | 96.2% | {PLACEHOLDER}% | {PLACEHOLDER} |
-| Agentic RAG | 87.6% | {PLACEHOLDER}% | {PLACEHOLDER} |
+| Hybrid RAG | 96.2% | 92.3% | -3.9% |
+| Agentic RAG | 87.6% | 92.3% | +4.7% |
+
+Hybrid RAGは渋谷エリアで3.9ポイントの微減が見られるが、4エリア全体では96.2%を維持している。Agentic RAGは渋谷で改善（+4.7%）しているが、池袋・東京で84.6%に低下し、全体としては90.8%に留まる。
 
 ### 3.3 レベル別結果
 
 | レベル | Hybrid RAG | Graph RAG | Adaptive RAG | Agentic RAG |
 |--------|-----------|-----------|-------------|-------------|
-| L1 | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| L2 | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| L3 | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| L4 | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| L5 | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
+| L1 (n=26) | 88.5% | 88.5% | 92.3% | 92.3% |
+| L2 (n=30) | **100.0%** | 96.7% | **100.0%** | 73.3% |
+| L3 (n=29) | 96.6% | **100.0%** | 93.1% | **100.0%** |
+| L4 (n=29) | **100.0%** | 89.7% | 89.7% | 96.6% |
+| L5 (n=16) | 93.8% | 81.2% | 81.2% | 93.8% |
+
+**注目パターン**:
+- **Agentic RAG** はL2（空間推論）で73.3%と大きく落ち込む。距離計算・集計などの構造化処理が弱い
+- **Hybrid RAG** はL2/L4で100%を達成。構造化パイプラインの空間計算が有効
+- L5（高度推論）では全システム81〜94%。キーワード評価では差が縮まるが、composite_scoreでは大きな差が出る
 
 ### 3.4 Subcategory別結果
 
-{PLACEHOLDER: subcategory別の4システム比較テーブル}
+| サブカテゴリ | n | Hybrid | Graph | Adaptive | Agentic |
+|------------|---|--------|-------|----------|---------|
+| basic_location | 8 | 62.5% | 62.5% | 75.0% | **87.5%** |
+| brand | 8 | 100.0% | 100.0% | 100.0% | 100.0% |
+| area_detection | 19 | 100.0% | 100.0% | 100.0% | 84.2% |
+| proximity | 4 | 100.0% | 100.0% | 100.0% | 75.0% |
+| aggregation | 4 | 100.0% | 100.0% | 100.0% | 50.0% |
+| comparison | 4 | 100.0% | 75.0% | 100.0% | 100.0% |
+| landmark_origin | 27 | 96.3% | **100.0%** | 92.6% | 88.9% |
+| constraint_single | 4 | 100.0% | 100.0% | 100.0% | 100.0% |
+| constraint_multi | 4 | 100.0% | 100.0% | 100.0% | 100.0% |
+| decision_support | 4 | **100.0%** | 25.0% | 25.0% | **100.0%** |
+| relation | 4 | 100.0% | 100.0% | 100.0% | 100.0% |
+| sensitivity | 8 | 100.0% | 75.0% | 87.5% | 100.0% |
+| multi_hop | 4 | 100.0% | 75.0% | 75.0% | 100.0% |
+| competitor | 4 | 75.0% | **100.0%** | 75.0% | 75.0% |
+| complementary | 4 | 100.0% | 100.0% | 100.0% | 100.0% |
+| cross_area_comparison | 20 | 100.0% | 100.0% | 100.0% | 95.0% |
+
+**サブカテゴリ別の特徴**:
+- **Hybrid RAG**: 16カテゴリ中13で100%を達成。`basic_location`（62.5%）と`competitor`（75.0%）が弱点
+- **Agentic RAG**: `decision_support`（100%）と`multi_hop`（100%）で強みを発揮するが、`aggregation`（50.0%）と`area_detection`（84.2%）で大幅に低下
+- **Graph RAG / Adaptive RAG**: `decision_support`でともに25.0%と著しく低い。グラフ構造のみでは意思決定支援の推論が不十分
+- `basic_location` は全システムで低め（62.5〜87.5%）。コンビニ名列挙などの具体性要求に対してベクトル検索の精度が不足
 
 ### 3.5 クロスエリアクエリ結果
 
 | システム | Success Rate | n | Avg Time (s) |
 |---------|-------------|---|-------------|
-| hybrid_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| graph_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| adaptive_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
-| agentic_rag | {PLACEHOLDER}% | {PLACEHOLDER} | {PLACEHOLDER} |
+| hybrid_rag | **100.0%** | 20 | 7.0 |
+| graph_rag | **100.0%** | 20 | 8.2 |
+| adaptive_rag | **100.0%** | 20 | 7.8 |
+| agentic_rag | 95.0% | 20 | 62.3 |
+
+Hybrid RAG・Graph RAG・Adaptive RAGの3システムはクロスエリアクエリで100%の成功率を記録。Agentic RAGのみ95.0%（1件失敗）に留まった。Agentic RAGの平均実行時間は62.3秒と他システムの8〜9倍であり、複数ツール呼び出しによるオーバーヘッドがクロスエリアで特に顕著となる。
 
 ### 3.6 エリア特定精度
 
 | システム | Accuracy | Correct/Total |
 |---------|---------|--------------|
-| hybrid_rag | {PLACEHOLDER}% | {PLACEHOLDER}/{PLACEHOLDER} |
-| graph_rag | {PLACEHOLDER}% | {PLACEHOLDER}/{PLACEHOLDER} |
-| adaptive_rag | {PLACEHOLDER}% | {PLACEHOLDER}/{PLACEHOLDER} |
-| agentic_rag | {PLACEHOLDER}% | {PLACEHOLDER}/{PLACEHOLDER} |
+| hybrid_rag | 98.1% | 103/105 |
+| graph_rag | 98.1% | 103/105 |
+| adaptive_rag | 98.1% | 103/105 |
+| agentic_rag | 98.1% | 103/105 |
 
-エリア特定タイプ別:
-- 明示的（駅名指定）: {PLACEHOLDER}%
-- 暗黙的（ランドマーク推定）: {PLACEHOLDER}%
-- 不明（フォールバック）: {PLACEHOLDER}%
+エリア特定タイプ別（Hybrid RAG基準）:
+- 明示的（駅名指定 / area_detectionサブカテゴリ外）: **100.0%**（64/64）
+- 暗黙的（ランドマーク推定）: **100.0%**（27/27）
+- エリア検出テスト: **89.5%**（17/19）
+
+4システムすべてが同一のエリア特定結果（98.1%）を示した。これはエリア特定ロジックが共通モジュール（`detect_area()`）を使用しているためである。失敗2件はいずれもarea_detectionサブカテゴリに属し、ランドマーク辞書に登録されていない施設名からのエリア推定に失敗した。
 
 ### 3.7 エリア一貫性（スコア分散）
 
 | システム | Variance | 解釈 |
 |---------|---------|------|
-| hybrid_rag | {PLACEHOLDER} | {PLACEHOLDER} |
-| graph_rag | {PLACEHOLDER} | {PLACEHOLDER} |
-| adaptive_rag | {PLACEHOLDER} | {PLACEHOLDER} |
-| agentic_rag | {PLACEHOLDER} | {PLACEHOLDER} |
+| graph_rag | **0.0005** | 最も安定（エリア間差異が最小） |
+| hybrid_rag | 0.0014 | 安定（池袋100%が押し上げ） |
+| adaptive_rag | 0.0025 | やや変動あり（渋谷84.6%が低め） |
+| agentic_rag | 0.0034 | 最も不安定（池袋・東京で84.6%） |
+
+分散値は4エリア（渋谷・新宿・池袋・東京）のsuccess_rateから算出（cross_areaは除外）。Graph RAGはエリア間の分散が最小（0.0005）で、性能の均一性が最も高い。Agentic RAGは分散が最大（0.0034）で、エリアによる性能差が大きい。
 
 ### 3.8 中国語混入分析
 
-| システム | 全体混入率 | 渋谷 | 新宿 | 池袋 | 東京 |
-|---------|----------|------|------|------|------|
-| hybrid_rag | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| graph_rag | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| adaptive_rag | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| agentic_rag | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% | {PLACEHOLDER}% |
+| システム | 全体件数 | 渋谷 | 新宿 | 池袋 | 東京 | クロスエリア |
+|---------|---------|------|------|------|------|------------|
+| hybrid_rag | 1 (0.8%) | 0 | 0 | 1 (3.8%) | 0 | 0 |
+| graph_rag | 0 (0.0%) | 0 | 0 | 0 | 0 | 0 |
+| adaptive_rag | 0 (0.0%) | 0 | 0 | 0 | 0 | 0 |
+| agentic_rag | **6 (4.6%)** | 0 | 2 (7.4%) | 1 (3.8%) | 2 (7.7%) | 1 (4.0%) |
+
+Agentic RAGが突出して中国語混入が多い（6件）。これはLangGraphのReActパターンにおけるJSON形式のツール出力が、Qwen2.5の中国語技術文書モードを誘発するためと考えられる。新宿（7.4%）・東京（7.7%）で混入率が高く、エリア依存性が見られる。Graph RAG・Adaptive RAGでは中国語混入が一切検出されなかった。
 
 ### 3.9 実行時間分析
 
 | システム | 全体平均 | エリア内平均 | クロスエリア平均 | 合計時間 |
 |---------|---------|------------|----------------|---------|
-| hybrid_rag | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}min |
-| graph_rag | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}min |
-| adaptive_rag | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}min |
-| agentic_rag | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}s | {PLACEHOLDER}min |
+| hybrid_rag | 8.8s | 9.1s | 7.0s | 19.0min |
+| graph_rag | 8.2s | 8.2s | 8.2s | 17.8min |
+| adaptive_rag | **8.1s** | 8.2s | 7.8s | **17.6min** |
+| agentic_rag | 54.4s | 52.9s | 62.3s | 117.7min |
+
+Agentic RAGは他の3システムに比べて約6.6倍の実行時間を要する。特にクロスエリアクエリでは62.3秒（他システムの7〜8倍）に達する。これは各クエリで複数ツールの逐次呼び出し（検索→分析→生成）が発生するためである。4システム合計の実行時間は約172分（2時間52分）。
 
 ---
 
@@ -311,78 +400,143 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 
 > **仮説**: Hybrid RAGの構造化パイプラインは、エリア特定が正しければ渋谷以外でも同等精度を維持する。
 
-**判定**: {PLACEHOLDER: 支持 / 部分的支持 / 棄却}
+**判定**: **支持**
 
 | エリア | Hybrid RAG Success Rate | 渋谷比 |
 |--------|------------------------|--------|
-| 渋谷 | {PLACEHOLDER}% | 100% |
-| 新宿 | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| 池袋 | {PLACEHOLDER}% | {PLACEHOLDER}% |
-| 東京 | {PLACEHOLDER}% | {PLACEHOLDER}% |
+| 渋谷 | 92.3% | 100% |
+| 新宿 | 96.3% | 104.3% |
+| 池袋 | 100.0% | 108.3% |
+| 東京 | 92.3% | 100.0% |
 
-{PLACEHOLDER: 判定根拠と考察を記述}
+判定基準は「新エリア成功率 ≥ 渋谷の90%（= 83.1%）」であり、新宿（96.3%）・池袋（100.0%）・東京（92.3%）のすべてが基準を大幅に上回る。特に池袋では100%を達成しており、構造化パイプラインのエリア汎化性能が確認された。
+
+渋谷のPhase 9-Bスコア（92.3%）がPhase 9（96.2%）から微減しているのは、POI総数の増加（1,047→~3,600）によるベクトル検索のノイズ増加と、渋谷専用プロンプトから汎用プロンプトへの変更が影響していると考えられる。しかし4エリア全体の96.2%は、構造化計算ロジック（距離計算・方角分析・集計）がエリア非依存で機能することを示している。
 
 ### 4.2 H2: エージェント型のクロスエリア優位性
 
 > **仮説**: Agentic RAGは複数ツール呼び分けによりクロスエリアで他システムを上回る。
 
-**判定**: {PLACEHOLDER: 支持 / 部分的支持 / 棄却}
+**判定**: **棄却**
 
 | システム | クロスエリア Success Rate |
 |---------|------------------------|
-| hybrid_rag | {PLACEHOLDER}% |
-| graph_rag | {PLACEHOLDER}% |
-| adaptive_rag | {PLACEHOLDER}% |
-| agentic_rag | {PLACEHOLDER}% |
+| hybrid_rag | 100.0% |
+| graph_rag | 100.0% |
+| adaptive_rag | 100.0% |
+| agentic_rag | 95.0% |
 
-{PLACEHOLDER: 判定根拠と考察を記述}
+Agentic RAGのクロスエリア成功率（95.0%）は他3システム（100.0%）を下回る。判定基準の「他の最高値+10%以上」（= 110%以上）には遠く及ばない。
+
+Agentic RAGがクロスエリアで劣る原因として、(1) 複数ツール呼び出しの途中で情報が欠落するリスク、(2) ReActパターンの逐次的推論が長いコンテキストで不安定になること、(3) JSON出力の中国語混入（クロスエリアで1件検出）が挙げられる。一方、Hybrid RAGはクロスエリアクエリでも構造化計算（エリア間集計・比較）を直接実行できるため、ツール呼び出しのオーバーヘッドなく100%を達成した。
 
 ### 4.3 H3: エリア特定がボトルネックになる
 
 > **仮説**: エリア特定精度が全体の成功率を律速する。
 
-**判定**: {PLACEHOLDER: 支持 / 部分的支持 / 棄却}
+**判定**: **棄却**
 
-{PLACEHOLDER: 失敗ケースのうちエリア特定誤りが占める割合を分析}
+エリア特定精度は全システム98.1%（103/105）と極めて高く、誤判定はわずか2件（area_detectionサブカテゴリ内）に限定される。全体の失敗ケースは以下の通り：
+
+| システム | 総失敗件数 | エリア特定誤り起因 | 割合 |
+|---------|----------|------------------|------|
+| hybrid_rag | 5 | 0 | 0% |
+| graph_rag | 10 | 0 | 0% |
+| adaptive_rag | 10 | 0 | 0% |
+| agentic_rag | 12 | ≤2 | ≤17% |
+
+失敗ケースの主因はエリア特定誤りではなく、(1) ベクトル検索で適切なPOIがヒットしない（basic_location系）、(2) LLMの回答生成品質（集計の不正確さ、推論の浅さ）、(3) 中国語混入による回答品質低下（Agentic RAG）である。エリア特定誤りが失敗の50%以上を占めるという判定基準は満たされない。
 
 ### 4.4 H4: POI数の増加が検索精度に影響する
 
 > **仮説**: POI総数3.5倍増加でベクトル検索精度が低下する。
 
-**判定**: {PLACEHOLDER: 支持 / 部分的支持 / 棄却}
+**判定**: **部分的支持**
 
-{PLACEHOLDER: 統合collection vs エリア別collectionの比較データが必要。本実験では統合collectionのみを使用しているため、間接的な評価として渋谷エリアのPhase 9（1,047 POI）との比較で判定する。}
+本実験ではエリア別collectionを使用しており、統合collection との直接比較はできない。間接的な評価として、渋谷エリアのPhase間比較を用いる：
+
+| 比較対象 | POI数 | 渋谷 Success Rate |
+|---------|-------|------------------|
+| Phase 9（渋谷単一） | ~1,047 | 96.2% |
+| Phase 9-B（4エリア） | ~3,600 | 92.3% |
+| 差分 | 3.4倍 | -3.9% |
+
+Hybrid RAGの渋谷スコアは3.9ポイント低下しているが、これが10%未満のため判定基準（成功率差10%以上）は満たさない。ただし、basic_locationサブカテゴリの低成功率（62.5%）は、POI数増加によるベクトル検索のノイズ増加を示唆する。エリア別collectionの使用がスケーラビリティ問題を緩和しているものの、完全には解決していない。
 
 ### 4.5 H5: 中国語混入がエリアによって変動する
 
 > **仮説**: 中国語混入率はエリアによって変動しない（モデル固有の問題）。
 
-**判定**: {PLACEHOLDER: 支持 / 棄却}
+**判定**: **棄却**
 
-{PLACEHOLDER: 3.8節のデータに基づいて判定}
+中国語混入はエリアではなく**システム**に強く依存する：
+
+- **Agentic RAG**: 6件（4.6%）— 新宿7.4%、東京7.7%、池袋3.8%、クロスエリア4.0%
+- **Hybrid RAG**: 1件（0.8%）— 池袋のみ
+- **Graph RAG / Adaptive RAG**: 0件
+
+仮説の「4エリア間の混入率差±3%以内」はAgentic RAGで満たされない（新宿7.4% vs 渋谷0%）。中国語混入はエリアの問題ではなく、Agentic RAGのReActパターンにおけるJSON形式のツール出力がQwen2.5の中国語技術文書モードを誘発するという**システムアーキテクチャ固有の問題**である。
 
 ---
 
 ## 5. 考察
 
-### 5.1 Phase 9（渋谷単一）との比較
+### 5.1 Phase 6-9との比較
 
-{PLACEHOLDER: Phase 9ベースラインとの比較考察}
+| フェーズ | 対象 | テスト件数 | 評価方法 | Hybrid | Agentic |
+|---------|------|----------|---------|--------|---------|
+| Phase 6 | 渋谷 55件 | 55 | 多次元評価 | 91.6pt | - |
+| Phase 9 | 渋谷 105件 | 105 | キーワード | 96.2% | 87.6% |
+| Phase 9-B | 4エリア 130件 | 520 | キーワード | **96.2%** | 90.8% |
+| Phase 9-B | 同上 | 520 | 多次元composite | **52.2/100** | 47.8/100 |
 
-**Phase 9ベースライン** (渋谷単一105件):
-- Structured RAG: 96.2% success, 11.08s avg
-- Agentic RAG: 87.6% success, 56.36s avg
+Phase 9-Bのキーワード成功率（96.2%）はPhase 9と同等を維持しており、4エリアへの拡張がキーワードレベルの品質を損なっていないことを示す。
 
-### 5.2 各RAGアプローチの適性まとめ
+一方、多次元composite_score（52.2/100）はPhase 6の91.6ptと直接比較はできないが（テスト設計・評価基準が異なる）、Phase 9-Bの全システムがcomposite_success_rate（≥60点の割合）で30〜34%に留まる点は、**回答の品質面での課題**を浮き彫りにする。キーワードを含む回答を生成できても、推論の説明や根拠の明示が不十分なケースが多数存在する。
 
-{PLACEHOLDER: 実験結果に基づく適性マトリクス}
+### 5.2 スコア下落の要因分析
 
-|                | エリア内 | クロスエリア | エリア特定 | 実行速度 | 総合評価 |
-|----------------|---------|------------|----------|---------|---------|
-| Hybrid RAG     | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| Graph RAG      | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| Adaptive RAG   | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
-| Agentic RAG    | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} | {PLACEHOLDER} |
+キーワード成功率と多次元composite_scoreの乖離（Hybrid RAG: 96.2% vs 33.9%のcomposite成功率）には、以下の要因が寄与している。
+
+#### (A) プロンプトエンジニアリングの課題
+
+Phase 6の渋谷専用プロンプト:
+> 「あなたは渋谷エリアの地理情報に詳しいアシスタントです。」
+
+Phase 9-Bの汎用プロンプト:
+> 「あなたは東京都内の主要駅周辺エリア（渋谷、新宿、池袋、東京）の地理情報に詳しいアシスタントです。」
+
+両者に共通する指示は「正確かつ簡潔に回答」「座標情報を含める」「具体的な数字を使う」のみであり、**推論過程の説明**や**根拠の明示的引用**に関する指示が含まれていない。これによりLLMは正しいキーワードを含む簡潔な回答を生成するが、「なぜそう判断したか」「どのデータに基づくか」を説明しない傾向がある。
+
+また、4エリア分のPOI（~3,600件）に対してk=5のベクトル検索を行うため、取得コンテキストの情報密度が低下している。渋谷専用の1,047 POIではk=5で関連POIをほぼ網羅できたが、3,600 POIではノイズが増加する。
+
+#### (B) モデル性能の限界
+
+| 指標 | 全システム平均 | 解釈 |
+|------|-------------|------|
+| reasoning_score | 1.2〜1.7 / 5.0 | 推論能力が極めて限定的 |
+| evidence_score | 1.6〜2.3 / 5.0 | 根拠提示は中程度 |
+| uncertainty_score | composite計算に含まれるが低い | 不確実性への言及がほぼ皆無 |
+
+Qwen2.5-7B-Instruct 4bit量子化の制約として：
+1. **推論能力の制限**: 7Bパラメータの4bit量子化により、多段推論やメタ認知的な不確実性表現が著しく劣化
+2. **回答の定型性**: 「情報がありません」か「〇〇は△△です」のような二極化した回答パターンが多く、推論プロセスの中間表現が欠如
+3. **中国語技術文書モードの誘発**: Agentic RAGのJSON形式ツール出力がQwen2.5の事前学習データ中の中国語技術文書パターンを活性化
+
+#### (C) キーワード評価と多次元評価の性質の違い
+
+キーワード評価は「答えが含まれているか」を測定し、多次元評価は「どのように答えたか」を測定する。7Bモデルは前者（情報検索＋キーワード出力）には十分だが、後者（推論説明＋根拠引用＋不確実性表現）には能力不足である。この乖離自体が、小規模言語モデルでのRAGシステム評価において**二層評価の必要性**を示す重要な知見である。
+
+### 5.3 各RAGアプローチの適性まとめ
+
+|                | エリア内 | クロスエリア | エリア特定 | 実行速度 | 推論品質 | 総合評価 |
+|----------------|---------|------------|----------|---------|---------|---------|
+| **Hybrid RAG** | ◎ (96.2%) | ◎ (100%) | ◎ (98.1%) | ○ (8.8s) | ○ (52.2) | **◎ 推奨** |
+| Graph RAG      | ○ (92.3%) | ◎ (100%) | ◎ (98.1%) | ○ (8.2s) | △ (46.1) | ○ 安定 |
+| Adaptive RAG   | ○ (92.3%) | ◎ (100%) | ◎ (98.1%) | ◎ (8.1s) | △ (48.1) | ○ 高速 |
+| **Agentic RAG** | △ (90.8%) | ○ (95%) | ◎ (98.1%) | × (54.4s) | △ (47.8) | △ 課題多 |
+
+凡例: ◎=優秀 ○=良好 △=要改善 ×=問題あり
 
 ---
 
@@ -399,23 +553,43 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 | 全システムで新エリアスコアが大幅低下 | エリア特定ロジック強化が先 |
 | Graph RAGがエリア間関係で優位 | Graph RAG要素をHybridに統合 |
 
-**本実験の結果パターン**: {PLACEHOLDER}
+**本実験の結果パターン**: Hybrid RAGが全エリアで92〜100%の安定した成功率を記録し、クロスエリアでも100%を達成。他システムと比較して最も高い多次元composite_score（52.2/100）も記録。
 
-**推奨**: {PLACEHOLDER}
+**推奨**: **Hybrid RAGベースで全国展開**。構造化パイプライン（ルールベース質問分析 + 空間計算 + ベクトル検索）のエリア汎化性能が確認されたため、このアーキテクチャを基盤とする。
 
-### 6.2 残課題
+### 6.2 MCPサーバーへの応用
 
-{PLACEHOLDER: 実験結果から明らかになった残課題を列挙}
+Phase 9-Bの実験結果から、MCPサーバー化における設計指針を提示する：
 
-1. {PLACEHOLDER}
-2. {PLACEHOLDER}
-3. {PLACEHOLDER}
+1. **空間計算ロジックのツール化**: `geo_utils.py`の距離計算・方角分析・最近傍検索と、`aggregator.py`のカテゴリ集計・比較ロジックをMCPツールとして移植。構造化計算はLLMに依存せずサーバーサイドで実行する
+2. **PostGIS/Supabase MCP経由の空間クエリ**: 現在のChromaDB（in-memory）からPostGIS空間インデックスに移行し、MCP Toolとして空間クエリ（ST_DWithin, ST_Distance等）を公開
+3. **日本語自然文出力の維持**: Agentic RAGで中国語混入が発生した教訓から、MCPツールの入出力は日本語自然文を基本とし、JSON形式の中間出力を最小化する
+4. **エリア特定のMCPツール化**: 現在のルールベース `detect_area()` をMCPツールとして独立させ、ジオコーディングAPI（Nominatim等）と連携した動的エリア解決を実装
+
+### 6.3 全国展開に向けた発展課題
+
+1. **動的基準点解決**: 現在のハードコード座標（4エリア分）からジオコーディングAPI連携に移行。ユーザーが任意の駅名・地名を指定可能にする
+2. **PostGIS空間インデックス**: 500万POI以上のスケールに対応するため、ChromaDBのin-memoryベクトル検索からPostGISの空間インデックス（R-tree）に移行。エリア別collectionの分割戦略を維持しつつ、動的なエリア境界設定を可能にする
+3. **プロンプト改善**: composite_scoreの低さ（52.2/100）を改善するため、回答生成プロンプトに以下を追加
+   - 「推論過程を段階的に説明してください」
+   - 「根拠となるPOIデータを引用してください」
+   - 「不確実な情報がある場合は明記してください」
+4. **モデルスケールアップ**: 7B 4bitモデルの推論能力限界（reasoning_score平均1.2〜1.7/5.0）を踏まえ、14B以上のモデルまたは非量子化モデル（8bit/FP16）の検討。VRAM制約がある場合はAPI経由での大規模モデル利用も選択肢
+5. **エリア特定ロジックの強化**: ランドマーク→エリア辞書の拡充（現在2件の失敗はランドマーク未登録に起因）、外部ジオコーディングAPIとのフォールバック連携
 
 ---
 
 ## 7. 結論
 
-{PLACEHOLDER: 主要な結論を3-5点で記述}
+1. **Hybrid RAGが最も高い汎化性能を示した**: 4エリア全体で96.2%のキーワード成功率を記録し、エリア間の分散も小さい（0.0014）。構造化パイプライン（ルールベース質問分析 + 空間計算 + ベクトル検索）はエリア非依存で安定動作することが確認された。
+
+2. **Agentic RAGのクロスエリア優位性は確認されなかった**: 仮説H2は棄却され、Agentic RAG（95.0%）は他3システム（100.0%）を下回った。ReActパターンの逐次的推論と複数ツール呼び出しのオーバーヘッドが、性能と速度の両面で不利に作用している。
+
+3. **キーワード評価と多次元評価の乖離が大きい**: 全システムのキーワード成功率（90〜96%）に対し、composite_success_rate（≥60点の割合）は29〜34%に留まった。この乖離は7B 4bitモデルの推論能力の限界と、プロンプトにおける推論・根拠明示指示の不足に起因する。小規模LLMでのRAG評価には二層評価（キーワード + 多次元）が不可欠である。
+
+4. **エリア特定は全システム98.1%で高精度**: ルールベースのエリア特定ロジックは十分に機能しており、全体性能のボトルネックではない。失敗2件はランドマーク辞書の未登録に起因し、辞書拡充で対応可能である。
+
+5. **Phase 10にはHybrid RAGベースの全国展開を推奨**: エリア汎化性能・クロスエリア対応・実行速度・推論品質の全指標でHybrid RAGが最も優れたバランスを示した。MCPサーバー化と空間計算のPostGIS移行により、500万POI以上への拡張が見込める。
 
 ---
 
@@ -462,9 +636,8 @@ Phase 6〜9では渋谷駅周辺（1,047 POI）に限定してRAG比較実験を
 
 | ファイル | 説明 |
 |---------|------|
-| `results/phase9b_evaluation_{timestamp}.json` | Full Test結果（JSON） |
-| `results/phase9b_summary_{timestamp}.txt` | テキストサマリー |
+| `results/phase9b_evaluation_20260219_005810.json` | Full Test結果（JSON） |
+| `results/phase9b_summary_20260219_005810.txt` | テキストサマリー |
 | `results/phase9b_overall_comparison.png` | 全体比較グラフ |
-| `results/phase9b_area_comparison.png` | エリア別比較グラフ |
 | `results/phase9b_level_comparison.png` | レベル別比較グラフ |
 | `results/checkpoint_{system_name}.json` | 各システムのチェックポイント |
