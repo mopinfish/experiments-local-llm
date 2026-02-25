@@ -373,7 +373,7 @@ PROXIMITY_PATTERNS = [
 - GraphRAG: 84.3%
 - 構造化RAG: 86.7%
 
-**詳細**: `docs/GRAPHRAG_EXPERIMENT_PLAN.md` および `docs/HANDOVER_SESSION_20260130.md` を参照
+**詳細**: `docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md` および `docs/handovers/HANDOVER_SESSION_20260130.md` を参照
 
 ---
 
@@ -436,9 +436,9 @@ python -c "from src.geo_utils import enrich_all_pois; print('OK')"
 
 ### リポジトリ内ドキュメント
 
-- `docs/PHASE6_IMPROVEMENT_REPORT.md` - 改善プロセスの詳細
-- `docs/GRAPHRAG_EXPERIMENT_PLAN.md` - グラフRAG実験計画と構築手順
-- `docs/HANDOVER_SESSION_20260130.md` - グラフRAG実験セッション引き継ぎ
+- `docs/reports/PHASE6_IMPROVEMENT_REPORT.md` - 改善プロセスの詳細
+- `docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md` - グラフRAG実験計画と構築手順
+- `docs/handovers/HANDOVER_SESSION_20260130.md` - グラフRAG実験セッション引き継ぎ
 - `results/phase621_eval_*.json` - 評価結果（生データ）
 - `results/phase621_report_*.md` - 評価レポート
 

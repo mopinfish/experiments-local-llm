@@ -230,5 +230,5 @@ Phase 9-Bの構造化処理関数をMCPツールに対応付ける:
 - **Hybrid RAG実装**: `src/structured_rag_system.py` L837-930 (`query_with_structured_rag`)
 - **Graph RAG実装**: `src/graph_rag_system.py` L426-484 (`query`)
 - **構造化処理**: `src/geo_utils.py`, `src/aggregator.py`
-- **実験レポート**: `docs/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md`
-- **引き継ぎ資料**: `docs/HANDOVER_PHASE9B.md` セクション4.5
+- **実験レポート**: `docs/reports/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md`
+- **引き継ぎ資料**: `docs/handovers/HANDOVER_PHASE9B.md` セクション4.5

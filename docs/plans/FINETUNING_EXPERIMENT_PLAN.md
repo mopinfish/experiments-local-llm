@@ -397,7 +397,7 @@ scipy
 
 | ファイル | 内容 |
 |---------|------|
-| `docs/FINETUNING_EXPERIMENT_REPORT.md` | 実験結果レポート |
+| `docs/reports/FINETUNING_EXPERIMENT_REPORT.md` | 実験結果レポート |
 
 ---
 

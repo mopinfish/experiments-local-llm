@@ -238,9 +238,9 @@ GraphRAG実験で得られた知見を踏まえ、以下のRAGアーキテクチ
 
 ### 8.3 関連ドキュメント
 
-- `docs/GRAPHRAG_EXPERIMENT_PLAN.md`: 実験計画書
-- `docs/STRUCTURED_RAG_RESEARCH_REPORT.md`: Phase 5-6研究レポート
-- `docs/FINETUNING_EXPERIMENT_REPORT.md`: ファインチューニング実験レポート
+- `docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md`: 実験計画書
+- `docs/reports/STRUCTURED_RAG_RESEARCH_REPORT.md`: Phase 5-6研究レポート
+- `docs/reports/FINETUNING_EXPERIMENT_REPORT.md`: ファインチューニング実験レポート
 
 ---
 

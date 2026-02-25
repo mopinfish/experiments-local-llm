@@ -13,11 +13,11 @@
 
 | 成果物 | 内容 |
 |--------|------|
-| `docs/FINETUNING_EXPERIMENT_PLAN.md` | 実験計画書 |
+| `docs/plans/FINETUNING_EXPERIMENT_PLAN.md` | 実験計画書 |
 | `notebooks/finetuning_01_data_preparation.ipynb` | データ準備（8パターン生成） |
 | `notebooks/finetuning_02_training.ipynb` | QLoRA学習（T4最適化済み） |
 | `notebooks/finetuning_03_evaluation.ipynb` | 4モデル比較評価 |
-| `docs/FINETUNING_EXPERIMENT_REPORT.md` | 実験結果の学術レポート |
+| `docs/reports/FINETUNING_EXPERIMENT_REPORT.md` | 実験結果の学術レポート |
 
 **実験結果**:
 - Baseline: 75.7pt
@@ -31,7 +31,7 @@
 
 | 成果物 | 内容 |
 |--------|------|
-| `docs/STRUCTURED_RAG_RESEARCH_REPORT.md` | Phase 5-6の学術論文形式レポート |
+| `docs/reports/STRUCTURED_RAG_RESEARCH_REPORT.md` | Phase 5-6の学術論文形式レポート |
 
 **内容**:
 - 階層化テストフレームワーク（55件、L1-L5）の設計

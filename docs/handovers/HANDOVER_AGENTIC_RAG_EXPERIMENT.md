@@ -394,8 +394,8 @@ AGENT_SYSTEM_PROMPT = """
 
 ### 10.2 関連ドキュメント
 
-- `docs/HANDOVER_SESSION_20260130.md`: Phase 8までの進捗
-- `docs/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md`: GraphRAG実験結果
+- `docs/handovers/HANDOVER_SESSION_20260130.md`: Phase 8までの進捗
+- `docs/handovers/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md`: GraphRAG実験結果
 - `CLAUDE.md`: プロジェクト全体のガイダンス
 
 ### 10.3 主要論文・リソース

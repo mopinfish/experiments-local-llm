@@ -781,7 +781,7 @@ notebooks/phase9b_full_comparison.ipynb
 
 #### タスク5: レポート作成
 ```
-docs/PHASE9B_COMPARISON_REPORT.md
+docs/reports/PHASE9B_COMPARISON_REPORT.md
 - 5システム詳細比較
 - モデル影響分析
 - 最終推奨

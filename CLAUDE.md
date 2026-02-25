@@ -108,6 +108,6 @@ SHIBUYA_STATION = (35.658034, 139.701636)  # すべての空間計算の基準�
 
 ## 主要ドキュメント
 
-- `docs/HANDOVER_PHASE6.md`: アーキテクチャ詳細を含む完全な技術引き継ぎ
-- `docs/PHASE6_IMPROVEMENT_REPORT.md`: 機能別スコア改善の詳細分析
-- `docs/PHASE6_PROGRESS_REPORT.md`: フェーズごとの進捗追跡
+- `docs/handovers/HANDOVER_PHASE6.md`: アーキテクチャ詳細を含む完全な技術引き継ぎ
+- `docs/reports/PHASE6_IMPROVEMENT_REPORT.md`: 機能別スコア改善の詳細分析
+- `docs/reports/PHASE6_PROGRESS_REPORT.md`: フェーズごとの進捗追跡

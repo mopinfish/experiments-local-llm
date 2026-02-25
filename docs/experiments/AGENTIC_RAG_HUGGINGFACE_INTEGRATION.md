@@ -201,7 +201,7 @@ system = AgenticRAGSystem(
    - HuggingFace統合のローカルテストスクリプト
    - 2つのサンプル質問で動作確認
 
-6. **docs/AGENTIC_RAG_HUGGINGFACE_INTEGRATION.md** (このファイル)
+6. **docs/experiments/AGENTIC_RAG_HUGGINGFACE_INTEGRATION.md** (このファイル)
    - 統合内容の詳細ドキュメント
 
 ## 使用方法

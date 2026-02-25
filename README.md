@@ -551,10 +551,10 @@ SENSITIVITY_KEYWORDS = ["変えても", "範囲を", "半径を", "成立"]
 | [PHASE1-3_REPORT.md](./PHASE1-3_REPORT.md) | 環境構築〜RAGシステム構築の報告 |
 | [PHASE4_TEST_REPORT.md](./PHASE4_TEST_REPORT.md) | テスト結果の詳細分析 |
 | [TEST_PROMPT_IMPROVEMENT_DESIGN.md](./TEST_PROMPT_IMPROVEMENT_DESIGN.md) | テスト改良の設計書 |
-| [docs/STRUCTURED_RAG_RESEARCH_REPORT.md](./docs/STRUCTURED_RAG_RESEARCH_REPORT.md) | Phase 5-6 構造化RAG研究レポート |
-| [docs/PHASE6_IMPROVEMENT_REPORT.md](./docs/PHASE6_IMPROVEMENT_REPORT.md) | Phase 6 改善詳細レポート |
-| [docs/HANDOVER_PHASE6.md](./docs/HANDOVER_PHASE6.md) | Phase 6 技術引き継ぎドキュメント |
-| [docs/FINETUNING_EXPERIMENT_REPORT.md](./docs/FINETUNING_EXPERIMENT_REPORT.md) | ファインチューニング実験レポート |
+| [docs/reports/STRUCTURED_RAG_RESEARCH_REPORT.md](./docs/reports/STRUCTURED_RAG_RESEARCH_REPORT.md) | Phase 5-6 構造化RAG研究レポート |
+| [docs/reports/PHASE6_IMPROVEMENT_REPORT.md](./docs/reports/PHASE6_IMPROVEMENT_REPORT.md) | Phase 6 改善詳細レポート |
+| [docs/handovers/HANDOVER_PHASE6.md](./docs/handovers/HANDOVER_PHASE6.md) | Phase 6 技術引き継ぎドキュメント |
+| [docs/reports/FINETUNING_EXPERIMENT_REPORT.md](./docs/reports/FINETUNING_EXPERIMENT_REPORT.md) | ファインチューニング実験レポート |
 
 ---
 

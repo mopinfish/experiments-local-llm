@@ -229,7 +229,7 @@ index = PropertyGraphIndex.from_documents(
 |-------|-------|
 | 55テストケース評価実行 | `notebooks/graph_rag_evaluation.ipynb` |
 | 追加テストケース評価 | `results/graphrag_eval_*.json` |
-| 比較分析レポート作成 | `docs/GRAPHRAG_EXPERIMENT_REPORT.md` |
+| 比較分析レポート作成 | `docs/reports/GRAPHRAG_EXPERIMENT_REPORT.md` |
 
 ---
 
@@ -323,9 +323,9 @@ EMBEDDING_CACHE = True  # 埋め込みのキャッシュ
 
 ### 8.3 プロジェクト内ドキュメント
 
-- `docs/HANDOVER_PHASE6.md` - 構造化RAGアーキテクチャ詳細
-- `docs/STRUCTURED_RAG_RESEARCH_REPORT.md` - Phase 5-6学術レポート
-- `docs/FINETUNING_EXPERIMENT_REPORT.md` - ファインチューニング実験結果
+- `docs/handovers/HANDOVER_PHASE6.md` - 構造化RAGアーキテクチャ詳細
+- `docs/reports/STRUCTURED_RAG_RESEARCH_REPORT.md` - Phase 5-6学術レポート
+- `docs/reports/FINETUNING_EXPERIMENT_REPORT.md` - ファインチューニング実験結果
 
 ---
 

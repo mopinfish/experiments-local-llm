@@ -65,7 +65,7 @@ GraphRAG向けのテストケースを15件→35件に拡張：
 
 | 成果物 | 内容 |
 |--------|------|
-| `docs/GRAPHRAG_EXPERIMENT_PLAN.md` セクション11追加 | 拡張グラフRAG構築手順 |
+| `docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md` セクション11追加 | 拡張グラフRAG構築手順 |
 | `.gitignore` 更新 | .venv/除外（ファイル数13,000→数百に削減） |
 
 ---
@@ -92,7 +92,7 @@ Phase 7: ファインチューニング [実験完了]
 Phase 8: グラフRAG実験 [完了] ★
     │       最終結果: StructuredRAG 89.1% > Adaptive 86.1% > GraphRAG 76.7%
     │       結論: StructuredRAGが最も効果的
-    │       詳細: docs/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md
+    │       詳細: docs/handovers/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md
     │
 Phase 9: 他RAGアーキテクチャ比較 [未着手]
     │       候補: Agentic RAG, Self-RAG, CRAG
@@ -125,8 +125,8 @@ Issue #4: GraphRAG実験結果の追跡
 
 | ファイル | 内容 |
 |---------|------|
-| `docs/GRAPHRAG_EXPERIMENT_PLAN.md` | 実験計画書 + 拡張構築手順 |
-| `docs/HANDOVER_SESSION_20260130.md` | 本ドキュメント |
+| `docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md` | 実験計画書 + 拡張構築手順 |
+| `docs/handovers/HANDOVER_SESSION_20260130.md` | 本ドキュメント |
 
 ---
 
@@ -225,8 +225,8 @@ builder = POIGraphBuilder(
 ### 6.3 参考リソース
 
 - **Issue #4**: GraphRAG実験の最終結果（評価結果コメント済み）
-- **`docs/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md`**: GraphRAG実験の最終引き継ぎ
-- **`docs/GRAPHRAG_EXPERIMENT_PLAN.md`**: 実験計画と最終結果（セクション13）
+- **`docs/handovers/HANDOVER_GRAPHRAG_EXPERIMENT_FINAL.md`**: GraphRAG実験の最終引き継ぎ
+- **`docs/plans/GRAPHRAG_EXPERIMENT_PLAN.md`**: 実験計画と最終結果（セクション13）
 - **`results/`**: 評価結果の画像・JSONファイル
 
 ---

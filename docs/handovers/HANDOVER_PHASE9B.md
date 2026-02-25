@@ -77,8 +77,8 @@ main  ← Phase 9-B全PRマージ完了
 | `src/test_cases_multi_area.py` | テストケース130件 | **新規作成** |
 | `src/evaluators_multi_area.py` | 評価モジュール | **新規作成**（多次元評価含む） |
 | `notebooks/phase9b_multi_area_evaluation.ipynb` | 評価ノートブック | **新規作成** |
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 実験計画書 | **新規作成** |
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | 実験レポート | **新規作成**→完成 |
+| `docs/plans/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 実験計画書 | **新規作成** |
+| `docs/reports/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | 実験レポート | **新規作成**→完成 |
 
 ### 3.2 結果データファイル（未追跡）
 
@@ -102,7 +102,7 @@ main  ← Phase 9-B全PRマージ完了
 | `debug_cell_v3.py` | 削除可（デバッグ用） |
 | `fixed_evaluation_cell.py` | 削除可（デバッグ用） |
 | `quick_test_output.log` | 削除可（ログ） |
-| `docs/RAG_APPROACH_SELECTION_GUIDE.md` | 要確認（有用なら追跡対象に） |
+| `docs/experiments/RAG_APPROACH_SELECTION_GUIDE.md` | 要確認（有用なら追跡対象に） |
 | `results/phase9b_evaluation_20260218_054933.json` | 削除可（Quick Test中間結果） |
 | `results/phase9b_evaluation_20260218_065531.json` | 削除可（Quick Test中間結果） |
 | `results/phase9b_evaluation_20260218_234531.json` | 削除可（Full Test中間結果、多次元スコアなし） |
@@ -163,7 +163,7 @@ Phase 9-Bの比較実験から、**ベクトル検索はPOI問合せの精度向
 
 **Phase 10への設計指針**: MCPツール＋PostGIS構造化処理の組み合わせでベクトル検索層を省略し、アーキテクチャのシンプル化・結果の確定性・説明可能性・スケーラビリティを同時に達成する。LLMは意図理解とツール選択に専念し、空間計算はGISエンジンに委譲する。
 
-> 詳細分析は `docs/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` を参照。
+> 詳細分析は `docs/experiments/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` を参照。
 
 ---
 
@@ -329,10 +329,10 @@ Phase 10 (全国展開 / MCP / PostGIS)
 
 | ドキュメント | 内容 |
 |-------------|------|
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 実験計画書（テスト設計・評価基準） |
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | **実験レポート（最終成果物）** |
-| `docs/HANDOVER_PHASE6.md` | Phase 6の引き継ぎ（構造化RAGの基盤設計） |
-| `docs/HANDOVER_PHASE9_AGENTIC_RAG.md` | Phase 9の引き継ぎ（Agentic RAG実装） |
-| `docs/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` | **POI問合せにおけるベクトル検索の役割分析** |
-| `docs/RAG_APPROACH_SELECTION_GUIDE.md` | RAGアプローチ選定ガイド（未追跡） |
+| `docs/plans/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 実験計画書（テスト設計・評価基準） |
+| `docs/reports/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | **実験レポート（最終成果物）** |
+| `docs/handovers/HANDOVER_PHASE6.md` | Phase 6の引き継ぎ（構造化RAGの基盤設計） |
+| `docs/handovers/HANDOVER_PHASE9_AGENTIC_RAG.md` | Phase 9の引き継ぎ（Agentic RAG実装） |
+| `docs/experiments/VECTOR_SEARCH_ANALYSIS_FOR_POI.md` | **POI問合せにおけるベクトル検索の役割分析** |
+| `docs/experiments/RAG_APPROACH_SELECTION_GUIDE.md` | RAGアプローチ選定ガイド（未追跡） |
 | `CLAUDE.md` | プロジェクト全体のガイダンス |

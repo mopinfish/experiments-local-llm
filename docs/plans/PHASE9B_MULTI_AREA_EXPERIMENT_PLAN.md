@@ -1208,8 +1208,8 @@ Step 3: 結果分析・レポート
 
 | ファイル | 説明 |
 |---------|------|
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 本計画書 |
-| `docs/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | 実験結果レポート（実験後作成） |
+| `docs/plans/PHASE9B_MULTI_AREA_EXPERIMENT_PLAN.md` | 本計画書 |
+| `docs/reports/PHASE9B_MULTI_AREA_EXPERIMENT_REPORT.md` | 実験結果レポート（実験後作成） |
 
 ---
 
