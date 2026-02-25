@@ -106,6 +106,22 @@ SHIBUYA_STATION = (35.658034, 139.701636)  # すべての空間計算の基準�
 - **Phase 7**: LLMファインチューニング（LoRA/QLoRA）で95pt以上を目標
 - **Phase 8**: PostGIS/Supabaseによる全国展開で500万POI以上の規模に対応
 
+## ドキュメント命名規則
+
+`docs/` 配下のドキュメントには、関連する実験IDをプレフィックスとして付与する：
+
+```
+docs/<カテゴリ>/<実験ID>_<内容>.md
+```
+
+- **実験ID形式**: `PHASE<番号>` または `PHASE<番号>_<サブID>`（例: `PHASE6`, `PHASE9_B`）
+- **カテゴリ**: `handovers/`, `plans/`, `reports/`, `experiments/`
+
+例:
+- `docs/reports/PHASE9_B_MULTI_AREA_EXPERIMENT_REPORT.md`
+- `docs/plans/PHASE7_FINETUNING_EXPERIMENT_PLAN.md`
+- `docs/handovers/PHASE6_HANDOVER.md`
+
 ## 主要ドキュメント
 
 - `docs/handovers/HANDOVER_PHASE6.md`: アーキテクチャ詳細を含む完全な技術引き継ぎ

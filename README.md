@@ -544,6 +544,22 @@ SENSITIVITY_KEYWORDS = ["変えても", "範囲を", "半径を", "成立"]
 
 ---
 
+## 📂 ドキュメント構成と命名規則
+
+`docs/` 配下のドキュメントはカテゴリ別に整理し、関連する実験IDをプレフィックスとして付与します。
+
+```
+docs/
+  handovers/   # 引き継ぎ資料
+  plans/       # 計画書
+  reports/     # 実験結果の報告レポート
+  experiments/ # 実験手法の説明・補足資料
+```
+
+**命名規則**: `<実験ID>_<内容>.md`
+- 実験ID例: `PHASE6`, `PHASE9_B`, `PHASE10`
+- ファイル名例: `PHASE9_B_MULTI_AREA_EXPERIMENT_REPORT.md`
+
 ## 📚 関連ドキュメント
 
 | ドキュメント | 内容 |
