@@ -1,0 +1,21 @@
+Phase 9-C Step 1: Prompt Improvement Evaluation Summary
+============================================================
+
+Date: 2026-02-26 02:22:40
+Test Cases: 130
+Model: Qwen2.5-7B-Instruct 4bit
+Prompt: C1 (improved: 3-part structure with reasoning/evidence/uncertainty)
+
+C0 vs C1 Comparison (Hybrid RAG):
+------------------------------------------------------------
+  Composite: C0=52.2 -> C1=67.1 (delta=+14.9)
+  Reasoning: C0=1.4 -> C1=2.6 (delta=+1.2)
+  Evidence: C0=2.3 -> C1=3.7 (delta=+1.4)
+  CompSuccess%: C0=33.9 -> C1=76.1 (delta=+42.3)
+
+All Systems C1 Results:
+------------------------------------------------------------
+  hybrid_rag: composite=67.1 success=96.9% reasoning=2.65 evidence=3.71
+  graph_rag: composite=62.3 success=100.0% reasoning=2.53 evidence=3.03
+  adaptive_rag: composite=65.2 success=96.9% reasoning=2.62 evidence=3.30
+  agentic_rag: composite=54.8 success=89.2% reasoning=2.11 evidence=2.79
