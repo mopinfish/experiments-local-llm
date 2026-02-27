@@ -2,7 +2,8 @@
 
 **作成日**: 2026-02-25
 **プロジェクト**: experiments-local-llm
-**ステータス**: 計画策定中
+**ステータス**: Step 1/2 完了、Step 3 未着手
+**最終更新**: 2026-02-27
 
 ---
 
@@ -46,17 +47,17 @@ Phase 9-Bで4エリア（渋谷/新宿/池袋/東京）×4システムの520ク�
 | ID | 構成 | プロンプト | モデル | FT | 期待効果 |
 |----|------|-----------|--------|-----|---------|
 | **C0** | ベースライン | 現行 | Qwen2.5-7B 4bit | なし | — (composite 52.2) |
-| **C1** | Step 1 | **改善版** | Qwen2.5-7B 4bit | なし | reasoning向上 |
-| **C2** | Step 2 | 改善版 | **上位モデル** | なし | 推論能力向上 |
-| **C3** | Step 3 | 改善版 | 上位モデル | **QLoRA** | 最終到達点 |
+| **C1** | Step 1 | **改善版** | Qwen2.5-7B 4bit | なし | **実績: composite 67.1 (+14.9)** |
+| **C2** | Step 2 | 改善版 | **Qwen3-32B 4bit** | なし | **実績: composite 70.4 (+3.3)** |
+| **C3** | Step 3 | 改善版 | Qwen3-32B 4bit | **QLoRA** | 未実施 |
 
 各StepでC0からの差分のみを変更し、改善効果を分離測定する。
 
 ### 1.3 使用環境
 
-- **LLM**: Qwen2.5-7B-Instruct 4bit（C0/C1）→ 上位モデル（C2/C3）
+- **LLM**: Qwen2.5-7B-Instruct 4bit（C0/C1）→ **Qwen3-32B** 4bit NF4（C2/C3）
 - **埋め込みモデル**: multilingual-e5-base（全Step共通、変更なし）
-- **実行環境**: Google Colab T4 GPU（15GB VRAM）
+- **実行環境**: Google Colab T4 GPU（C0/C1）→ **Google Colab Pro A100 GPU**（C2以降）
 - **ベクトルDB**: ChromaDB（全Step共通、変更なし）
 
 ---
@@ -94,18 +95,18 @@ Phase 9-Bと同一の評価パイプライン（`src/evaluators_multi_area.py`�
 C0 (ベースライン: composite 52.2)
   │
   ▼ Step 1: プロンプト改善
-C1 (目標: composite 60+, reasoning 2.0+)
+C1 (目標: composite 60+ → ★実績: 67.1 (+14.9))  ✅ 完了
   │
-  ▼ Step 2: モデル変更
-C2 (目標: composite 68+, reasoning 2.5+)
+  ▼ Step 2: モデル変更 (Qwen3-32B)
+C2 (目標: composite 70+ → ★実績: 70.4 (+3.3))   ✅ 完了
   │
   ▼ Step 3: QLoRAファインチューニング
-C3 (目標: composite 70+, reasoning 3.0+, 成功率 60%+)
+C3 (目標: composite 75+?, reasoning 3.5+?)        ⬜ 未着手
 ```
 
 各Stepの評価は**Hybrid RAG×130件**で統一する（Phase 9-Bで最もバランスが良かったシステム）。
 
-ただしStep 1のみ、プロンプト改善の汎用性を確認するため**4システム×130件=520クエリ**の全量評価も実施する。
+ただしStep 1のみ、プロンプト改善の汎用性を確認するため**4システム×130件=520クエリ**の全量評価も実施した。
 
 ---
 
@@ -162,46 +163,36 @@ C3 (目標: composite 70+, reasoning 3.0+, 成功率 60%+)
 - ツール結果からの情報抽出→推論→結論の段階的プロセスを指示
 - 「どのツール結果をどう解釈したか」を明記させる
 
-### 3.2 Step 2: LLMモデル変更
+### 3.2 Step 2: LLMモデル変更 ✅ 完了
 
-#### モデル候補とVRAM見積もり
+#### 最終選定モデル
 
-| モデル | パラメータ | 量子化 | 推定VRAM | T4適合 | 期待効果 |
-|--------|----------|--------|---------|--------|---------|
-| Qwen2.5-7B | 7B | 4bit | ~5GB | ○ | ベースライン |
-| Qwen2.5-7B | 7B | 8bit | ~8GB | ○ | 量子化劣化軽減 |
-| Qwen2.5-14B | 14B | 4bit | ~9GB | ○ | パラメータ増加 |
-| Qwen2.5-14B | 14B | 8bit | ~16GB | △（要検証） | 最大品質 |
+| モデル | パラメータ | 量子化 | 実測VRAM | GPU | 結果 |
+|--------|----------|--------|---------|------|------|
+| **Qwen3-32B** | 32B | NF4 4bit | ~18-20GB | **A100 40GB** | **composite 70.4** |
 
-#### 実行手順
+当初計画ではQwen2.5-14Bを候補としていたが、Qwen3ファミリー(2025年4月リリース)の登場により、より大きなモデルでの評価に変更。
 
-1. **VRAM検証フェーズ**: 各モデルをロードし、実際のVRAM使用量を計測。T4 15GBに収まるか確認
-2. **クイック評価**: VRAM収まるモデルで10件クイックテスト（応答品質・速度の概算）
-3. **本評価**: 最良候補でHybrid RAG×130件の全量評価
+#### 実行経緯
 
-#### モデルロードコード（参考）
+1. Qwen3-32B-AWQ → transformers互換性問題でbitsandbytes NF4に変更
+2. Qwen3-32B NF4 on L4 (22GB) → OOM
+3. Qwen3-14B NF4 on L4 → OOM
+4. Colab Proアップグレード → A100 (40GB) で Qwen3-32B NF4 動作確認
+5. 初回実行: L4割り当て → 14Bフォールバック (composite 65.7)
+6. GPU検証強化 (VRAM < 30GBでエラー停止) → A100明示選択で32B動作 → **composite 70.4**
 
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+#### Qwen3固有の対応
 
-# 8bit量子化
-quantization_config_8bit = BitsAndBytesConfig(load_in_8bit=True)
+- **enable_thinking=False**: tokenizer.apply_chat_templateにmonkey-patchで非思考モード強制
+- **`<think>`タグ除去**: テンプレート出力とモデル出力の両方でテキストレベル除去
+- **生成パラメータ**: Qwen3推奨値 (temperature=0.7, top_p=0.8, top_k=20)
 
-# 4bit量子化
-quantization_config_4bit = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-)
+### 3.3 Step 3: QLoRAファインチューニング ⬜ 未着手
 
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    quantization_config=quantization_config,
-    device_map="auto",
-)
-```
-
-### 3.3 Step 3: QLoRAファインチューニング
+> **注**: Step 2でC2目標を全達成したため、Step 3の必要性・方針は再検討が必要。
+> C2結果の分析から、sensitivity/decision_support劣化やtemperatureチューニング等、
+> FTなしで改善可能な施策が複数ある。Step 3実施前にこれらを優先検討すべき。
 
 #### 学習データ作成
 
@@ -209,10 +200,12 @@ Step 2の最良モデルの出力から、高品質な回答を人手で選定�
 
 | 項目 | 値 |
 |------|-----|
+| ベースモデル | **Qwen3-32B** (Step 2で確定) |
 | 学習データ件数 | 50-80件 |
 | データソース | Step 2の130件出力から選定 |
 | フォーマット | instruction-input-output形式 |
 | 品質基準 | composite_score 70+かつreasoning_score 3+の回答を選定・修正 |
+| 実行環境 | **Colab Pro A100** (32Bモデルのため) |
 
 #### QLoRAパラメータ（候補）
 
@@ -236,41 +229,45 @@ lora_config = LoraConfig(
 | バッチサイズ | 4 | gradient_accumulation=4で実効16 |
 | 学習率 | 2e-4 | cosineスケジューラ |
 | max_seq_length | 2048 | コンテキスト+回答の最大長 |
-| 推定学習時間 | 30-60分 | T4 GPU |
+| 推定学習時間 | 60-120分 | A100 GPU (32Bモデル) |
 
 ---
 
 ## 4. 成功基準
 
-### 4.1 Step別目標
+### 4.1 Step別目標と実績
 
-| 指標 | C0 (現状) | C1目標 (Step1) | C2目標 (Step2) | C3目標 (Step3) |
-|------|----------|---------------|---------------|---------------|
-| composite_score | 52.2 | 60+ | 68+ | **70+** |
-| reasoning_score | 1.43 | 2.0+ | 2.5+ | **3.0+** |
-| evidence_score | 2.34 | 2.8+ | 3.0+ | 3.5+ |
-| composite_success_rate | 33.85% | 45%+ | 55%+ | **60%+** |
-| keyword_success_rate | 96.15% | 95%+（維持） | 95%+（維持） | 95%+（維持） |
+| 指標 | C0 (現状) | C1目標 | **C1実績** | C2目標 | **C2実績** | C3目標 |
+|------|----------|--------|-----------|--------|-----------|--------|
+| composite_score | 52.2 | 60+ | **67.1** ✅ | 70+ | **70.4** ✅ | 75+? |
+| reasoning_score | 1.43 | 2.0+ | **2.65** ✅ | 3.0+ | **3.07** ✅ | 3.5+? |
+| evidence_score | 2.34 | 2.8+ | **3.71** ✅ | 3.5+ | **3.85** ✅ | 4.0+? |
+| composite_success% | 33.85% | 45%+ | **76.2%** ✅ | 80%+ | **83.1%** ✅ | 85%+? |
+| success_rate | 96.15% | 95%+ | **96.9%** ✅ | 95%+ | **100%** ✅ | 95%+ |
 
-### 4.2 最終成功基準（Phase 9-C全体）
+> **C3目標値は暫定**。Step 3の実施判断と合わせて再設定が必要。
 
-- **composite_score 70以上**（C0: 52.2 → +17.8pt改善）
-- **composite_success_rate 60%以上**（C0: 33.85% → +26.15pt改善）
-- **reasoning_score 3.0以上**（C0: 1.43 → +1.57pt改善）
-- keyword_success_rateの維持（95%以上）
+### 4.2 最終成功基準（Phase 9-C全体）— **Step 2時点で達成済み**
+
+- ✅ **composite_score 70以上** — C2実績: 70.4（C0: 52.2 → **+18.2pt改善**）
+- ✅ **composite_success_rate 60%以上** — C2実績: 83.1%（C0: 33.85% → **+49.2pt改善**）
+- ✅ **reasoning_score 3.0以上** — C2実績: 3.07（C0: 1.43 → **+1.64pt改善**）
+- ✅ **keyword_success_rateの維持** — C2実績: 100%（維持以上）
 
 ---
 
 ## 5. リスク管理
 
-| リスク | 影響度 | 対策 |
-|--------|-------|------|
-| T4 VRAM不足で14B 8bitが動かない | 中 | 14B 4bitにフォールバック。Step 2のVRAM検証フェーズで早期確認 |
-| プロンプト改善がreasoning向上に寄与しない | 中 | Few-shot例の追加を検討。プロンプトパターンを複数試行 |
-| QLoRA学習データの品質確保が困難 | 中 | Step 2で高品質出力が少ない場合、人手修正で補完 |
-| QLoRAで汎化性能が低下（過学習） | 中 | validationセット（20%）で監視、早期停止を適用 |
-| Colabセッション切断による実験中断 | 低 | チェックポイント保存を頻繁に実施、結果はJSON逐次保存 |
-| 評価パイプライン自体のバイアス | 低 | evaluator_multi_areaは変更せず、C0と同一条件で比較 |
+| リスク | 影響度 | 対策 | 結果 |
+|--------|-------|------|------|
+| T4 VRAM不足で14B 8bitが動かない | 中 | 14B 4bitにフォールバック | **発生**: 32BはT4/L4不可。Colab Pro A100で解決 |
+| プロンプト改善がreasoning向上に寄与しない | 中 | Few-shot例の追加を検討 | **未発生**: C1で+1.22pt大幅改善 |
+| QLoRA学習データの品質確保が困難 | 中 | Step 2で高品質出力が少ない場合、人手修正で補完 | Step 3未着手 |
+| QLoRAで汎化性能が低下（過学習） | 中 | validationセットで監視、早期停止 | Step 3未着手 |
+| Colabセッション切断による実験中断 | 低 | チェックポイント保存を頻繁に実施 | **軽微**: チェックポイント機構で対応済み |
+| 評価パイプライン自体のバイアス | 低 | evaluator_multi_areaは変更せず | **未発生**: 全Step同一条件で比較 |
+| **Colab GPUガチャ** (新規) | 高 | VRAM < 30GBでエラー停止 | **発生**: L4割当→14Bフォールバック。A100明示選択で解決 |
+| **Qwen3 thinkingモード混入** (新規) | 中 | monkey-patch + テキスト除去 | **発生・解決**: `<think>`タグ除去で対応 |
 
 ---
 
@@ -278,39 +275,40 @@ lora_config = LoraConfig(
 
 ### 6.1 成果物一覧
 
-| # | 成果物 | 形式 | 備考 |
+| # | 成果物 | 形式 | 状態 |
 |---|--------|------|------|
-| 1 | 本計画書 | `docs/plans/PHASE9C_QUALITY_IMPROVEMENT_PLAN.md` | |
-| 2 | Step 1 改善プロンプト | `src/` 各ファイルの修正 | |
-| 3 | Step 1 評価ノートブック | `notebooks/phase9c_step1_prompt_evaluation.ipynb` | |
-| 4 | Step 1 評価結果 | `results/phase9c_step1_*.json` | |
-| 5 | Step 2 モデル比較ノートブック | `notebooks/phase9c_step2_model_evaluation.ipynb` | |
-| 6 | Step 2 評価結果 | `results/phase9c_step2_*.json` | |
-| 7 | Step 3 FTノートブック | `notebooks/phase9c_step3_qlora_training.ipynb` | |
-| 8 | Step 3 学習データ | `data/phase9c_training_data.json` | |
-| 9 | Step 3 評価結果 | `results/phase9c_step3_*.json` | |
-| 10 | 最終レポート | `docs/reports/PHASE9C_QUALITY_IMPROVEMENT_REPORT.md` | |
-| 11 | ハンドオーバー | `docs/handovers/PHASE9C_HANDOVER.md` | |
+| 1 | 本計画書 | `docs/plans/PHASE9C_QUALITY_IMPROVEMENT_PLAN.md` | ✅ 完了 |
+| 2 | Step 1 改善プロンプト | `src/` 各ファイルの修正 | ✅ 完了 |
+| 3 | Step 1 評価ノートブック | `notebooks/phase9c_step1_prompt_evaluation.ipynb` | ✅ 完了 |
+| 4 | Step 1 評価結果 | `results/phase9c_step1_20260226_022240.json` | ✅ 完了 |
+| 5 | Step 1 レポート | `docs/reports/PHASE9C_STEP1_PROMPT_IMPROVEMENT_REPORT.md` | ✅ 完了 |
+| 6 | Step 2 モデル評価ノートブック | `notebooks/phase9c_step2_model_evaluation.ipynb` | ✅ 完了 |
+| 7 | Step 2 評価結果 | `results/phase9c_step2_20260227_071313.json` | ✅ 完了 |
+| 8 | Step 2 レポート | `docs/reports/PHASE9C_STEP2_MODEL_UPGRADE_REPORT.md` | ✅ 完了 |
+| 9 | 引き継ぎ資料 | `docs/handovers/HANDOVER_PHASE9C.md` | ✅ 完了 |
+| 10 | Step 3 FTノートブック | `notebooks/phase9c_step3_qlora_training.ipynb` | ⬜ 未着手 |
+| 11 | Step 3 学習データ | `data/phase9c_training_data.json` | ⬜ 未着手 |
+| 12 | Step 3 評価結果 | `results/phase9c_step3_*.json` | ⬜ 未着手 |
 
 ### 6.2 実行順序
 
 ```
-Step 1: プロンプト改善実験
+Step 1: プロンプト改善実験                          ✅ 完了 (2026-02-25〜26)
   ├── プロンプト修正・レビュー
   ├── 4システム×130件評価（520クエリ）
   └── 結果分析・C0との比較
-      │
+      │  結果: composite 52.2 → 67.1 (+14.9)
       ▼
-Step 2: モデル変更実験（Step 1完了後）
-  ├── VRAM検証（3モデル候補）
-  ├── クイック評価（10件×候補数）
-  ├── 本評価（Hybrid RAG×130件）
+Step 2: モデル変更実験（Step 1完了後）              ✅ 完了 (2026-02-26〜27)
+  ├── VRAM検証 → A100必須が判明
+  ├── Colab Proアップグレード
+  ├── 本評価（Hybrid RAG×130件、Qwen3-32B）
   └── 結果分析・C1との比較
-      │
+      │  結果: composite 67.1 → 70.4 (+3.3)
       ▼
-Step 3: QLoRAファインチューニング（Step 2完了後）
+Step 3: QLoRAファインチューニング（Step 2完了後）   ⬜ 未着手
   ├── 学習データ作成（50-80件）
-  ├── QLoRA学習（30-60分）
+  ├── QLoRA学習
   ├── 本評価（Hybrid RAG×130件）
   └── 最終レポート作成
 ```
