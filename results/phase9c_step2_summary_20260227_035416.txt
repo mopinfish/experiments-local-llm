@@ -1,0 +1,23 @@
+Phase 9-C Step 2: Model Upgrade Evaluation Summary
+============================================================
+
+Date: 2026-02-27 03:54:16
+Test Cases: 130
+Model C1: Qwen2.5-7B-Instruct 4bit
+Model C2: Qwen/Qwen3-14B
+Prompt: C1 (improved: same as Step 1)
+enable_thinking: False
+
+C1 vs C2 Comparison (Hybrid RAG):
+------------------------------------------------------------
+  Composite: C1=67.1 -> C2=65.7 (delta=-1.4)
+  Reasoning: C1=2.6 -> C2=2.8 (delta=+0.1)
+  Evidence: C1=3.7 -> C2=3.7 (delta=-0.0)
+  CompSuccess%: C1=76.1 -> C2=76.1 (delta=+0.0)
+
+C2 Target Achievement:
+------------------------------------------------------------
+  Composite: 65.7 / 70.0 MISS
+  Reasoning: 2.8 / 3.0 MISS
+  Evidence: 3.7 / 3.5 PASS
+  Success%: 76.1 / 80.0 MISS
