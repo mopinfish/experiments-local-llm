@@ -41,8 +41,5 @@ data/finetuning_*.json
 # Libraries (vendored JS/CSS)
 lib/
 
-# Generated HTML
-*.html
-
 # Claude settings (local)
 .claude/
