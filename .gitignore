@@ -23,3 +23,26 @@ experiments-local-llm.txt
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Large model files
+models/
+*.safetensors
+*.pt
+*.bin
+*.onnx
+
+# Training checkpoints
+phase9c_step3_checkpoints/
+
+# Large data files
+data/poi_documents.json
+data/finetuning_*.json
+
+# Libraries (vendored JS/CSS)
+lib/
+
+# Generated HTML
+*.html
+
+# Claude settings (local)
+.claude/
