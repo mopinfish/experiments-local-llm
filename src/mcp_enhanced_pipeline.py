@@ -169,30 +169,29 @@ class EnhancedMCPPipeline:
                 if self.debug:
                     print(f"  ツールエラー (geo_count_by_category): {e}")
 
-        # 3. フォールバック: 基本周辺検索
-        if not context_parts:
-            try:
-                coords = _StationsCoords.get(station_name)
-                if not coords:
-                    coords = {"lat": 35.658034, "lon": 139.701636}  # 渋谷デフォルト
+        # 3. 基本周辺検索（常時補完 — Phase 6/9-C のベクトル検索に相当）
+        try:
+            coords = _StationsCoords.get(station_name)
+            if not coords:
+                coords = {"lat": 35.658034, "lon": 139.701636}  # 渋谷デフォルト
 
-                search_args = {
-                    "lon": coords["lon"],
-                    "lat": coords["lat"],
-                    "radius": int(analysis.get("distance_constraint") or 1000),
-                    "num_results": 20,
-                }
-                if category:
-                    search_args["genre_name"] = category
+            search_args = {
+                "lon": coords["lon"],
+                "lat": coords["lat"],
+                "radius": int(analysis.get("distance_constraint") or 1000),
+                "num_results": 20,
+            }
+            if category:
+                search_args["genre_name"] = category
 
-                result = await self.mcp.call_tool(
-                    "mapfan_search_spot_area", search_args
-                )
-                context_parts.append(result)
-                tool_calls.append({"tool": "mapfan_search_spot_area", "result_len": len(result)})
-            except Exception as e:
-                if self.debug:
-                    print(f"  ツールエラー (mapfan_search_spot_area): {e}")
+            result = await self.mcp.call_tool(
+                "mapfan_search_spot_area", search_args
+            )
+            context_parts.append(result)
+            tool_calls.append({"tool": "mapfan_search_spot_area", "result_len": len(result)})
+        except Exception as e:
+            if self.debug:
+                print(f"  ツールエラー (mapfan_search_spot_area): {e}")
 
         # 4. LLM 応答生成
         context = "\n\n".join(context_parts)
