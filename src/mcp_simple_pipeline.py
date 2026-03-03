@@ -150,11 +150,16 @@ class SimpleMCPPipeline:
         if genre_name:
             search_args["genre_name"] = genre_name
 
-        result = await self.mcp.call_tool("mapfan_search_spot_area", search_args)
-        tool_calls.append({
-            "tool": "mapfan_search_spot_area",
-            "result_len": len(result),
-        })
+        try:
+            result = await self.mcp.call_tool("mapfan_search_spot_area", search_args)
+            tool_calls.append({
+                "tool": "mapfan_search_spot_area",
+                "result_len": len(result),
+            })
+        except Exception as e:
+            if self.debug:
+                print(f"  ツールエラー (mapfan_search_spot_area): {e}")
+            result = ""
 
         # 5. LLM 応答生成
         context = result
@@ -229,8 +234,6 @@ class SimpleMCPPipeline:
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=512,
-                    temperature=0.1,
-                    do_sample=True,
                     pad_token_id=self.tokenizer.eos_token_id,
                 )
 

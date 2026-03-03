@@ -112,67 +112,87 @@ class EnhancedMCPPipeline:
 
         # 近接性
         if analysis.get("requires_proximity") and category:
-            radius = int(analysis.get("distance_constraint") or 1000)
-            result = await self.mcp.call_tool("geo_nearest_pois", {
-                "station_name": station_name,
-                "category": category,
-                "radius": radius,
-                "top_n": 5,
-            })
-            context_parts.append(result)
-            tool_calls.append({"tool": "geo_nearest_pois", "result_len": len(result)})
+            try:
+                radius = int(analysis.get("distance_constraint") or 1000)
+                result = await self.mcp.call_tool("geo_nearest_pois", {
+                    "station_name": station_name,
+                    "category": category,
+                    "radius": radius,
+                    "top_n": 5,
+                })
+                context_parts.append(result)
+                tool_calls.append({"tool": "geo_nearest_pois", "result_len": len(result)})
+            except Exception as e:
+                if self.debug:
+                    print(f"  ツールエラー (geo_nearest_pois): {e}")
 
         # 感度分析
-        if analysis.get("requires_sensitivity"):
-            radii = analysis.get("sensitivity_radii") or [300, 500]
-            result = await self.mcp.call_tool("geo_sensitivity_analysis", {
-                "station_name": station_name,
-                "category": category,
-                "radius1": radii[0],
-                "radius2": radii[1],
-            })
-            context_parts.append(result)
-            tool_calls.append({"tool": "geo_sensitivity_analysis", "result_len": len(result)})
+        if analysis.get("requires_sensitivity") and category:
+            try:
+                radii = analysis.get("sensitivity_radii") or [300, 500]
+                result = await self.mcp.call_tool("geo_sensitivity_analysis", {
+                    "station_name": station_name,
+                    "category": category,
+                    "radius1": radii[0],
+                    "radius2": radii[1],
+                })
+                context_parts.append(result)
+                tool_calls.append({"tool": "geo_sensitivity_analysis", "result_len": len(result)})
+            except Exception as e:
+                if self.debug:
+                    print(f"  ツールエラー (geo_sensitivity_analysis): {e}")
 
         # 方角比較
-        if analysis.get("requires_comparison") and analysis.get("detected_directions"):
-            result = await self.mcp.call_tool("geo_compare_directions", {
-                "station_name": station_name,
-                "category": category,
-                "radius": int(analysis.get("distance_constraint") or 1000),
-            })
-            context_parts.append(result)
-            tool_calls.append({"tool": "geo_compare_directions", "result_len": len(result)})
+        if analysis.get("requires_comparison") and analysis.get("detected_directions") and category:
+            try:
+                result = await self.mcp.call_tool("geo_compare_directions", {
+                    "station_name": station_name,
+                    "category": category,
+                    "radius": int(analysis.get("distance_constraint") or 1000),
+                })
+                context_parts.append(result)
+                tool_calls.append({"tool": "geo_compare_directions", "result_len": len(result)})
+            except Exception as e:
+                if self.debug:
+                    print(f"  ツールエラー (geo_compare_directions): {e}")
 
         # 集約
         if analysis.get("requires_aggregation"):
-            result = await self.mcp.call_tool("geo_count_by_category", {
-                "station_name": station_name,
-                "radius": int(analysis.get("distance_constraint") or 1000),
-            })
-            context_parts.append(result)
-            tool_calls.append({"tool": "geo_count_by_category", "result_len": len(result)})
+            try:
+                result = await self.mcp.call_tool("geo_count_by_category", {
+                    "station_name": station_name,
+                    "radius": int(analysis.get("distance_constraint") or 1000),
+                })
+                context_parts.append(result)
+                tool_calls.append({"tool": "geo_count_by_category", "result_len": len(result)})
+            except Exception as e:
+                if self.debug:
+                    print(f"  ツールエラー (geo_count_by_category): {e}")
 
         # 3. フォールバック: 基本周辺検索
         if not context_parts:
-            coords = _StationsCoords.get(station_name)
-            if not coords:
-                coords = {"lat": 35.658034, "lon": 139.701636}  # 渋谷デフォルト
+            try:
+                coords = _StationsCoords.get(station_name)
+                if not coords:
+                    coords = {"lat": 35.658034, "lon": 139.701636}  # 渋谷デフォルト
 
-            search_args = {
-                "lon": coords["lon"],
-                "lat": coords["lat"],
-                "radius": int(analysis.get("distance_constraint") or 1000),
-                "num_results": 20,
-            }
-            if category:
-                search_args["genre_name"] = category
+                search_args = {
+                    "lon": coords["lon"],
+                    "lat": coords["lat"],
+                    "radius": int(analysis.get("distance_constraint") or 1000),
+                    "num_results": 20,
+                }
+                if category:
+                    search_args["genre_name"] = category
 
-            result = await self.mcp.call_tool(
-                "mapfan_search_spot_area", search_args
-            )
-            context_parts.append(result)
-            tool_calls.append({"tool": "mapfan_search_spot_area", "result_len": len(result)})
+                result = await self.mcp.call_tool(
+                    "mapfan_search_spot_area", search_args
+                )
+                context_parts.append(result)
+                tool_calls.append({"tool": "mapfan_search_spot_area", "result_len": len(result)})
+            except Exception as e:
+                if self.debug:
+                    print(f"  ツールエラー (mapfan_search_spot_area): {e}")
 
         # 4. LLM 応答生成
         context = "\n\n".join(context_parts)
@@ -219,8 +239,6 @@ class EnhancedMCPPipeline:
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=512,
-                    temperature=0.1,
-                    do_sample=True,
                     pad_token_id=self.tokenizer.eos_token_id,
                 )
 

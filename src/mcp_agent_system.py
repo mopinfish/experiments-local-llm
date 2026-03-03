@@ -9,6 +9,7 @@ Phase 10-A: MCP サーバー構造化ツール拡張実験
 作成日: 2026-03-03
 """
 
+import copy
 import json
 import re
 import time
@@ -187,7 +188,13 @@ class MCPAgentSystem:
                     if self.debug:
                         print(f"  ツール呼び出し: {tool_name}({args})")
 
-                    result = await self.mcp.call_tool(tool_name, args)
+                    try:
+                        result = await self.mcp.call_tool(tool_name, args)
+                    except Exception as e:
+                        if self.debug:
+                            print(f"  ツールエラー ({tool_name}): {e}")
+                        result = f"ツール実行エラー: {e}"
+
                     tool_calls_log.append({
                         "tool": tool_name,
                         "args": args,
@@ -242,11 +249,11 @@ class MCPAgentSystem:
                 tokenize=False,
                 add_generation_prompt=True,
             )
-        except TypeError:
+        except Exception:
             # tools パラメータ非対応の場合（旧モデル）
             # ツール定義をシステムプロンプトに埋め込む
             tool_desc = self._format_tools_as_text(tools)
-            augmented = messages.copy()
+            augmented = copy.deepcopy(messages)
             augmented[0] = {
                 "role": "system",
                 "content": messages[0]["content"] + "\n\n" + tool_desc,
@@ -260,9 +267,7 @@ class MCPAgentSystem:
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=1024,
-                temperature=0.1,
-                do_sample=True,
+                max_new_tokens=512,
                 pad_token_id=self.tokenizer.eos_token_id,
             )
 
