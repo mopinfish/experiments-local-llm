@@ -15,7 +15,7 @@ from typing import Dict, List, Optional
 try:
     from .test_cases_multi_area import (
         MultiAreaTestCase,
-        get_all_test_cases,
+        ALL_MULTI_AREA_TEST_CASES,
         get_quick_test_cases,
         get_area_tests,
         get_cross_area_tests,
@@ -26,7 +26,7 @@ try:
 except ImportError:
     from test_cases_multi_area import (
         MultiAreaTestCase,
-        get_all_test_cases,
+        ALL_MULTI_AREA_TEST_CASES,
         get_quick_test_cases,
         get_area_tests,
         get_cross_area_tests,
@@ -153,8 +153,8 @@ def convert_to_variant_b(test_case: MultiAreaTestCase) -> MultiAreaTestCase:
 # =============================================================================
 
 def get_all_test_cases_v2() -> List[MultiAreaTestCase]:
-    """全 130 テストケースの Variant B 版を返す。"""
-    return [convert_to_variant_b(tc) for tc in get_all_test_cases()]
+    """全テストケースの Variant B 版を返す。"""
+    return [convert_to_variant_b(tc) for tc in ALL_MULTI_AREA_TEST_CASES]
 
 
 def get_quick_test_cases_v2() -> List[MultiAreaTestCase]:
@@ -185,7 +185,7 @@ def get_variant_b_stats() -> Dict[str, int]:
     """
     Variant B への変換で何件のキーワードが変更されたかの統計。
     """
-    original = get_all_test_cases()
+    original = ALL_MULTI_AREA_TEST_CASES
     v2 = get_all_test_cases_v2()
 
     changed = 0
