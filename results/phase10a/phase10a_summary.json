@@ -1,0 +1,70 @@
+{
+  "summaries": [
+    {
+      "system": "SystemA_Enhanced_Pipeline_VA",
+      "n_cases": 130,
+      "composite_mean": 0.0,
+      "composite_median": 0,
+      "kw_hit_rate_mean": 0.0,
+      "success_rate": 0.0,
+      "avg_time_sec": 0.0
+    },
+    {
+      "system": "SystemA_Enhanced_Pipeline_VB",
+      "n_cases": 130,
+      "composite_mean": 47.00923076923077,
+      "composite_median": 43.0,
+      "kw_hit_rate_mean": 0.8814099999999999,
+      "success_rate": 0.9230769230769231,
+      "avg_time_sec": 21.101230769230767
+    },
+    {
+      "system": "SystemB_Simple_Pipeline_VA",
+      "n_cases": 130,
+      "composite_mean": 57.73307692307692,
+      "composite_median": 58.0,
+      "kw_hit_rate_mean": 0.9542315384615385,
+      "success_rate": 0.9923076923076923,
+      "avg_time_sec": 29.96369230769231
+    },
+    {
+      "system": "SystemB_Simple_Pipeline_VB",
+      "n_cases": 130,
+      "composite_mean": 40.73692307692308,
+      "composite_median": 40.0,
+      "kw_hit_rate_mean": 0.8365415384615384,
+      "success_rate": 0.9538461538461539,
+      "avg_time_sec": 8.613846153846154
+    },
+    {
+      "system": "SystemC_Enhanced_Agent_VA",
+      "n_cases": 130,
+      "composite_mean": 28.91923076923077,
+      "composite_median": 30.0,
+      "kw_hit_rate_mean": 0.6939738461538462,
+      "success_rate": 0.7461538461538462,
+      "avg_time_sec": 25.88623076923077
+    },
+    {
+      "system": "SystemD_Simple_Agent_VA",
+      "n_cases": 130,
+      "composite_mean": 27.79230769230769,
+      "composite_median": 26.0,
+      "kw_hit_rate_mean": 0.6166684615384616,
+      "success_rate": 0.676923076923077,
+      "avg_time_sec": 38.141
+    },
+    {
+      "system": "Baseline (Phase9C-C2)",
+      "n_cases": 130,
+      "composite_mean": 70.4,
+      "composite_median": 0,
+      "kw_hit_rate_mean": 0,
+      "success_rate": 0,
+      "avg_time_sec": 0
+    }
+  ],
+  "timestamp": "2026-03-03T11:08:10.658862",
+  "model": "Qwen3-32B-4bit",
+  "mcp_server_url": "https://92ac-220-147-211-103.ngrok-free.app/mcp"
+}
