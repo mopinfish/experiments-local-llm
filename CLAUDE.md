@@ -85,7 +85,55 @@ SHIBUYA_STATION = (35.658034, 139.701636)  # すべての空間計算の基準�
 - **poi_documents.json**: 渋谷エリアの1,047 POI
 - **chroma_db/**: 永続化ベクトルストア（ChromaDB）
 - 埋め込みモデル: multilingual-e5-base
-- LLM: Qwen2.5-7B-Instruct（Colab用4ビット量子化）
+- LLM: Qwen3-32B（Colab A100用4ビット量子化、VRAM約19GB）
+
+## Google Colab でのローカル LLM 運用ノウハウ
+
+### GPU ランタイムの選択
+
+- **A100 40GB** が必要（Qwen3-32B 4bit で VRAM 約19GB 使用）
+- T4 16GB では Qwen3-32B は動作しない（Qwen2.5-7B なら可）
+
+### 大規模モデルロード時の OOM 対策
+
+4bit 量子化モデルでも、ロード過程では重みを一時的に fp16/bf16/fp32 で GPU に展開してから量子化するため、**最終モデルサイズの2倍近いピークメモリ**が必要になる場合がある。以下の3パラメータで回避する：
+
+```python
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_ID,
+    quantization_config=bnb_config,
+    device_map="auto",
+    trust_remote_code=True,
+    torch_dtype=torch.float16,                        # 中間テンソルをfp16に制限
+    low_cpu_mem_usage=True,                            # レイヤー単位でCPU→GPU逐次転送
+    max_memory={0: "36GiB", "cpu": "24GiB"},           # GPU上限制限＋CPUオフロード許可
+)
+```
+
+| パラメータ | 効果 |
+|-----------|------|
+| `torch_dtype=torch.float16` | 重みの中間展開を fp16 に制限（bf16/fp32 で展開されるのを防ぐ） |
+| `low_cpu_mem_usage=True` | 全レイヤーを一括 GPU 展開せずレイヤー単位で逐次転送 |
+| `max_memory={0: "36GiB", "cpu": "24GiB"}` | GPU に載りきらない分を CPU RAM にオフロード |
+
+**注意**: `transformers` / `bitsandbytes` のバージョン更新でロード時のメモリ挙動が変わることがある。OOM が発生したらまずこの3パラメータを確認すること。
+
+### Qwen3 の Non-thinking モード
+
+Qwen3 はデフォルトで `<think>` タグ付きの推論モードが有効。RAG 用途では不要なので無効化する：
+
+```python
+original_apply = tokenizer.apply_chat_template
+def patched_apply(*args, **kwargs):
+    kwargs['enable_thinking'] = False
+    return original_apply(*args, **kwargs)
+tokenizer.apply_chat_template = patched_apply
+```
+
+### ランタイムリセットの注意点
+
+- `Runtime > Restart runtime` では GPU メモリが完全に解放されない場合がある
+- OOM が発生したら `Runtime > Disconnect and delete runtime` で**ファクトリーリセット**してから再接続する
 
 ## 既知の制限事項
 
