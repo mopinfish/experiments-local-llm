@@ -49,6 +49,7 @@ class MCPClientWrapper:
             ツール実行結果のテキスト
         """
         start = time.time()
+        result_text = None
         try:
             async with streamablehttp_client(self.server_url) as (
                 read_stream,
@@ -67,12 +68,18 @@ class MCPClientWrapper:
                         else:
                             texts.append(str(block))
 
-                    elapsed = time.time() - start
-                    return "\n".join(texts)
+                    result_text = "\n".join(texts)
 
-        except Exception as e:
+        except BaseException as e:
+            # streamablehttp_client は anyio TaskGroup を使用しており、
+            # クリーンアップ時に BaseExceptionGroup が発生することがある。
+            # ツール呼び出し自体が成功していれば結果を返す。
+            if result_text is not None:
+                return result_text
             elapsed = time.time() - start
             return f"MCP ツール呼び出しエラー ({tool_name}, {elapsed:.1f}s): {e}"
+
+        return result_text
 
     async def call_tool_with_timing(
         self, tool_name: str, arguments: Dict[str, Any]
@@ -110,27 +117,35 @@ class MCPClientWrapper:
             ツール定義のリスト。各要素は
             {"name": str, "description": str, "inputSchema": dict}
         """
-        async with streamablehttp_client(self.server_url) as (
-            read_stream,
-            write_stream,
-            _,
-        ):
-            async with ClientSession(read_stream, write_stream) as session:
-                await session.initialize()
-                result = await session.list_tools()
+        tools = []
+        try:
+            async with streamablehttp_client(self.server_url) as (
+                read_stream,
+                write_stream,
+                _,
+            ):
+                async with ClientSession(read_stream, write_stream) as session:
+                    await session.initialize()
+                    result = await session.list_tools()
 
-                tools = []
-                for tool in result.tools:
-                    tools.append({
-                        "name": tool.name,
-                        "description": tool.description or "",
-                        "inputSchema": (
-                            tool.inputSchema if hasattr(tool, "inputSchema") else {}
-                        ),
-                    })
+                    for tool in result.tools:
+                        tools.append({
+                            "name": tool.name,
+                            "description": tool.description or "",
+                            "inputSchema": (
+                                tool.inputSchema
+                                if hasattr(tool, "inputSchema")
+                                else {}
+                            ),
+                        })
 
-                self._tools_cache = tools
-                return tools
+        except BaseException:
+            # BaseExceptionGroup from anyio cleanup — tools already collected
+            if not tools:
+                raise
+
+        self._tools_cache = tools
+        return tools
 
     async def ping(self) -> Dict[str, Any]:
         """
