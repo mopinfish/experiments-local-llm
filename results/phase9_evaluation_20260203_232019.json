@@ -1,0 +1,11 @@
+{
+  "timestamp": "20260203_232019",
+  "test_count": 10,
+  "quick_test": true,
+  "structured_rag": {
+    "metrics": {
+      "success_rate": 0.0,
+      "avg_hit_rate": 0.0,
+      "avg_execution_time": 0.0,
+      "std_execution_time": 0.0,
+      "error_count": 
