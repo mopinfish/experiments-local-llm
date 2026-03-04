@@ -10,6 +10,7 @@ Phase 10-A: MCP サーバー構造化ツール拡張実験
 作成日: 2026-03-03
 """
 
+import asyncio
 import json
 import time
 from typing import Any, Dict, List, Optional
@@ -136,40 +137,62 @@ class MCPClientWrapper:
                 headers=headers,
             )
 
-    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> str:
+    async def call_tool(
+        self,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        max_retries: int = 2,
+        retry_delay: float = 2.0,
+    ) -> str:
         """
         MCP ツールを呼び出して結果テキストを返す。
+        HTTP エラーやタイムアウト時は自動リトライ（指数バックオフ）。
 
         Args:
             tool_name: ツール名（例: "mapfan_search_spot_area", "geo_nearest_pois"）
             arguments: ツール引数の辞書
+            max_retries: 最大リトライ回数（デフォルト2、計3回試行）
+            retry_delay: 初回リトライ待機秒数（以降指数バックオフ）
 
         Returns:
             ツール実行結果のテキスト
         """
+        last_error: Optional[Exception] = None
         start = time.time()
-        try:
-            await self._ensure_initialized()
-            resp = await self._send_jsonrpc("tools/call", {
-                "name": tool_name,
-                "arguments": arguments,
-            })
 
-            result = resp.get("result", {})
-            content = result.get("content", [])
+        for attempt in range(max_retries + 1):
+            try:
+                await self._ensure_initialized()
+                resp = await self._send_jsonrpc("tools/call", {
+                    "name": tool_name,
+                    "arguments": arguments,
+                })
 
-            texts = []
-            for block in content:
-                if isinstance(block, dict):
-                    texts.append(block.get("text", str(block)))
-                else:
-                    texts.append(str(block))
+                result = resp.get("result", {})
+                content = result.get("content", [])
 
-            return "\n".join(texts)
+                texts = []
+                for block in content:
+                    if isinstance(block, dict):
+                        texts.append(block.get("text", str(block)))
+                    else:
+                        texts.append(str(block))
 
-        except Exception as e:
-            elapsed = time.time() - start
-            return f"MCP ツール呼び出しエラー ({tool_name}, {elapsed:.1f}s): {e}"
+                return "\n".join(texts)
+
+            except Exception as e:
+                last_error = e
+                if attempt < max_retries:
+                    print(f"[MCP retry] {tool_name} attempt {attempt+1}/{max_retries+1}: {e}")
+                    # 4xx エラー（セッション切れ等）ではセッションリセットして再 initialize
+                    if isinstance(e, httpx.HTTPStatusError) and 400 <= e.response.status_code < 500:
+                        print(f"[MCP retry] セッションリセット（HTTP {e.response.status_code}）")
+                        self._session_id = None
+                    await asyncio.sleep(retry_delay * (attempt + 1))
+                # 最終試行の失敗はループ終了後に処理
+
+        elapsed = time.time() - start
+        return f"MCP ツール呼び出しエラー ({tool_name}, {elapsed:.1f}s): {last_error}"
 
     async def call_tool_with_timing(
         self, tool_name: str, arguments: Dict[str, Any]
@@ -241,6 +264,31 @@ class MCPClientWrapper:
                 "elapsed_sec": round(elapsed, 2),
                 "error": str(e),
             }
+
+    async def health_check(self) -> bool:
+        """
+        接続確認 + 自動回復。失敗時にセッションリセット+再試行。
+
+        評価ループのチェックポイント（10問ごと等）での呼び出しを想定。
+
+        Returns:
+            True: 接続OK, False: 回復不能
+        """
+        result = await self.ping()
+        if result["connected"]:
+            return True
+
+        print(f"[MCP health_check] 接続失敗、セッションリセットして再試行: {result.get('error', '?')}")
+        self._session_id = None
+        self._tools_cache = None
+
+        result = await self.ping()
+        if result["connected"]:
+            print(f"[MCP health_check] 回復成功（ツール数: {result['tool_count']}）")
+            return True
+
+        print(f"[MCP health_check] 回復失敗: {result.get('error', '?')}")
+        return False
 
     def get_cached_tools(self) -> Optional[List[Dict[str, Any]]]:
         """キャッシュ済みツール一覧を返す（list_tools 未実行なら None）。"""
