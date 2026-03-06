@@ -3,11 +3,11 @@
     {
       "system": "SystemA_Enhanced_Pipeline_VA",
       "n_cases": 130,
-      "composite_mean": 54.04692307692308,
-      "composite_median": 50.0,
-      "kw_hit_rate_mean": 0.9608976923076924,
-      "success_rate": 0.9923076923076923,
-      "avg_time_sec": 52.069153846153846
+      "composite_mean": 58.20538461538462,
+      "composite_median": 58.0,
+      "kw_hit_rate_mean": 0.9692315384615385,
+      "success_rate": 1.0,
+      "avg_time_sec": 54.80515384615385
     },
     {
       "system": "SystemB_Simple_Pipeline_VA",
@@ -46,7 +46,7 @@
       "avg_time_sec": 0
     }
   ],
-  "timestamp": "2026-03-05T23:13:34.781308",
+  "timestamp": "2026-03-06T03:25:33.937144",
   "model": "Qwen/Qwen3-32B",
   "mcp_server_url": "https://6fe1-220-147-211-103.ngrok-free.app/mcp"
 }
